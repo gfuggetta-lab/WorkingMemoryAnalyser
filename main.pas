@@ -79,6 +79,8 @@ type
     participantID : string;
     monlist : TList;
     procedure PopulateMonitorsList;
+    function GetMonitorToPoint(const p: TPoint): Integer;
+    procedure SelectMonitor(const p: TPoint);
   public
     { Public declarations }
 
@@ -3598,6 +3600,30 @@ begin
   end;
 end;
 
+function TForm1.GetMonitorToPoint(const p: TPoint): Integer;
+var
+  i : integer;
+  m : TMonitor;
+begin
+  for i := 0 to RadioGroup4.Items.Count-1 do begin
+    m := TMonitor(RadioGroup4.Items.Objects[i]);
+    if not Assigned(m) then Continue;
+    if PtInRect(m.Bounds, p) then begin
+      Result:=i;
+      Exit;
+    end;
+  end;
+  Result := -1;
+end;
+
+procedure TForm1.SelectMonitor(const p: TPoint);
+var
+  i : integer;
+begin
+  i := GetMonitorToPoint(p);
+  if i>=0 then RadioGroup4.ItemIndex := i;
+end;
+
 //------------------------------------------------------------------------------
 
 
@@ -3707,12 +3733,13 @@ end;
 
 //------------------------------------------------------------------------------
 procedure TForm1.FormCreate(Sender: TObject);
-var
-  i : integer;
 begin
   monlist := TList.Create;
   GetSysMonitors(monlist);
-  if monlist.Count>0 then PopulateMonitorsList;
+  if monlist.Count>0 then begin
+    PopulateMonitorsList;
+    SelectMonitor( ClientToScreen(Point(0,0)) );
+  end;
 
   Form1.visible:=false;
    Form1.visible:=true;
