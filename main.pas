@@ -3719,7 +3719,7 @@ begin
 
   OpenDialog1.initialdir:= (getCurrentDir + '\Experiment Library');
   //showmessage(  OpenDialog1.initialdir);
-  OpenDialog1.execute;
+  if not OpenDialog1.execute then Exit;
   //showmessage(OpenDialog1.filename);
 
 
