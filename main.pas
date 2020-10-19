@@ -1654,6 +1654,7 @@ var
      BMPwidthPixels, BMPheightPixels:integer;
 
   selMonitor: TMonitor;
+  Background_diameter_deg : Real;
 
 
 const
@@ -1778,6 +1779,8 @@ begin
   Show_S3_placeholder_when_centre := getIntegerForParameter(configDataFilename, 'Show_S3_placeholder_when_centre:') <> 0;
   Show_S4_placeholder_when_centre := getIntegerForParameter(configDataFilename, 'Show_S4_placeholder_when_centre:') <> 0;
 
+  Background_diameter_deg := getRealForParameter(configDataFilename, 'Background_diameter_deg:');
+  if Background_diameter_deg <= 0 then Background_diameter_deg := backgroundRadiusDeg * 2;
 
 
   //////////////////////////////////////////////////////////////////////////////
@@ -2066,7 +2069,7 @@ begin
   InitGL;
 
   // create displaylists;
-  backgroundRadiusCM := tan(backgroundRadiusDeg*(pi/180))*ef.distance;
+  backgroundRadiusCM := tan(Background_diameter_deg / 2*(pi/180))*ef.distance;
   makeDisplayLists(tan(placeholderRadiusDeg*(pi/180))*ef.distance, backgroundRadiusCM );
 
 
