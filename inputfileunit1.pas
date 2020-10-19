@@ -207,6 +207,14 @@ begin
 
 end;
 
+
+function isParamFound(const inps: string; ofs: Integer): boolean;
+begin
+  Result := (ofs > 0)
+    and (inps<>'')
+    and ((ofs = 1) or (inps[ofs-1] in [#32,#9,#10,#13]));
+end;
+
 //------------------------------------------------------------------------------
 procedure getShapeColours(filename:string; var colours:array of TcolourReal);
 // extract rgb triplets for Shapes_colour_ definitions inthe input file
@@ -291,7 +299,7 @@ AssignFile(f, filename);
     begin
       readln(f,str0);
       i := pos(parameterString,str0);
-      if i<>0 then
+      if isParamFound(str0, i) then
       begin // text found
         //showmessage (str0 );
         // get the text following the colon, with any white spaces at the beginning and end trimmed
@@ -299,6 +307,7 @@ AssignFile(f, filename);
         //showmessage (str1 );
         colour:= colourIntegerToColourReal(getRGBtripletFromString(str1));
         //colour:= getRGBtripletFromString(str1);
+        break;
       end;
     end;
     closeFile(f);
@@ -323,6 +332,7 @@ var
   data:integer;
 
 begin
+  Result := 0;
   AssignFile(f, filename);
 
   try
@@ -333,7 +343,7 @@ begin
     begin
       readln(f,str0);
       i := pos(parameterString,str0);
-      if i<>0 then
+      if isParamFound(str0, i) then
       begin // text found
         //showmessage (str0 );
         // get the text following the colon, with any white spaces at the beginning and end trimmed
@@ -341,7 +351,7 @@ begin
         //showmessage (str1 );
         //colour:= colourIntegerToColourReal(getRGBtripletFromString(str1));
         data:=stripFirstIntegerFromString(str1);
-
+        break;
       end;
     end;
     closeFile(f);
@@ -378,7 +388,7 @@ begin
     begin
       readln(f,str0);
       i := pos(parameterString,str0);
-      if i<>0 then
+      if isParamFound(str0, i) then
       begin // text found
 
         //showmessage (str0 );
@@ -389,6 +399,7 @@ begin
         //colour:= colourIntegerToColourReal(getRGBtripletFromString(str1));
         data:=stripFirstRealFromString(str1);
         //showmessage (floattostr(data) );
+        break;
       end;
     end;
     closeFile(f);
@@ -413,6 +424,7 @@ var
   //data:string;
 
 begin
+  Result := '';
   AssignFile(f, filename);
 
   try
@@ -423,7 +435,7 @@ begin
     begin
       readln(f,str0);
       i := pos(parameterString,str0);
-      if i<>0 then
+      if isParamFound(str0, i) then
       begin // text found
         //showmessage (str0 );
         // get the text following the colon, with any white spaces at the beginning and end trimmed
@@ -432,7 +444,7 @@ begin
        // showmessage (str2 );
         //colour:= colourIntegerToColourReal(getRGBtripletFromString(str1));
         //data:=stripFirstIntegerFromString(str1);
-
+        break;
       end;
     end;
     closeFile(f);
