@@ -1652,6 +1652,7 @@ var
      BMPtextureID: GLUint;
      BMPwidthPixels, BMPheightPixels:integer;
 
+  selMonitor: TMonitor;
 
 
 const
@@ -1716,7 +1717,7 @@ begin
   experimentName:=GetExperimentName(configDataFilename);
 
   Monitor_name:= getStringForParameter(configDataFilename, 'Monitor_name:');
-  radiogroup4.items[0]:= Monitor_name;
+  //radiogroup4.items[0]:= Monitor_name;
   Monitor_width_cm := getRealForParameter(configDataFilename, 'Monitor_width_cm:');
   Monitor_height_cm := getRealForParameter(configDataFilename, 'Monitor_height_cm:');
   Monitor_resolution_h := getIntegerForParameter(configDataFilename, 'Monitor_resolution_h:');
@@ -1801,7 +1802,24 @@ begin
 
 
    // set display properties
-   radiogroup4.items[0]:=Monitor_name;
+  //radiogroup4.items[0]:=Monitor_name;
+  selMonitor := TMonitor(radiogroup4.items.Objects[radiogroup4.itemindex]);
+  if (selMonitor <> nil) then
+  begin
+    ef.displayWindowXpos:=selMonitor.Bounds.Left;
+    ef.displayWindowYpos:=selMonitor.Bounds.Top;
+    ef.Width := selMonitor.Resolution.cx;
+    ef.Height := selMonitor.Resolution.cy;
+
+    if (selMonitor.PhysSizeCm.cx>0) and (selMonitor.PhysSizeCm.cy>0) then begin
+      ef.widthCM := selMonitor.PhysSizeCm.cx;
+      ef.heightCM := selMonitor.PhysSizeCm.cy;
+    end else begin
+      ef.widthCM := Monitor_width_cm;
+      ef.heightCM := Monitor_height_cm;
+    end;
+    ef.distance := Monitor_distance_cm;
+  end else begin
   DISPLAY_TYPE := radiogroup4.itemindex;
 
  // DISPLAY_TYPE := DISPLAY_PC_LAB;
@@ -1872,7 +1890,7 @@ begin
 
   end;
 
-
+  end;
 
 
 
@@ -2025,7 +2043,7 @@ begin
 
   ef.SetDisplayType(Cyclopean);
 
-  ef.displayWindowXpos:=0;//1280;
+  //ef.displayWindowXpos:=0;//1280;
   //ef.distance := 57;
   ef.iod:=0;
   ef.Refreshform;
@@ -3648,6 +3666,7 @@ var
   sessionNo:integer;
   numstr:string;
   c:integer;
+  selMonitor : TMonitor;
 begin
 
   experiment_dir:=extractfilepath(Opendialog1.filename);
@@ -3700,6 +3719,12 @@ begin
  else
  begin
   form2.image1.picture.Loadfromfile(experiment_dir+ Instructions_EVEN_participants);
+ end;
+
+ if (RadioGroup4.ItemIndex >= 0) then begin
+   selMonitor := TMonitor(RadioGroup4.Items.Objects[RadioGroup4.ItemIndex]);
+   if Assigned(selMonitor) then
+     Form2.BoundsRect := selMonitor.Bounds;
  end;
 
  //// change this back************************************************************
@@ -3809,7 +3834,7 @@ begin
     terminateApplication;
   end;
 
-  radiogroup4.items[0]:= getStringForParameter(configDataFilename, 'Monitor_name:');
+  //radiogroup4.items[0]:= getStringForParameter(configDataFilename, 'Monitor_name:');
 
 end;
 
