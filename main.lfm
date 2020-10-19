@@ -63,7 +63,7 @@ object Form1: TForm1
     Caption = 'Begin'
     Enabled = False
     OnClick = Button1Click
-    TabOrder = 0
+    TabOrder = 8
   end
   object Button2: TButton
     Left = 16
@@ -72,14 +72,14 @@ object Form1: TForm1
     Width = 75
     Caption = 'Quit'
     OnClick = Button2Click
-    TabOrder = 1
+    TabOrder = 9
   end
   object Edit1: TEdit
     Left = 208
     Height = 21
     Top = 672
     Width = 101
-    TabOrder = 2
+    TabOrder = 10
     Text = 'INITIALS'
     Visible = False
   end
@@ -515,7 +515,7 @@ object Form1: TForm1
     )
     OnChange = ShowControlsIfReady
     Style = csDropDownList
-    TabOrder = 5
+    TabOrder = 0
   end
   object ComboBox5: TComboBox
     Left = 24
@@ -782,7 +782,7 @@ object Form1: TForm1
       '254'
       '255'
     )
-    TabOrder = 6
+    TabOrder = 11
     Text = '0'
     Visible = False
   end
@@ -1051,7 +1051,7 @@ object Form1: TForm1
       '254'
       '255'
     )
-    TabOrder = 7
+    TabOrder = 12
     Text = '0'
     Visible = False
   end
@@ -1320,7 +1320,7 @@ object Form1: TForm1
       '254'
       '255'
     )
-    TabOrder = 8
+    TabOrder = 13
     Text = '0'
     Visible = False
   end
@@ -1370,9 +1370,8 @@ object Form1: TForm1
     ItemIndex = 0
     Items.Strings = (
       '1:Default'
-      '2:AOC_G-sync_monitor_1920x1080_100Hz'
     )
-    TabOrder = 9
+    TabOrder = 5
   end
   object Label12: TLabel
     Left = 16
@@ -1388,7 +1387,7 @@ object Form1: TForm1
     Height = 21
     Top = 768
     Width = 80
-    TabOrder = 10
+    TabOrder = 14
     Text = '400'
     Visible = False
   end
@@ -1420,7 +1419,7 @@ object Form1: TForm1
       '9'
       '10'
     )
-    TabOrder = 11
+    TabOrder = 15
     Text = '1'
     Visible = False
   end
@@ -1442,7 +1441,7 @@ object Form1: TForm1
       ''
     )
     ScrollBars = ssVertical
-    TabOrder = 12
+    TabOrder = 7
   end
   object Label13: TLabel
     Left = 24
@@ -1459,7 +1458,7 @@ object Form1: TForm1
     Width = 296
     Caption = 'Select experiment'
     OnClick = Button3Click
-    TabOrder = 13
+    TabOrder = 6
   end
   object ComboBox13: TComboBox
     Left = 160
@@ -1473,7 +1472,7 @@ object Form1: TForm1
     )
     OnChange = ShowControlsIfReady
     Style = csDropDownList
-    TabOrder = 14
+    TabOrder = 1
   end
   object ComboBox14: TComboBox
     Left = 288
@@ -1487,7 +1486,7 @@ object Form1: TForm1
     )
     OnChange = ShowControlsIfReady
     Style = csDropDownList
-    TabOrder = 15
+    TabOrder = 2
   end
   object Label14: TLabel
     Left = 160
