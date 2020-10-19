@@ -806,7 +806,7 @@ end;
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-procedure makeDisplayLists(radiusCM, backgroundradiusCM: real);
+procedure makeDisplayLists(placeHolderRadiusCM, backgroundradiusCM, shapeSizeCM: real);
 var
     r, r1, r2: real;
 
@@ -816,7 +816,7 @@ var
 
   DL_CIRCLE:= glGenLists(1);
   glNewList(DL_CIRCLE,GL_COMPILE);
-    circle(0,0,-ef.distance+0.01,radiusCM,tan(0.0629*(pi/180) * SCALE_FACTOR * Shape_scale_factor)*ef.distance,20,true);
+    circle(0,0,-ef.distance+0.01,placeHolderRadiusCM,tan(0.0629*(pi/180) * SCALE_FACTOR * Shape_scale_factor)*ef.distance,20,true);
   glEndList;
 
   DL_CIRCLE_OUTLINE:= glGenLists(1);
@@ -1655,6 +1655,8 @@ var
   Placeholders_diameter_deg : Real; // "virtual" circle of where the 4 place holders and a target are drawn at
   Sample_diameter_deg       : Real; // "virtual" circle of where the samples are drawn
   Fixation_dot_deg          : Real;
+  Shape_size_deg            : Real;
+  Shape_size_CM             : Real;
 
 const
   show_s1:boolean=true;
@@ -1671,8 +1673,7 @@ const
   Placeholders_diameter_deg_DEFAULT = 14.2;// 10; // radius of target position in degrees
 
   Sample_diameter_deg_DEFAULT = 4.1;
-
-
+  Shape_size_deg_DEFAULT = 1.6;
 
   bgrColour: array [0..2] of real = (0, 0, 0);
 
@@ -1789,6 +1790,9 @@ begin
 
   Fixation_dot_deg := getRealForParameter(configDataFilename, 'Fixation_dot_deg:');
   if Fixation_dot_deg <= 0 then Fixation_dot_deg := Fixation_dot_deg_DEFAULT;
+
+  Shape_size_deg := getRealForParameter(configDataFilename, 'Shape_size_deg:');
+  if Shape_size_deg <= 0 then Shape_size_deg := Shape_size_deg_DEFAULT;
 
   //////////////////////////////////////////////////////////////////////////////
 
@@ -2077,7 +2081,8 @@ begin
 
   // create displaylists;
   backgroundRadiusCM := tan(Background_diameter_deg / 2*(pi/180))*ef.distance;
-  makeDisplayLists(tan(placeholderRadiusDeg*(pi/180))*ef.distance, backgroundRadiusCM );
+  Shape_size_CM := tan(Shape_size_deg*(pi/180))*ef.distance;
+  makeDisplayLists(tan(placeholderRadiusDeg*(pi/180))*ef.distance, backgroundRadiusCM, Shape_size_CM);
 
 
   //load images
