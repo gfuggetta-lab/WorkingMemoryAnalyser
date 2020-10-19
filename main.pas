@@ -1051,7 +1051,8 @@ begin
 
   300..397:
     begin
-       displayBMPimageXYcm(BMPimages,shapeNo-300, x,y, ef.Width, ef.height, ef.WidthCM, ef.heightCM);
+       displayBMPimageXYcm(BMPimages,shapeNo-300, x,y, ef.Width, ef.height, ef.WidthCM, ef.heightCM
+         , ef.ImageScaleHorz, ef.ImageScaleVert);
     end;
 
   1033..1255:
@@ -1803,6 +1804,9 @@ begin
 
    // set display properties
   //radiogroup4.items[0]:=Monitor_name;
+  ef.ImageScaleHorz:=1.0;
+  ef.ImageScaleVert:=1.0;
+
   selMonitor := TMonitor(radiogroup4.items.Objects[radiogroup4.itemindex]);
   if (selMonitor <> nil) then
   begin
@@ -1812,6 +1816,8 @@ begin
     ef.displayWindowYpos:=selMonitor.Bounds.Top;
     ef.Width := selMonitor.Resolution.cx;
     ef.Height := selMonitor.Resolution.cy;
+    ef.ImageScaleHorz := selMonitor.Resolution.cx / Monitor_resolution_h;
+    ef.ImageScaleVert := selMonitor.Resolution.cy / Monitor_resolution_v;
 
     if (selMonitor.PhysSizeCm.cx>0) and (selMonitor.PhysSizeCm.cy>0) then begin
       ef.widthCM := selMonitor.PhysSizeCm.cx;
@@ -3386,7 +3392,8 @@ begin
                showTextFeedback(pfontFeedback, font_col_correct,fontBgrCol,Feedback_text_correct);
 
               13:
-              displayBMPimageXYcm(BMPimages,100, x,y, ef.Width, ef.height, ef.WidthCM, ef.heightCM);
+              displayBMPimageXYcm(BMPimages,100, x,y, ef.Width, ef.height, ef.WidthCM, ef.heightCM
+                ,ef.ImageScaleHorz, ef.ImageScaleVert);
 
             end;
 
@@ -3406,7 +3413,8 @@ begin
               showTextFeedback(pfontFeedback, font_col_incorrect,fontBgrCol,Feedback_text_incorrect);
 
             13:
-              displayBMPimageXYcm(BMPimages,101, x,y, ef.Width, ef.height, ef.WidthCM, ef.heightCM);
+              displayBMPimageXYcm(BMPimages,101, x,y, ef.Width, ef.height, ef.WidthCM, ef.heightCM
+                ,ef.ImageScaleHorz, ef.ImageScaleVert);
             end;
           end;
         end;

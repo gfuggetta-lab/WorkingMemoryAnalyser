@@ -22,7 +22,9 @@ type
 
   function loadBMPimages (experiment_dir: string; var BMPimages : array of TBMPimages): integer;
   function displayBMPimage(var BMPimages: array of TBMPimages; imageNo:integer):integer;
-  function displayBMPimageXYcm(var BMPimages: array of TBMPimages; imageNo:integer; xcm, ycm :real; screenWidthPix, screenHeightPix: integer; screenWidthCM,  screenHeightCM: real ):integer;
+  function displayBMPimageXYcm(var BMPimages: array of TBMPimages; imageNo:integer; xcm, ycm :real; screenWidthPix, screenHeightPix: integer; screenWidthCM,  screenHeightCM: real;
+    scaleH: double = 1.0;
+    scaleV: double = 1.0):integer;
 
 implementation
 
@@ -305,7 +307,8 @@ end;
 
 
 //------------------------------------------------------------------------------
-function displayBMPimageXYcm(var BMPimages: array of TBMPimages; imageNo:integer; xcm, ycm :real; screenWidthPix, screenHeightPix: integer; screenWidthCM,  screenHeightCM: real ):integer;
+function displayBMPimageXYcm(var BMPimages: array of TBMPimages; imageNo:integer; xcm, ycm :real; screenWidthPix, screenHeightPix: integer; screenWidthCM,  screenHeightCM: real;
+  scaleH: double = 1.0; scaleV: double = 1.0):integer;
 begin
   Result := 0;
   glviewport(0,0,screenWidthPix,screenHeightPix);
@@ -317,6 +320,7 @@ begin
   glLoadIdentity;
   glortho(-screenWidthPix/2,screenWidthPix/2,-screenHeightPix/2,screenHeightPix/2,-1,1);
   gltranslatef( xcm * (screenWidthPix/ screenWidthCM) , ycm * (screenHeightPix / screenHeightCM), 0);
+  glScaled(scaleH, scaleH, 1.0);
   displayBMPimage(BMPimages,imageNo);
 
   glpopmatrix();

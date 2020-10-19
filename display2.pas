@@ -80,6 +80,7 @@ const
     displayWindowXpos,
     displaywindowYpos: integer;
     DisplayType:TDisplayType;
+    ImageScaleHorz, ImageScaleVert: double;
   //  MonitorNumber: TMonitorNumber;
     FrameRate,
     Width,
