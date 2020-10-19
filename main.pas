@@ -1657,7 +1657,7 @@ var
   Background_diameter_deg   : Real; // the size of the "gray background" r
   Placeholders_diameter_deg : Real; // "virtual" circle of where the 4 place holders and a target are drawn at
   Sample_diameter_deg       : Real; // "virtual" circle of where the samples are drawn
-
+  Fixation_dot_deg          : Real;
 
 const
   show_s1:boolean=true;
@@ -1665,13 +1665,13 @@ const
   show_s3:boolean=true;
   doCheckForResponse:boolean=true;
 
- parallelPortPulseDur = 0.002;
+  parallelPortPulseDur = 0.002;
   placeholderRadiusDeg = SCALE_FACTOR * 0.69230769;//1.0;
-  backgroundRadiusDeg = SCALE_FACTOR  * 9; //13;
-  fixSpotSizeDeg = SCALE_FACTOR  * 0.069230769 ;
+  background_deg_DEFAULT = 18.3; 
+  Fixation_dot_deg_DEFAULT = 0.3; // seems to be too much. 0.07 seems to be better
 
   // target parameters
-  targetRadiusDeg = SCALE_FACTOR  * 6.923;// 10; // radius of target position in degrees
+  Placeholders_diameter_deg_DEFAULT = 14.2;// 10; // radius of target position in degrees
 
   Sample_diameter_deg_DEFAULT = 4.1;
 
@@ -1782,13 +1782,16 @@ begin
   Show_S4_placeholder_when_centre := getIntegerForParameter(configDataFilename, 'Show_S4_placeholder_when_centre:') <> 0;
 
   Background_diameter_deg := getRealForParameter(configDataFilename, 'Background_diameter_deg:');
-  if Background_diameter_deg <= 0 then Background_diameter_deg := backgroundRadiusDeg * 2;
+  if Background_diameter_deg <= 0 then Background_diameter_deg := background_deg_DEFAULT;
 
   Placeholders_diameter_deg := getRealForParameter(configDataFilename, 'Placeholders_diameter_deg:');
-  if Placeholders_diameter_deg <= 0 then Placeholders_diameter_deg := targetRadiusDeg * 2;
+  if Placeholders_diameter_deg <= 0 then Placeholders_diameter_deg := Placeholders_diameter_deg_DEFAULT;
 
   Sample_diameter_deg := getRealForParameter(configDataFilename, 'Sample_diameter_deg:');
   if Sample_diameter_deg <= 0 then Sample_diameter_deg := Sample_diameter_deg_DEFAULT;
+
+  Fixation_dot_deg := getRealForParameter(configDataFilename, 'Fixation_dot_deg:');
+  if Fixation_dot_deg <= 0 then Fixation_dot_deg := Fixation_dot_deg_DEFAULT;
 
   //////////////////////////////////////////////////////////////////////////////
 
@@ -2031,7 +2034,7 @@ begin
     triggerStation.WriteSharedRam(3,1); // enable BNC1 for the TMS. (BNC1 triggers TMS 1ms after Photodiode 1 is triggered)
   end;
 
-  fixSpotSizeCM:=ef.distance*(fixSpotSizeDeg*(pi/180));
+  fixSpotSizeCM:=ef.distance*(Fixation_dot_deg*(pi/180));
 
 
 
