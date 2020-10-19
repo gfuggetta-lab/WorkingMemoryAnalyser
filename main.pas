@@ -1819,9 +1819,9 @@ begin
     ef.ImageScaleHorz := selMonitor.Resolution.cx / Monitor_resolution_h;
     ef.ImageScaleVert := selMonitor.Resolution.cy / Monitor_resolution_v;
 
-    if (selMonitor.PhysSizeCm.cx>0) and (selMonitor.PhysSizeCm.cy>0) then begin
-      ef.widthCM := selMonitor.PhysSizeCm.cx;
-      ef.heightCM := selMonitor.PhysSizeCm.cy;
+    if (selMonitor.PhysSizeMm.cx>0) and (selMonitor.PhysSizeMm.cy>0) then begin
+      ef.widthCM := selMonitor.PhysSizeMm.cx / 10;
+      ef.heightCM := selMonitor.PhysSizeMm.cy / 10;
     end else begin
       ef.widthCM := Monitor_width_cm;
       ef.heightCM := Monitor_height_cm;
@@ -3619,8 +3619,8 @@ begin
       m := TMonitor(monlist[i]);
       s := Format('%s (%dx%d) %dHz',
         [m.Name, m.Resolution.cx, m.Resolution.cy, Round(m.Frequency)]);
-      if (m.PhysSizeCm.cx > 0) and (m.PhysSizeCm.cy > 0) then
-        s:=s + Format(' (%dcm x %dcm)', [m.PhysSizeCm.cx, m.PhysSizeCm.cy]);
+      if (m.PhysSizeMm.cx > 0) and (m.PhysSizeMm.cy > 0) then
+        s:=s + Format(' (%.1fcm x %.1fcm)', [m.PhysSizeMm.cx / 10, m.PhysSizeMm.cy / 10]);
       RadioGroup4.Items.AddObject(s, m);
     end;
   finally
