@@ -14,7 +14,7 @@ uses
   LCLIntf, LCLType, LMessages, Messages, SysUtils, Classes, Graphics, Controls,
   Forms, Dialogs, StdCtrls, ExtCtrls, ActnList, SDL2, SDL2_Mixer, SDL2_ttf, gl,
   Useful, GLTextureDistortion, Display2, Timing, math, IOR_Shapes, FileUtil, inputfileunit1, ParticipantID, loadImages
-  ,edidMonitorUtils
+  ,edidMonitorUtils, aboutFormUnit
   {$ifdef triggerstation}
   ,TriggerStationDevice_DLL_1_0_TLB
   {$endif}
@@ -34,6 +34,7 @@ type
   TForm1 = class(TForm)
     Button1: TButton;
     Button3: TButton;
+    btnAbout: TButton;
     ComboBox13: TComboBox;
     ComboBox14: TComboBox;
     ComboBox4: TComboBox;
@@ -66,6 +67,7 @@ type
     Label6: TLabel;
 
     procedure Button3Click(Sender: TObject);
+    procedure btnAboutClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -3913,6 +3915,11 @@ begin
 
   //radiogroup4.items[0]:= getStringForParameter(configDataFilename, 'Monitor_name:');
 
+end;
+
+procedure TForm1.btnAboutClick(Sender: TObject);
+begin
+  AboutForm.ShowModal;
 end;
 
 //------------------------------------------------------------------------------

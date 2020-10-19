@@ -7,7 +7,7 @@ Monitor_height_cm:	29.65
 Monitor_resolution_h:	1920			
 Monitor_resolution_v:	1080			
 Monitor_refresh_rate:	60			
-Monitor_distance_cm:	60			
+Monitor_distance_cm:	57
 				
 Placeholder_diameter_deg:	2.0			
 Shape_scale_factor:	1.0			
@@ -72,10 +72,12 @@ Message_9:	Experiment terminated successfully
 Message_10:	Not in use			
 
 
-Show_S3_photodiode_patch: 0			[1 yes 0 no]	Not Implemented
+Show_S3_photodiode_patch: 0			[1 yes 0 no]	Implemented
 				
 Show_S4_photodiode_patch: 0			[1 yes 0 no]	Implemented
 
 Show_S3_peripheral_placeholders: 0		[1 yes 0 no]	Not Implemented
 
 Show_S4_peripheral_placeholders: 0		[1 yes 0 no]	Not Implemented
+
+Shape_size_deg: 9

@@ -1511,6 +1511,17 @@ object Form1: TForm1
     Caption = 'Handedness'
     ParentColor = False
   end
+  object btnAbout: TButton
+    Left = 749
+    Height = 25
+    Top = 152
+    Width = 75
+    Anchors = [akTop, akRight]
+    Caption = 'About'
+    OnClick = btnAboutClick
+    TabOrder = 16
+    TabStop = False
+  end
   object SaveDialog1: TSaveDialog
     Left = 616
     Top = 168
