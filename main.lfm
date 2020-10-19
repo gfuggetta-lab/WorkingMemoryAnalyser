@@ -3,7 +3,7 @@ object Form1: TForm1
   Height = 623
   Top = 63
   Width = 836
-  Caption = 'Experiment'
+  Caption = 'Working Memory Analyser'
   ClientHeight = 623
   ClientWidth = 836
   Font.Color = clWindowText
