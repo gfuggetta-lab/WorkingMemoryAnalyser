@@ -1657,6 +1657,8 @@ var
   Fixation_dot_deg          : Real;
   Shape_size_deg            : Real;
   Shape_size_CM             : Real;
+  Image_feedback_deg: real;
+  Image_feedback_CM: real;
 
 const
   show_s1:boolean=true;
@@ -1674,6 +1676,7 @@ const
 
   Sample_diameter_deg_DEFAULT = 4.1;
   Shape_size_deg_DEFAULT = 1.6;
+  Image_feedback_deg_DEFAULT = 3.2;
 
   bgrColour: array [0..2] of real = (0, 0, 0);
 
@@ -1793,6 +1796,9 @@ begin
 
   Shape_size_deg := getRealForParameter(configDataFilename, 'Shape_size_deg:');
   if Shape_size_deg <= 0 then Shape_size_deg := Shape_size_deg_DEFAULT;
+
+  Image_feedback_deg := getRealForParameter(configDataFilename, 'Image_feedback_deg:');
+  if Image_feedback_deg <= 0 then Image_feedback_deg := Image_feedback_deg_DEFAULT;
 
   //////////////////////////////////////////////////////////////////////////////
 
@@ -2082,6 +2088,7 @@ begin
   // create displaylists;
   backgroundRadiusCM := tan(Background_diameter_deg / 2*(pi/180))*ef.distance;
   Shape_size_CM := tan(Shape_size_deg*(pi/180))*ef.distance;
+  Image_feedback_CM := tan(Image_feedback_deg*(pi/180))*ef.distance;
   makeDisplayLists(tan(placeholderRadiusDeg*(pi/180))*ef.distance, backgroundRadiusCM, Shape_size_CM);
 
 
@@ -3410,8 +3417,8 @@ begin
                showTextFeedback(pfontFeedback, font_col_correct,fontBgrCol,Feedback_text_correct);
 
               13:
-              displayBMPimageXYcm(BMPimages,100, x,y, ef.Width, ef.height, ef.WidthCM, ef.heightCM
-                ,ef.ImageScaleHorz, ef.ImageScaleVert);
+               displayBMPimageXYSizecm(BMPimages[100], x, y, ef.WidthCM,
+                 ef.heightCM, Image_feedback_CM, Image_feedback_CM);
 
             end;
 
@@ -3431,8 +3438,8 @@ begin
               showTextFeedback(pfontFeedback, font_col_incorrect,fontBgrCol,Feedback_text_incorrect);
 
             13:
-              displayBMPimageXYcm(BMPimages,101, x,y, ef.Width, ef.height, ef.WidthCM, ef.heightCM
-                ,ef.ImageScaleHorz, ef.ImageScaleVert);
+             displayBMPimageXYSizecm(BMPimages[101], x, y, ef.WidthCM,
+               ef.heightCM, Image_feedback_CM, Image_feedback_CM);
             end;
           end;
         end;
