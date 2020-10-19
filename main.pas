@@ -1457,6 +1457,98 @@ end;
 
 //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 //------------------------------------------------------------------------------
+
+type
+  TPhotodiodeAlign = (paTopLeft, paTopRight, paTopCenter);
+
+  TPhotodiodeRecord = record
+    Show    : Boolean;
+    Align   : TPhotodiodeAlign;
+    HorzDeg : Real;
+    VertDeg : Real;
+    SizeDeg : Real;
+    HorzCm  : Real; // recalculated Deg to Cm
+    VertCm  : Real; // recalculated Deg to Cm
+    SizeCm  : Real; // recalculated Deg to Cm
+    name    : string; // for debugging purposes only
+  end;
+
+function StrToAlign(const s: string; const DefaultAlign: TPhotodiodeAlign): TPhotodiodeAlign;
+var
+  ls : string;
+begin
+  ls := Trim(AnsiLowerCase(s));
+  if ls = 'top_left' then
+    Result := paTopLeft
+  else if (ls = 'top_centre') or (ls = 'top_center') then
+    Result := paTopCenter
+  else if ls = 'top_right' then
+    Result := paTopRight
+  else
+    Result := DefaultAlign;
+end;
+
+procedure ReadPhotodiode( out Photodiode: TPhotodiodeRecord;
+  const cfgFilename: string; const prefix: string {'S3_photodiode_patch'} ;
+  const DefaultAlign: TPhotodiodeAlign = paTopLeft);
+begin
+  Photodiode.Show := getIntegerForParameter(cfgFileName, 'Show_'+prefix+':')>0;
+  Photodiode.Align := StrToAlign( getStringForParameter( cfgFileName, prefix+'_position:'), DefaultAlign);
+  Photodiode.HorzDeg := getRealForParameter( cfgFileName, prefix + '_horz_distance_deg:');
+  Photodiode.VertDeg := getRealForParameter( cfgFileName, prefix + '_vert_distance_deg:');
+  Photodiode.SizeDeg := getRealForParameter( cfgFileName, prefix + '_size_deg:');
+  Photodiode.name := prefix;
+end;
+
+procedure CalculatePhotodiodeCm(var Photodiode: TPhotodiodeRecord; distanceCm : Real);
+begin
+  Photodiode.HorzCm := tan(Photodiode.HorzDeg*(pi/180))*distanceCm;
+  Photodiode.VertCm := tan(Photodiode.VertDeg*(pi/180))*distanceCm;
+  Photodiode.SizeCm := tan(Photodiode.SizeDeg*(pi/180))*distanceCm;
+end;
+
+procedure DrawPhotodiode(const Photodiode: TPhotodiodeRecord; widthCm, heightCm: Real);
+var
+  x, y : Real;
+  sz   : Real;
+  md   : Integer;
+  dpth : Integer;
+begin
+  case Photodiode.Align of
+    paTopCenter: x := widthCm / 2 + PhotoDiode.HorzCm;
+    paTopRight:  x := widthCm - PhotoDiode.HorzCm - Photodiode.sizecm;
+  else
+    x := PhotoDiode.HorzCm;
+  end;
+  y := heightCm - PhotoDiode.VertCm; // heightCm at the top. 0 at the bottom. Otherwise bar() function fails on culling test
+  sz := PhotoDiode.SizeCm / 2;
+  x := x + sz;
+  y := y - sz;
+
+  glGetIntegerv(GL_MATRIX_MODE, @md);
+  dpth := glIsEnabled(GL_DEPTH_TEST);
+  glDisable(GL_DEPTH_TEST);
+
+  glMatrixMode(GL_PROJECTION);
+  glPushMatrix();
+  glLoadIdentity();
+  glOrtho(0, widthCm, 0, heightCm, -1, 1);
+
+  glMatrixMode(GL_MODELVIEW);
+  glPushMatrix();
+  glLoadIdentity();
+
+  glColor3f(1,1,1);
+  bar(x, y, 0, PhotoDiode.SizeCm, PhotoDiode.SizeCm, 0);
+
+  glPopMatrix();
+  glMatrixMode(GL_PROJECTION);
+  glPopMatriX();
+
+  if dpth <> 0 then glEnable(GL_DEPTH_TEST);
+  glMatrixMode(md);
+end;
+
 procedure TForm1.RunExperiment(Sender: TObject);
 
 var
@@ -1649,8 +1741,10 @@ var
   isPauseTrial:boolean = false;
 
   isRuinedTrial :integer = 0; // flag if user has suspended the trial (garbage trial)
-  Show_S3_photodiode_patch:integer = 0;
-  Show_S4_photodiode_patch:integer = 0;
+  Photodiode_S3       : TPhotodiodeRecord;
+  Photodiode_TMS_S3   : TPhotodiodeRecord;
+  Photodiode_S4       : TPhotodiodeRecord;
+
   Show_S3_peripheral_placeholders: Boolean = true;
   Show_S4_peripheral_placeholders: Boolean = true;
   Show_S3_placeholder_when_centre: Boolean = true;
@@ -1794,9 +1888,10 @@ begin
 
   Monitor_name:= getStringForParameter(configDataFilename, 'Monitor_name:');
 
-  Show_S3_photodiode_patch := getIntegerForParameter(configDataFilename, 'Show_S3_photodiode_patch:');
+  ReadPhotodiode( Photodiode_S3,     configDataFilename, 'S3_photodiode_patch');
+  ReadPhotodiode( Photodiode_TMS_S3, configDataFilename, 'TMS_S3_photodiode_patch');
+  ReadPhotodiode( Photodiode_S4,     configDataFilename, 'S4_photodiode_patch');
 
-  Show_S4_photodiode_patch := getIntegerForParameter(configDataFilename, 'Show_S4_photodiode_patch:');
   Show_S3_peripheral_placeholders := getIntegerForParameter(configDataFilename, 'Show_S3_peripheral_placeholders:') <> 0;
   Show_S4_peripheral_placeholders := getIntegerForParameter(configDataFilename, 'Show_S4_peripheral_placeholders:') <> 0;
   Show_S3_placeholder_when_centre := getIntegerForParameter(configDataFilename, 'Show_S3_placeholder_when_centre:') <> 0;
@@ -2117,6 +2212,9 @@ begin
   Image_size_CM := tan(Image_size_deg*(pi/180))*ef.distance;
   Sample_diameter_Cm := tan(Sample_diameter_deg*(pi/180))*ef.distance;
   makeDisplayLists(tan(placeholderRadiusDeg*(pi/180))*ef.distance, backgroundRadiusCM, Shape_size_CM);
+  CalculatePhotodiodeCm(Photodiode_S3, ef.distance);
+  CalculatePhotodiodeCm(Photodiode_TMS_S3, ef.distance);
+  CalculatePhotodiodeCm(Photodiode_S4, ef.distance);
 
 
   //load images
@@ -2918,7 +3016,9 @@ begin
       if (doPhotodiode=true) then
       begin
         if (isTriggerstation) then  glCallList(DL_PHOTODIODE_PATCH_LEFT);
-        if (Show_S3_photodiode_patch = 1) then glCallList(DL_PHOTODIODE_PATCH_CENTRE); //photodiode patch at location specified for S3
+        if (Photodiode_S3.Show) then
+          //glCallList(DL_PHOTODIODE_PATCH_CENTRE); //photodiode patch at location specified for S3
+          DrawPhotodiode(Photodiode_S3, ef.widthCM, ef.heightCM);
       end;
 
 
@@ -2992,6 +3092,7 @@ begin
     //=======================================================================================
     Nframes:=round   (s3_s4_isi/1000 / (1/REFRESH_RATE))  ;
     timer1.start;
+    doPhotodiode:=true;
     for frameNo:=0 to Nframes-1 do
     begin
       ef.ProjectionTrans;
@@ -2999,6 +3100,12 @@ begin
 
       pollevent(state, eventTime) ;
       if showTrialsRemaining then showCountdown(pfontGeneral,fontCol,inttostr(Ntrials-trialNo));
+
+      if doPhotodiode then begin
+        if (Photodiode_TMS_S3.Show) then
+          DrawPhotodiode(Photodiode_TMS_S3, ef.WidthCM, ef.HeightCM);
+        doPhotodiode := false;
+      end;
 
       if ((frameNoTotal = TMS_frameNo) and (isTriggerStation)) then
       begin
@@ -3071,7 +3178,9 @@ begin
       if (isTriggerstation) then  triggerStation.WriteSharedRam(1,2000); // set triggerstation to start timer on photodiode patch detection
       {$endif}
       if (isTriggerstation) then    glCallList(DL_PHOTODIODE_PATCH_LEFT); //photodiode patch left side
-      if (Show_S4_photodiode_patch = 1) then glCallList(DL_PHOTODIODE_PATCH_CENTRE); //photodiode patch at location specified for S4.
+      if (Photodiode_S4.Show) then
+        //glCallList(DL_PHOTODIODE_PATCH_CENTRE); //photodiode patch at location specified for S4.
+        DrawPhotodiode(Photodiode_S4, ef.WidthCM, ef.HeightCM);
 
       doPhotodiode:=false;
     //  showmessage('s4 on triggerStationData = '+ inttostr(triggerStationData));
