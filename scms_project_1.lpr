@@ -6,6 +6,7 @@ uses
   Forms, Interfaces,
   main in 'main.pas' {Form1},
   Unit2 in 'Unit2.pas' {Form2},
+  aboutFormUnit in 'aboutFormUnit.pas' {AboutForm},
   ParticipantID in 'ParticipantID.pas' {ParticipantIDForm},
   Display2 in 'Display2.pas'; {Displayenviroform)
 
@@ -20,5 +21,6 @@ begin
   Application.CreateForm(Tdisplayenviroform, eF);
   Application.CreateForm(TForm2, Form2);
   Application.CreateForm(TParticipantIDForm, ParticipantIDForm);
+  Application.CreateForm(TAboutForm, AboutForm);
   Application.Run;
 end.

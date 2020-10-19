@@ -1,0 +1,50 @@
+object AboutForm: TAboutForm
+  Left = 437
+  Height = 294
+  Top = 123
+  Width = 631
+  BorderIcons = []
+  Caption = 'About'
+  ClientHeight = 294
+  ClientWidth = 631
+  KeyPreview = True
+  OnKeyDown = FormKeyDown
+  OnKeyPress = FormKeyPress
+  OnResize = FormResize
+  Position = poOwnerFormCenter
+  LCLVersion = '2.0.4.0'
+  object btnClose: TButton
+    Left = 120
+    Height = 25
+    Top = 254
+    Width = 75
+    Anchors = [akLeft, akBottom]
+    Caption = 'Close'
+    Default = True
+    ModalResult = 1
+    TabOrder = 0
+  end
+  object Memo1: TMemo
+    Left = 8
+    Height = 240
+    Top = 8
+    Width = 614
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    Lines.Strings = (
+      'Working Memory Analyser (Version 1.0)'
+      ''
+      'Copyright (c) 2020 by Phil Duke, Giorgio Fuggetta'
+      ''
+      'Contribution:'
+      ''
+      'Dr Phil Duke (email: pad11@leicester.ac.uk) conceived and primarily developed the software for Windows OS .'
+      ''
+      'Dr Giorgio Fuggetta (email: giorgio.fuggetta@roehampton.ac.uk) conceived the software and developed the sequences of cognitive tasks available as part of the software''s experiments library. '
+      ''
+      'skalogryz (email: unspecified), additional developed, optimised and compiled the software for MacOS.'
+    )
+    ReadOnly = True
+    ScrollBars = ssAutoVertical
+    TabOrder = 1
+  end
+end
