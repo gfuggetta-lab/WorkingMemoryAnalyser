@@ -25,6 +25,8 @@ type
   function displayBMPimageXYcm(var BMPimages: array of TBMPimages; imageNo:integer; xcm, ycm :real; screenWidthPix, screenHeightPix: integer; screenWidthCM,  screenHeightCM: real;
     scaleH: double = 1.0;
     scaleV: double = 1.0):integer;
+  function displayBMPimageXYSizecm(var BMPimages: TBMPimages; xcm, ycm :real; screenWidthCM, screenHeightCM: real;
+    widthCm, HeightCm: real):integer;
 
 implementation
 
@@ -329,6 +331,80 @@ begin
 end;
 //------------------------------------------------------------------------------
 
+function displayBMPimageXYSizecm(var BMPimages: TBMPimages; xcm, ycm :real; screenWidthCM, screenHeightCM: real;
+  widthCm, HeightCm: real):integer;
+var
+  destSurface : PSDL_Surface;  // surface into which Texture image is blitted to give correct RGB order of bytes
+begin
+  Result := 0;
+  if BMPimages.TextureImage = nil then Exit;
+
+  //glviewport(0,0,screenWidthPix,screenHeightPix);
+  glMatrixMode(GL_PROJECTION);
+  glpushmatrix();
+  glLoadIdentity;
+  glMatrixMode(GL_MODELVIEW);
+  glpushmatrix();
+  glLoadIdentity;
+  glortho(-screenWidthCm/2,screenWidthCm/2,-screenHeightCm/2,screenHeightCm/2,-1,1);
+  gltranslatef( xcm, ycm, 0);
+  glScaled(widthCm*0.5, heightCm*0.5, 1.0);
+
+  Result := 0;
+  //* Load The Bitmap, Check For Errors, If Bitmap's Not Found Quit */
+
+  // create 24bit destination surface with little-endian byte order
+  destSurface  := SDL_createRGBsurface(0,BMPimages.TextureImage.w, BMPimages.TextureImage.h, 24, $000000ff,$0000ff00,$00ff0000,$ff000000);
+
+  SDL_blitsurface(BMPimages.TextureImage,NIL, destSurface, NIL);
+
+  //* Create storage space for the texture */
+  glEnable(GL_TEXTURE_2D);
+
+  //* Create The Texture */
+  glGenTextures( 1, @BMPimages.textureID );
+
+  //* Typical Texture Generation Using Data From The Bitmap */
+  glBindTexture( GL_TEXTURE_2D, BMPimages.textureID );
+
+  glTexImage2D( GL_TEXTURE_2D, 0, 3, destSurface.w, destSurface.h, 0, GL_RGB, GL_UNSIGNED_BYTE, destSurface.pixels );
+
+  //* Linear Filtering */
+  glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+  glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+
+  // Select how the texture image is combined with existing image
+  glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_REPLACE);
+
+  glBegin(GL_QUADS);
+  // top left
+  glTexCoord2f(0,0);
+  glVertex2f(-1.0 ,1.0);
+
+  // bottom left
+  glTexCoord2f(0,1);
+  glVertex2f(-1.0,-1.0);
+
+  // bottom right
+  glTexCoord2f(1,1);
+  glVertex2f(1.0,-1.0);
+
+  // top right
+  glTexCoord2f(1,0);
+  glVertex2f(1.0, 1.0);
+  glEnd;
+
+  glDisable(GL_TEXTURE_2D);
+  glDeleteTextures(1, @BMPimages.textureID );
+
+  // clean up
+  SDL_freeSurface(destSurface);
+
+
+  glpopmatrix();
+  glMatrixMode(GL_PROJECTION);
+  glpopmatrix();
+end;
 
 end.
 
