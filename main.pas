@@ -11,8 +11,11 @@ uses
   LCLIntf, LCLType, LMessages, Messages, SysUtils, Classes, Graphics, Controls,
   Forms, Dialogs, StdCtrls, ExtCtrls, ActnList, SDL2, SDL2_Mixer, SDL2_ttf, gl,
   Useful, GLTextureDistortion, Display2, Timing, math, IOR_Shapes, FileUtil, inputfileunit1, ParticipantID, loadImages
-
-  ,TriggerStationDevice_DLL_1_0_TLB;
+  ,edidMonitorUtils
+  {$ifdef mswindows}
+  ,TriggerStationDevice_DLL_1_0_TLB
+  {$endif}
+  ;
 
 function Inp32(wAddr:word):byte; stdcall; external 'inpout32.dll';
 function Out32(wAddr:word;bOut:byte):byte; stdcall; external 'inpout32.dll';
@@ -63,6 +66,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
     procedure ShowControlsIfReady(Sender: TObject);
 
 
@@ -73,6 +77,8 @@ type
     { Private declarations }
     trialOrderFileNo: integer;
     participantID : string;
+    monlist : TList;
+    procedure PopulateMonitorsList;
   public
     { Public declarations }
 
@@ -3569,6 +3575,29 @@ begin
 
   TerminateApplication;
 end;//end of experiment
+
+procedure TForm1.PopulateMonitorsList;
+var
+  i : integer;
+  m : TMonitor;
+  s : string;
+begin
+  RadioGroup4.Items.BeginUpdate;
+  try
+    RadioGroup4.Items.Clear;
+    for i:=0 to monlist.Count-1 do begin
+      m := TMonitor(monlist[i]);
+      s := Format('%s (%dx%d) %dHz',
+        [m.Name, m.Resolution.cx, m.Resolution.cy, Round(m.Frequency)]);
+      if (m.PhysSizeCm.cx > 0) and (m.PhysSizeCm.cy > 0) then
+        s:=s + Format(' (%dcmdx%dcm)', [m.PhysSizeCm.cx, m.PhysSizeCm.cy]);
+      RadioGroup4.Items.AddObject(s, m);
+    end;
+  finally
+    RadioGroup4.Items.EndUpdate;
+  end;
+end;
+
 //------------------------------------------------------------------------------
 
 
@@ -3663,14 +3692,27 @@ begin
   TerminateApplication;
 end;
 
+procedure TForm1.FormDestroy(Sender: TObject);
+var
+  i : integer;
+begin
+  for i:=0 to monlist.count-1 do begin
+    TObject(monlist[i]).Free;
+  end;
+end;
+
 //------------------------------------------------------------------------------
 
 
 
 //------------------------------------------------------------------------------
 procedure TForm1.FormCreate(Sender: TObject);
-
+var
+  i : integer;
 begin
+  monlist := TList.Create;
+  GetSysMonitors(monlist);
+  if monlist.Count>0 then PopulateMonitorsList;
 
   Form1.visible:=false;
    Form1.visible:=true;
