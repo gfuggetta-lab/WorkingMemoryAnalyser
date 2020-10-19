@@ -1111,14 +1111,16 @@ end;
 
 //------------------------------------------------------------------------------
 
-procedure drawFixationWithPlaceholders(fixSpotSizeCM:real; targetRadiusCM: real;Fixation_and_placeholders_colour:TcolourReal  );
+procedure drawFixationWithPlaceholders(fixSpotSizeCM:real; targetRadiusCM: real;Fixation_and_placeholders_colour:TcolourReal;
+  doDrawFixationSpot: Boolean = true);
 
 var x,y:real;
   begin
 
       glMatrixMode(GL_MODELVIEW);
       glLoadIdentity;
-      drawFixationSpot(fixSpotSizeCM,Fixation_and_placeholders_colour);
+      if doDrawFixationSpot then
+        drawFixationSpot(fixSpotSizeCM,Fixation_and_placeholders_colour);
 
       glcolor3f(Fixation_and_placeholders_colour.r,Fixation_and_placeholders_colour.g,Fixation_and_placeholders_colour.b);
 
@@ -2815,7 +2817,7 @@ begin
         , Show_S3_peripheral_placeholders, Show_S3_placeholder_when_centre);
 
       glClear(GL_DEPTH_BUFFER_BIT);
-      drawFixationWithPlaceholders(fixSpotSizeCM, targetRadiusCM, Fixation_and_placeholders_colour);
+      drawFixationWithPlaceholders(fixSpotSizeCM, targetRadiusCM, Fixation_and_placeholders_colour, s3_quad <> 5);
 
 
       // s3 onset photodiode patch: left. trigger station will send s3_marker on detecting the patch
@@ -2980,7 +2982,7 @@ begin
     if showTrialsRemaining then showCountdown(pfontGeneral,fontCol,inttostr(Ntrials-trialNo));
 
     glClear(GL_DEPTH_BUFFER_BIT);
-    drawFixationWithPlaceholders(fixSpotSizeCM, targetRadiusCM, Fixation_and_placeholders_colour);
+    drawFixationWithPlaceholders(fixSpotSizeCM, targetRadiusCM, Fixation_and_placeholders_colour, s4_quad <> 5);
 
     // TMS photodiode patch
     if ((frameNoTotal = TMS_frameNo) and (isTriggerStation)) then
