@@ -156,7 +156,7 @@ var
     destSurface : PSDL_Surface;  // surface into which Texture image is blitted to give correct RGB order of bytes
 
 begin
-
+  Result := 0;
   // copy image into new surface, with correct order of RGB
   destSurface  := SDL_createRGBsurface(0,BMPimages[imageNo].TextureImage.w, BMPimages[imageNo].TextureImage.h, 24, $000000ff,$0000ff00,$00ff0000,$ff000000);
 
@@ -205,6 +205,7 @@ var
     BMPimageFilename: string;
 
 begin
+  Result := 0;
   for c:=0 to 99 do
   begin
     BMPimageFilename := experiment_dir + 'Stimulus images\' + {'Image_'+} inttostr(c+300)+'.bmp';
@@ -247,6 +248,7 @@ var
   destSurface : PSDL_Surface;  // surface into which Texture image is blitted to give correct RGB order of bytes
 
 begin
+  Result := 0;
   //* Load The Bitmap, Check For Errors, If Bitmap's Not Found Quit */
   if ( BMPimages[imageNo].TextureImage<> nil ) then
   begin
@@ -305,7 +307,7 @@ end;
 //------------------------------------------------------------------------------
 function displayBMPimageXYcm(var BMPimages: array of TBMPimages; imageNo:integer; xcm, ycm :real; screenWidthPix, screenHeightPix: integer; screenWidthCM,  screenHeightCM: real ):integer;
 begin
-
+  Result := 0;
   glviewport(0,0,screenWidthPix,screenHeightPix);
   glMatrixMode(GL_PROJECTION);
   glpushmatrix();
