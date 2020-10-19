@@ -21,6 +21,7 @@ type
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
+    procedure FormResize(Sender: TObject);
    // procedure showMemo(Sender: TObject);
   //  procedure showBMP(Sender: TObject);
   private
@@ -67,6 +68,11 @@ begin
  SetWindowPos(ef.Wnd, HWND_TOP, 0,0,0,0, SWP_NOMOVE or SWP_NOSIZE	);
  application.processmessages;
                }
+end;
+
+procedure TForm2.FormResize(Sender: TObject);
+begin
+  Button3.Left := (ClientWidth - Button3.Width) div 2;
 end;
 
 end.
