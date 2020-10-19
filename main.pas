@@ -858,7 +858,7 @@ var
   r := shapeSizeCM / 2; // tan(0.607418775*(pi/180) * SCALE_FACTOR * Shape_scale_factor)*ef.distance;
   DL_HEX:= glGenLists(1);
   glNewList(DL_HEX,GL_COMPILE);
-    circle(0,0,-ef.distance+0.01,r,0.069230769,6,true);
+    circle(0,0,-ef.distance+0.01,r,r*0.01,6,true);
   glEndList;
 
 
@@ -867,17 +867,18 @@ var
   r := shapeSizeCM / 2; //tan(0.858912367 *(pi/180) * SCALE_FACTOR * Shape_scale_factor)*ef.distance;
   DL_TRIANGLE:= glGenLists(1);
   glNewList(DL_TRIANGLE,GL_COMPILE);
-    circle(0,0,-ef.distance+0.01,r,0.069230769,3,true);
+    circle(0,0,-ef.distance+0.01,r,r*0.01,3,true);
   glEndList;
 
   // Shape 4.
   // Box, area equal to bar
   DL_BOX:= glGenLists(1);
+  r := shapeSizeCM / 2;
   glNewList(DL_BOX,GL_COMPILE);
    glpushmatrix;
    glmatrixmode(GL_MODELVIEW);
    glrotatef(45,0,0,1);
-   circle(0,0,-ef.distance+0.01, tan(0.734223563*(pi/180) * SCALE_FACTOR * Shape_scale_factor)*ef.distance      ,   tan(0.489470467*(pi/180) * SCALE_FACTOR * Shape_scale_factor)*ef.distance,4,false);
+   circle(0,0,-ef.distance+0.01, r, r*0.66,4,false);
    glpopmatrix;
   glEndList;
 
@@ -885,15 +886,16 @@ var
   // Shape 5.
   // ring, area equal to bar
   DL_RING:= glGenLists(1);
+  r := shapeSizeCM / 2;
   glNewList(DL_RING,GL_COMPILE);
-    circle(0,0,-ef.distance+0.01, tan(0.641766589*(pi/180) * SCALE_FACTOR * Shape_scale_factor)*ef.distance      ,   tan(0.315204306*(pi/180) * SCALE_FACTOR * Shape_scale_factor)*ef.distance,20,false);
+    circle(0,0,-ef.distance+0.01, r, r*0.5,20,false);
   glEndList;
 
 
   // Shape 6.
   // Plus, area equal to bar
-  r1 := tan(0.437821791*(pi/180) * SCALE_FACTOR * Shape_scale_factor)*ef.distance;
-  r2 := tan(1.313260911*(pi/180) * SCALE_FACTOR * Shape_scale_factor)*ef.distance;
+  r1 := shapeSizeCM;
+  r2 := r1 * 0.33;
   DL_CROSS:= glGenLists(1);
   glNewList(DL_CROSS,GL_COMPILE);
     bar(0,0,-ef.distance+0.01, r1, r2, 0);
@@ -903,8 +905,8 @@ var
 
   // Shape 7.
   // Horiz bar
-  r1 := tan(1.384615385*(pi/180) * SCALE_FACTOR * Shape_scale_factor)*ef.distance;
-  r2 := tan(0.692307692*(pi/180) * SCALE_FACTOR * Shape_scale_factor)*ef.distance;
+  r1 := shapeSizeCM;
+  r2 := r1 * 0.5;
   DL_BAR_HORIZ:= glGenLists(1);
   glNewList(DL_BAR_HORIZ,GL_COMPILE);
     bar(0,0,-ef.distance+0.01, r1, r2, 0);
@@ -913,8 +915,8 @@ var
 
   // Shape 8.
   // Vert bar
-  r1 := tan(0.692307692*(pi/180) * SCALE_FACTOR  * Shape_scale_factor)*ef.distance;
-  r2 := tan(1.384615385*(pi/180) * SCALE_FACTOR  * Shape_scale_factor)*ef.distance;
+  r2 := shapeSizeCM;
+  r1 := r2 * 0.5;
   DL_BAR_VERT:= glGenLists(1);
   glNewList(DL_BAR_VERT,GL_COMPILE);
     bar(0,0,-ef.distance+0.01,r1 , r2, 0);
