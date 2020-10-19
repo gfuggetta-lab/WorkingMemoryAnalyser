@@ -54,6 +54,7 @@ begin
    Button2.Enabled:=true;
    Label20.visible:=false;
    Form1.hide;
+   UpdateLabel(nil);
 end;
 
 procedure TParticipantIDForm.Button1Click(Sender: TObject);
@@ -80,10 +81,13 @@ begin
       combobox10.items[combobox10.itemindex]+
       combobox11.items[combobox11.itemindex]+
       combobox12.items[combobox12.itemindex]);
-      Button2.Enabled:=true;
       Label20.visible:=true
      end;
-
+  Button2.Enabled:=(ComboBox8.Text <> '')
+    and (ComboBox9.Text <> '')
+    and (ComboBox10.Text <> '')
+    and (ComboBox11.Text <> '')
+    and (ComboBox12.Text <> '');
 end;
 
 end.

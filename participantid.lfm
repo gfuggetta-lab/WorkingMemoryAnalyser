@@ -1,14 +1,14 @@
 object ParticipantIDForm: TParticipantIDForm
-  Left = 1259
+  Left = 520
   Height = 336
-  Top = 485
+  Top = 181
   Width = 574
-  Caption = 'ParticipantIDForm'
+  Caption = 'Participant ID Form'
   ClientHeight = 336
   ClientWidth = 574
   OnCreate = FormCreate
-  Position = poDesktopCenter
-  LCLVersion = '1.2.4.0'
+  Position = poScreenCenter
+  LCLVersion = '2.0.10.0'
   Visible = True
   object ComboBox8: TComboBox
     Left = 368
