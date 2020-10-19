@@ -6,6 +6,9 @@ unit main;
 {$ifdef mswindows}
 {$define triggerstation}
 {$endif}
+{$ifdef lclcocoa}
+{$define applemainmenu}
+{$endif}
 
 interface
 
@@ -14,6 +17,7 @@ uses
   LCLIntf, LCLType, LMessages, Messages, SysUtils, Classes, Graphics, Controls,
   Forms, Dialogs, StdCtrls, ExtCtrls, ActnList, SDL2, SDL2_Mixer, SDL2_ttf, gl,
   Useful, GLTextureDistortion, Display2, Timing, math, IOR_Shapes, FileUtil, inputfileunit1, ParticipantID, loadImages
+  ,Menus
   ,edidMonitorUtils, aboutFormUnit
   {$ifdef triggerstation}
   ,TriggerStationDevice_DLL_1_0_TLB
@@ -86,6 +90,7 @@ type
     procedure PopulateMonitorsList;
     function GetMonitorToPoint(const p: TPoint): Integer;
     procedure SelectMonitor(const p: TPoint);
+    procedure InitAppleMenu;
   public
     { Public declarations }
 
@@ -3717,6 +3722,43 @@ begin
   if i>=0 then RadioGroup4.ItemIndex := i;
 end;
 
+procedure TForm1.InitAppleMenu;
+var
+  mm    : TMainMenu;
+  apple : TMenuItem;
+  abt   : TMenuItem;
+  i     : integer;
+const
+  APPLE_LOGO = #$ef#$a3#$bf;
+begin
+  mm := nil;
+  for i:=0 to ComponentCount-1 do
+    if Components[i] is TMainMenu then
+      mm := TMainMenu(Components[i]);
+  if not Assigned(mm) then begin
+    mm := TMainMenu.Create(Self);
+    mm.Parent:=Self;
+  end;
+  if not Assigned(mm) then Exit;
+
+  apple := nil;
+  for i:=0 to mm.Items.Count - 1 do
+    if mm.Items[i].Caption=APPLE_LOGO then begin
+      apple := mm.items[i];
+      break;
+    end;
+  if not Assigned(apple) then begin
+    apple := TMenuItem.Create(mm);
+    apple.Caption := APPLE_LOGO;
+    mm.Items.Insert(0, apple);
+  end;
+
+  abt:= TMenuItem.Create(mm);
+  abt.Caption:='About';
+  abt.OnClick := btnAboutClick;
+  apple.Insert(0,abt);
+end;
+
 //------------------------------------------------------------------------------
 
 
@@ -3834,6 +3876,10 @@ end;
 //------------------------------------------------------------------------------
 procedure TForm1.FormCreate(Sender: TObject);
 begin
+  {$ifdef applemainmenu}
+  InitAppleMenu;
+  btnAbout.Visible := false;
+  {$endif}
   monlist := TList.Create;
   GetSysMonitors(monlist);
   if monlist.Count>0 then begin
