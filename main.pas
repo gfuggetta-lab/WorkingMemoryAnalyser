@@ -433,16 +433,13 @@ end;
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-procedure DrawFixationSpot(sizeDeg:real;colour:TcolourReal);
-var
-  HalfSizeCM:real;
-
+procedure DrawFixationSpot(sizeCm:real;colour:TcolourReal);
 begin
 
  //(XCoord,Ycoord,ZCoord, OuterRadius,LineWidth:real; Npoints:integer;  Colour:array of real; filled:boolean);
 // coords are cm, Size is degrees
 
-  circle(0,0,-ef.distance,tan(sizeDeg*(pi/180))*ef.distance,0,10,[colour.r, colour.g, colour.b,1],true);
+  circle(0,0,-ef.distance,sizeCm/2,0,10,[colour.r, colour.g, colour.b,1],true);
 
 end;
 //------------------------------------------------------------------------------
