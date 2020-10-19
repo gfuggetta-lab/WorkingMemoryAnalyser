@@ -24,8 +24,10 @@ uses
   {$endif}
   ;
 
+{$ifdef triggerstation}
 function Inp32(wAddr:word):byte; stdcall; external 'inpout32.dll';
 function Out32(wAddr:word;bOut:byte):byte; stdcall; external 'inpout32.dll';
+{$endif}
 procedure Terminateapplication;
 
 
