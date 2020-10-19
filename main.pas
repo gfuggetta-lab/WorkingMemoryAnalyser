@@ -3100,24 +3100,26 @@ begin
 
     if (doCheckForResponse=true) then
     begin
-      if (hasResponded=false) then checkKeypressAndButtonbox(state, eventTime);
+      if (not hasResponded) then begin
+        checkKeypressAndButtonbox(state, eventTime);
 
-      if (state<>-1) then
-      begin
-        //showmessage('has responded');
-        hasResponded:=true;
-        responseState:=state;
-        responseEventTime:=eventTime;
+        if (state<>-1) then
+        begin
+          //showmessage('has responded');
+          hasResponded:=true;
+          responseState:=state;
+          responseEventTime:=eventTime;
 
-        //##################################################
-        // read trigger station timer from slot 2. RT
-       // triggerStationRT := triggerStation.ReadSharedRam(2);
+          //##################################################
+          // read trigger station timer from slot 2. RT
+         // triggerStationRT := triggerStation.ReadSharedRam(2);
 
-        if (isTriggerstation) then  triggerStation.WriteSharedRam(1,0); // set triggerstation slot 1 to zero: required to initialise triggerstation timer;
+          if (isTriggerstation) then  triggerStation.WriteSharedRam(1,0); // set triggerstation slot 1 to zero: required to initialise triggerstation timer;
 
-        //showmessage('reading trigger station during blank');
-        //##################################################
+          //showmessage('reading trigger station during blank');
+          //##################################################
 
+        end;
       end;
 
       if ((triggerstate=true) and (responseState<>-1)) then  //if there has been a response
@@ -3138,14 +3140,14 @@ begin
 
         // showmessage(inttostr(state));
         if keyMapping=0 then
-        begin   // state 1  = left button. 4 = right button
-          if (state=RESPONSE_LEFT_BUTTON) then observedDataResponseRecord[trialNo] := 0; //'different' (253 on DAS6014)
-          if (state=RESPONSE_RIGHT_BUTTON) then observedDataResponseRecord[trialNo] := 1; //'same'   (254 on DAS6014)
+        begin  
+          if (responseState=RESPONSE_LEFT_BUTTON) then observedDataResponseRecord[trialNo] := 0; //'different' (253 on DAS6014)
+          if (responseState=RESPONSE_RIGHT_BUTTON) then observedDataResponseRecord[trialNo] := 1; //'same'   (254 on DAS6014)
         end
         else
         begin
-          if (state=RESPONSE_LEFT_BUTTON) then observedDataResponseRecord[trialNo] := 1; //'same' (253 on DAS6014)
-          if (state=RESPONSE_RIGHT_BUTTON) then observedDataResponseRecord[trialNo] := 0; //'different'  (254 on DAS6014)
+          if (responseState=RESPONSE_LEFT_BUTTON) then observedDataResponseRecord[trialNo] := 1; //'same' (253 on DAS6014)
+          if (responseState=RESPONSE_RIGHT_BUTTON) then observedDataResponseRecord[trialNo] := 0; //'different'  (254 on DAS6014)
         end;
 
         // determine whether cue and target match on the task dimension in same/different tasks (taskType 1 and 2)
