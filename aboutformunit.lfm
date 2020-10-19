@@ -1,11 +1,11 @@
 object AboutForm: TAboutForm
   Left = 437
-  Height = 294
+  Height = 381
   Top = 123
   Width = 631
   BorderIcons = []
   Caption = 'About'
-  ClientHeight = 294
+  ClientHeight = 381
   ClientWidth = 631
   KeyPreview = True
   OnKeyDown = FormKeyDown
@@ -16,7 +16,7 @@ object AboutForm: TAboutForm
   object btnClose: TButton
     Left = 120
     Height = 25
-    Top = 254
+    Top = 341
     Width = 75
     Anchors = [akLeft, akBottom]
     Caption = 'Close'
@@ -26,7 +26,7 @@ object AboutForm: TAboutForm
   end
   object Memo1: TMemo
     Left = 8
-    Height = 240
+    Height = 327
     Top = 8
     Width = 614
     Anchors = [akTop, akLeft, akRight, akBottom]
@@ -42,6 +42,9 @@ object AboutForm: TAboutForm
       'Dr Giorgio Fuggetta (email: giorgio.fuggetta@roehampton.ac.uk) conceived the software and developed the sequences of cognitive tasks available as part of the software''s experiments library. '
       ''
       'skalogryz (email: unspecified), additional developed, optimised and compiled the software for MacOS.'
+      ''
+      'The latest version of Working Memory Analyser and updated experiment library can be downloaded from: https://github.com [Please insert the correct link] This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License v3.0. '
+      'This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.'
     )
     ReadOnly = True
     ScrollBars = ssAutoVertical
