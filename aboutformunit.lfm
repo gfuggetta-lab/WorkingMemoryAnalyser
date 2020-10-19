@@ -33,18 +33,20 @@ object AboutForm: TAboutForm
     Lines.Strings = (
       'Working Memory Analyser (Version 1.0)'
       ''
-      'Copyright (c) 2020 by Phil Duke, Giorgio Fuggetta'
+      'Copyright (c) 2020 by Phil Duke and Giorgio Fuggetta'
       ''
       'Contribution:'
       ''
-      'Dr Phil Duke (email: pad11@leicester.ac.uk) conceived and primarily developed the software for Windows OS .'
+      'Dr Phil Duke (email: pad11@leicester.ac.uk) conceived and primarily developed the software for Windows OS.'
       ''
       'Dr Giorgio Fuggetta (email: giorgio.fuggetta@roehampton.ac.uk) conceived the software and developed the sequences of cognitive tasks available as part of the software''s experiments library. '
       ''
       'skalogryz (email: unspecified), additional developed, optimised and compiled the software for MacOS.'
       ''
-      'The latest version of Working Memory Analyser and updated experiment library can be downloaded from: https://github.com [Please insert the correct link] This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License v3.0. '
-      'This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.'
+      'The latest version of Working Memory Analyser and updated experiment library can be downloaded from: https://github.com/gfuggetta-lab/WorkingMemoryAnalyser. '
+      ''
+      'This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License v3.0. '
+      'This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. '
     )
     ReadOnly = True
     ScrollBars = ssAutoVertical
