@@ -87,7 +87,7 @@
     <PathDelim Value="\"/>
     <SearchPaths>
       <IncludeFiles Value="..\Temporal integration experiment 3 - constant stimuli - orientation - 144Hz;$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\SDL2"/>
+      <OtherUnitFiles Value="..\SDL2;..\edid"/>
     </SearchPaths>
     <Parsing>
       <SyntaxOptions>
