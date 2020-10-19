@@ -840,7 +840,7 @@ var
 
   // Shape 1.
   //diamond with equal area to bar
-  r := tan(0.978923077*(pi/180) * SCALE_FACTOR * Shape_scale_factor)*ef.distance;
+  r := shapeSizeCM / 2; // tan(0.978923077*(pi/180) * SCALE_FACTOR * Shape_scale_factor)*ef.distance;
   DL_DIAMOND:= glGenLists(1);
   glNewList(DL_DIAMOND,GL_COMPILE);
     bar(0,0,-ef.distance+0.01, r, r, pi/4);
@@ -850,7 +850,7 @@ var
 
   // Shape 2.
   //hexagon with equal area to bar
-  r := tan(0.607418775*(pi/180) * SCALE_FACTOR * Shape_scale_factor)*ef.distance;
+  r := shapeSizeCM / 2; // tan(0.607418775*(pi/180) * SCALE_FACTOR * Shape_scale_factor)*ef.distance;
   DL_HEX:= glGenLists(1);
   glNewList(DL_HEX,GL_COMPILE);
     circle(0,0,-ef.distance+0.01,r,0.069230769,6,true);
@@ -859,7 +859,7 @@ var
 
   // Shape 3.
   // Triangle, area equal to bar
-  r := tan(0.858912367 *(pi/180) * SCALE_FACTOR * Shape_scale_factor)*ef.distance;
+  r := shapeSizeCM / 2; //tan(0.858912367 *(pi/180) * SCALE_FACTOR * Shape_scale_factor)*ef.distance;
   DL_TRIANGLE:= glGenLists(1);
   glNewList(DL_TRIANGLE,GL_COMPILE);
     circle(0,0,-ef.distance+0.01,r,0.069230769,3,true);
@@ -1173,8 +1173,9 @@ end;
 
 //------------------------------------------------------------------------------
 procedure targetImage(targetRadiusCM: real;  targetShape:integer; targetQuadrant,distractorShape, target_colour, distractor_colour: integer;
-  drawPeripheral: boolean; showPlaceholderCentre: Boolean;
-  ImageSizeCm: real );
+  drawPeripheral: boolean;
+  showPlaceholderCentre: Boolean;
+  ImageSizeCm: real; periperRadiusCM : real );
 
 
 var
@@ -1182,6 +1183,7 @@ var
   c:integer;
 
 begin
+  if periperRadiusCM < 0 then periperRadiusCM := targetRadiusCM;
 
   for c :=1 to 16 do
   begin
@@ -1194,8 +1196,8 @@ begin
 
       // draw distractors
       theta := ((2*pi)/16)*c;
-      x :=  targetRadiusCM * sin(theta);
-      y :=  targetRadiusCM * cos(theta);
+      x :=  periperRadiusCM * sin(theta);
+      y :=  periperRadiusCM * cos(theta);
 
       glMatrixMode(GL_MODELVIEW);
       glLoadIdentity;
@@ -2556,7 +2558,7 @@ begin
           glMatrixMode(GL_MODELVIEW);
           glLoadIdentity;
           gltranslatef(0,0,0);
-          DrawShapeOrChar(s1_shape,colours[s1_colour], Run_background_circle_colour,x,y, Image_size_deg);
+          DrawShapeOrChar(s1_shape,colours[s1_colour], Run_background_circle_colour,x,y, Image_size_CM);
         end
         else
         begin
@@ -2566,7 +2568,7 @@ begin
             glLoadIdentity;
             objectLocation(x,y,cueCurrentRadiusCM,s1_quad);
             gltranslatef(x,y,0);
-            DrawShapeOrChar(s1_shape,colours[s1_colour], Run_background_circle_colour,x,y, Image_size_deg)
+            DrawShapeOrChar(s1_shape,colours[s1_colour], Run_background_circle_colour,x,y, Image_size_CM)
           end
           else
           begin
@@ -2574,25 +2576,25 @@ begin
             glLoadIdentity;
             objectLocation(x,y,cueCurrentRadiusCM,1);
             gltranslatef(x,y,0);
-            DrawShapeOrChar(s1_shape,colours[s1_colour], Run_background_circle_colour,x,y, Image_size_deg);
+            DrawShapeOrChar(s1_shape,colours[s1_colour], Run_background_circle_colour,x,y, Image_size_CM);
 
             glMatrixMode(GL_MODELVIEW);
             glLoadIdentity;
             objectLocation(x,y,cueCurrentRadiusCM,2);
             gltranslatef(x,y,0);
-            DrawShapeOrChar(s1_shape,colours[s1_colour], Run_background_circle_colour,x,y, Image_size_deg);
+            DrawShapeOrChar(s1_shape,colours[s1_colour], Run_background_circle_colour,x,y, Image_size_CM);
 
             glMatrixMode(GL_MODELVIEW);
             glLoadIdentity;
             objectLocation(x,y,cueCurrentRadiusCM,3);
             gltranslatef(x,y,0);
-            DrawShapeOrChar(s1_shape,colours[s1_colour], Run_background_circle_colour,x,y, Image_size_deg);
+            DrawShapeOrChar(s1_shape,colours[s1_colour], Run_background_circle_colour,x,y, Image_size_CM);
 
             glMatrixMode(GL_MODELVIEW);
             glLoadIdentity;
             objectLocation(x,y,cueCurrentRadiusCM,4);
             gltranslatef(x,y,0);
-            DrawShapeOrChar(s1_shape,colours[s1_colour], Run_background_circle_colour,x,y, Image_size_deg);
+            DrawShapeOrChar(s1_shape,colours[s1_colour], Run_background_circle_colour,x,y, Image_size_Cm);
             end;
         end;
 
@@ -2768,7 +2770,7 @@ begin
 
       drawS2cues(s2_shape_position_1, s2_shape_position_2, s2_shape_position_3, s2_shape_position_4, s2_shape_position_5,
         s2_colour_position_1, s2_colour_position_2, s2_colour_position_3, s2_colour_position_4, s2_colour_position_5
-          ,Sample_diameter_Cm, Image_size_deg);
+          ,Sample_diameter_Cm, Image_size_CM);
 
 
       glClear(GL_DEPTH_BUFFER_BIT);
@@ -2906,7 +2908,7 @@ begin
       drawBackgroundFixation(fixSpotSizeCM, Run_background_circle_colour, Fixation_and_placeholders_colour);
 
       if (s3_shape<>12) then targetImage(targetRadiusCM, s3_shape, s3_quad,s3_distractor_shape, s3_colour, s3_distractor_colour
-        , Show_S3_peripheral_placeholders, Show_S3_placeholder_when_centre, Image_size_deg);
+        , Show_S3_peripheral_placeholders, Show_S3_placeholder_when_centre, Image_size_CM, -1);
 
       glClear(GL_DEPTH_BUFFER_BIT);
       drawFixationWithPlaceholders(fixSpotSizeCM, targetRadiusCM, Fixation_and_placeholders_colour, s3_quad <> 5);
@@ -3060,7 +3062,7 @@ begin
     drawBackgroundFixation(fixSpotSizeCM, Run_background_circle_colour, Fixation_and_placeholders_colour);
 
     if (s4_shape<>12) then targetImage(targetRadiusCM, s4_shape, s4_quad,s4_distractor_shape, s4_colour, s4_distractor_colour
-      , Show_S4_peripheral_placeholders, Show_S4_placeholder_when_centre, Image_size_deg);
+      , Show_S4_peripheral_placeholders, Show_S4_placeholder_when_centre, Image_size_CM, -1);
 
     // photodiode patch left trigger station will send s4_marker on detecting the patch
     if (doPhotodiode=true) then
