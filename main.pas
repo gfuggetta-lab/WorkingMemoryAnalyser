@@ -3590,7 +3590,7 @@ begin
       s := Format('%s (%dx%d) %dHz',
         [m.Name, m.Resolution.cx, m.Resolution.cy, Round(m.Frequency)]);
       if (m.PhysSizeCm.cx > 0) and (m.PhysSizeCm.cy > 0) then
-        s:=s + Format(' (%dcmdx%dcm)', [m.PhysSizeCm.cx, m.PhysSizeCm.cy]);
+        s:=s + Format(' (%dcm x %dcm)', [m.PhysSizeCm.cx, m.PhysSizeCm.cy]);
       RadioGroup4.Items.AddObject(s, m);
     end;
   finally
