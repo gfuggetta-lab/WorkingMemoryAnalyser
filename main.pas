@@ -1151,7 +1151,7 @@ end;
 
 //------------------------------------------------------------------------------
 procedure targetImage(targetRadiusCM: real;  targetShape:integer; targetQuadrant,distractorShape, target_colour, distractor_colour: integer;
-  drawPeripheral: boolean );
+  drawPeripheral: boolean; showPlaceholderCentre: Boolean );
 
 
 var
@@ -1207,8 +1207,11 @@ begin
     //if (targetShape<1033)then begin drawShape(targetShape); end else begin drawTextStim(pfont2,colours[target_colour],Run_background_circle_colour,x,y,char(targetShape-1000)); end;
 
     // draw outline of circle
+    if (showPlaceholderCentre or (targetQuadrant <> 5)) then
+    begin
     glcolor3f(Fixation_and_placeholders_colour.r,Fixation_and_placeholders_colour.g,Fixation_and_placeholders_colour.b);
     glCallList(DL_CIRCLE_OUTLINE);
+    end;
     end;
 
   end;
@@ -1626,6 +1629,8 @@ var
   Show_S4_photodiode_patch:integer = 0;
   Show_S3_peripheral_placeholders: Boolean = true;
   Show_S4_peripheral_placeholders: Boolean = true;
+  Show_S3_placeholder_when_centre: Boolean = true;
+  Show_S4_placeholder_when_centre: Boolean = true;
 
   isVeryFirstTrial : boolean = true; // flag which is cleared after the very first trial is started to beginthe main timer, so if a block of trials is
                                      // repeated because a participant fails to reach criterion, then the timer isn't restarted
@@ -1757,8 +1762,8 @@ begin
   Show_S4_photodiode_patch := getIntegerForParameter(configDataFilename, 'Show_S4_photodiode_patch:');
   Show_S3_peripheral_placeholders := getIntegerForParameter(configDataFilename, 'Show_S3_peripheral_placeholders:') <> 0;
   Show_S4_peripheral_placeholders := getIntegerForParameter(configDataFilename, 'Show_S4_peripheral_placeholders:') <> 0;
-
-
+  Show_S3_placeholder_when_centre := getIntegerForParameter(configDataFilename, 'Show_S3_placeholder_when_centre:') <> 0;
+  Show_S4_placeholder_when_centre := getIntegerForParameter(configDataFilename, 'Show_S4_placeholder_when_centre:') <> 0;
 
 
 
@@ -2806,7 +2811,7 @@ begin
       drawBackgroundFixation(fixSpotSizeCM, Run_background_circle_colour, Fixation_and_placeholders_colour);
 
       if (s3_shape<>12) then targetImage(targetRadiusCM, s3_shape, s3_quad,s3_distractor_shape, s3_colour, s3_distractor_colour
-        , Show_S3_peripheral_placeholders);
+        , Show_S3_peripheral_placeholders, Show_S3_placeholder_when_centre);
 
       glClear(GL_DEPTH_BUFFER_BIT);
       drawFixationWithPlaceholders(fixSpotSizeCM, targetRadiusCM, Fixation_and_placeholders_colour);
@@ -2958,7 +2963,7 @@ begin
     drawBackgroundFixation(fixSpotSizeCM, Run_background_circle_colour, Fixation_and_placeholders_colour);
 
     if (s4_shape<>12) then targetImage(targetRadiusCM, s4_shape, s4_quad,s4_distractor_shape, s4_colour, s4_distractor_colour
-      , Show_S4_peripheral_placeholders);
+      , Show_S4_peripheral_placeholders, Show_S4_placeholder_when_centre);
 
     // photodiode patch left trigger station will send s4_marker on detecting the patch
     if (doPhotodiode=true) then
