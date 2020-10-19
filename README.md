@@ -1,2 +1,2 @@
-# WorkingMemoryAnalyzer
-Working Memory Analyzer implementation
+# WorkingMemoryAnalyser
+Working Memory Analyser implementation
