@@ -51,7 +51,7 @@ type
 
 //procedure getColours(filename:string; var colours:Tcolour);
  procedure getShapeColours(filename:string; var colours: array of TcolourReal);
- procedure getColoursForParameter(filename:string; parameterString:string; var colour: TcolourReal);
+ function  getColoursForParameter(filename:string; parameterString:string; var colour: TcolourReal): Boolean;
  //procedure getIntegerForParameter(filename:string; parameterstring:string; var data:integer);
  function getIntegerForParameter(filename:string; parameterstring:string):integer;
  function getRealForParameter(filename:string; parameterstring:string):real;
@@ -280,7 +280,7 @@ end;
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-procedure getColoursForParameter(filename:string; parameterString:string; var colour: TcolourReal);
+function getColoursForParameter(filename:string; parameterString:string; var colour: TcolourReal): Boolean;
 
 var
   f:textfile;
@@ -289,7 +289,8 @@ var
 
 
 begin
-AssignFile(f, filename);
+  Result := false;
+  AssignFile(f, filename);
 
   try
     reset(f);
@@ -307,6 +308,7 @@ AssignFile(f, filename);
         //showmessage (str1 );
         colour:= colourIntegerToColourReal(getRGBtripletFromString(str1));
         //colour:= getRGBtripletFromString(str1);
+        Result := true;
         break;
       end;
     end;
