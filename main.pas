@@ -1682,6 +1682,7 @@ begin
   //showmessage('Ex dir: '+ experiment_dir);
 
  // observerNo:= strtoint(Combobox1.items[Combobox1.Itemindex]);
+  observerNo:=0;
   sessionNo:= strtoint(Combobox2.items[Combobox2.Itemindex]);
   experiment_part_no :=  strtoint(Combobox4.items[Combobox4.Itemindex]);
 
