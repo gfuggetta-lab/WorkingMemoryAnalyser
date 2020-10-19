@@ -1150,7 +1150,8 @@ end;
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-procedure targetImage(targetRadiusCM: real;  targetShape:integer; targetQuadrant,distractorShape, target_colour, distractor_colour: integer);
+procedure targetImage(targetRadiusCM: real;  targetShape:integer; targetQuadrant,distractorShape, target_colour, distractor_colour: integer;
+  drawPeripheral: boolean );
 
 
 var
@@ -1165,6 +1166,8 @@ begin
     if (not( ((c=2) and (targetQuadrant=2)) or ((c=6) and (targetQuadrant=3)) or
          ((c=10) and (targetQuadrant=4)) or  ((c=14) and (targetQuadrant=1)) ) or (targetshape=0))  then
     begin
+      if drawPeripheral then
+      begin
 
       // draw distractors
       theta := ((2*pi)/16)*c;
@@ -1184,6 +1187,7 @@ begin
       // draw outline of circle
       glcolor3f(Fixation_and_placeholders_colour.r,Fixation_and_placeholders_colour.g,Fixation_and_placeholders_colour.b);
       glCallList(DL_CIRCLE_OUTLINE);
+      end;
     end;
 
     // draw target
@@ -1620,6 +1624,8 @@ var
   isRuinedTrial :integer = 0; // flag if user has suspended the trial (garbage trial)
   Show_S3_photodiode_patch:integer = 0;
   Show_S4_photodiode_patch:integer = 0;
+  Show_S3_peripheral_placeholders: Boolean = true;
+  Show_S4_peripheral_placeholders: Boolean = true;
 
   isVeryFirstTrial : boolean = true; // flag which is cleared after the very first trial is started to beginthe main timer, so if a block of trials is
                                      // repeated because a participant fails to reach criterion, then the timer isn't restarted
@@ -1749,6 +1755,8 @@ begin
   Show_S3_photodiode_patch := getIntegerForParameter(configDataFilename, 'Show_S3_photodiode_patch:');
 
   Show_S4_photodiode_patch := getIntegerForParameter(configDataFilename, 'Show_S4_photodiode_patch:');
+  Show_S3_peripheral_placeholders := getIntegerForParameter(configDataFilename, 'Show_S3_peripheral_placeholders:') <> 0;
+  Show_S4_peripheral_placeholders := getIntegerForParameter(configDataFilename, 'Show_S4_peripheral_placeholders:') <> 0;
 
 
 
@@ -2797,7 +2805,8 @@ begin
 
       drawBackgroundFixation(fixSpotSizeCM, Run_background_circle_colour, Fixation_and_placeholders_colour);
 
-      if (s3_shape<>12) then targetImage(targetRadiusCM, s3_shape, s3_quad,s3_distractor_shape, s3_colour, s3_distractor_colour);
+      if (s3_shape<>12) then targetImage(targetRadiusCM, s3_shape, s3_quad,s3_distractor_shape, s3_colour, s3_distractor_colour
+        , Show_S3_peripheral_placeholders);
 
       glClear(GL_DEPTH_BUFFER_BIT);
       drawFixationWithPlaceholders(fixSpotSizeCM, targetRadiusCM, Fixation_and_placeholders_colour);
@@ -2948,7 +2957,8 @@ begin
     ef.ProjectionTrans;
     drawBackgroundFixation(fixSpotSizeCM, Run_background_circle_colour, Fixation_and_placeholders_colour);
 
-    if (s4_shape<>12) then targetImage(targetRadiusCM, s4_shape, s4_quad,s4_distractor_shape, s4_colour, s4_distractor_colour);
+    if (s4_shape<>12) then targetImage(targetRadiusCM, s4_shape, s4_quad,s4_distractor_shape, s4_colour, s4_distractor_colour
+      , Show_S4_peripheral_placeholders);
 
     // photodiode patch left trigger station will send s4_marker on detecting the patch
     if (doPhotodiode=true) then
