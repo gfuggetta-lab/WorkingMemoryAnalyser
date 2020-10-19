@@ -1618,6 +1618,7 @@ var
   isPauseTrial:boolean = false;
 
   isRuinedTrial :integer = 0; // flag if user has suspended the trial (garbage trial)
+  Show_S3_photodiode_patch:integer = 0;
   Show_S4_photodiode_patch:integer = 0;
 
   isVeryFirstTrial : boolean = true; // flag which is cleared after the very first trial is started to beginthe main timer, so if a block of trials is
@@ -1744,6 +1745,8 @@ begin
   getShapeColours(configDataFilename,colours)  ;
 
   Monitor_name:= getStringForParameter(configDataFilename, 'Monitor_name:');
+
+  Show_S3_photodiode_patch := getIntegerForParameter(configDataFilename, 'Show_S3_photodiode_patch:');
 
   Show_S4_photodiode_patch := getIntegerForParameter(configDataFilename, 'Show_S4_photodiode_patch:');
 
@@ -2804,6 +2807,7 @@ begin
       if (doPhotodiode=true) then
       begin
         if (isTriggerstation) then  glCallList(DL_PHOTODIODE_PATCH_LEFT);
+        if (Show_S3_photodiode_patch = 1) then glCallList(DL_PHOTODIODE_PATCH_CENTRE); //photodiode patch at location specified for S3
       end;
 
 
