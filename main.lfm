@@ -1,7 +1,7 @@
 object Form1: TForm1
-  Left = 1068
+  Left = 430
   Height = 623
-  Top = 379
+  Top = 63
   Width = 836
   Caption = 'Experiment'
   ClientHeight = 623
@@ -10,8 +10,8 @@ object Form1: TForm1
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   OnCreate = FormCreate
-  Position = poDesktopCenter
-  LCLVersion = '1.2.4.0'
+  Position = poScreenCenter
+  LCLVersion = '2.0.10.0'
   Visible = True
   object Label1: TLabel
     Left = 328
@@ -437,6 +437,18 @@ object Form1: TForm1
     Width = 97
     ItemHeight = 13
     Items.Strings = (
+      '6'
+      '7'
+      '8'
+      '9'
+      '10'
+      '11'
+      '12'
+      '13'
+      '14'
+      '15'
+      '16'
+      '17'
       '18'
       '19'
       '20'
@@ -1494,13 +1506,13 @@ object Form1: TForm1
     ParentColor = False
   end
   object SaveDialog1: TSaveDialog
-    left = 696
-    top = 280
+    Left = 696
+    Top = 280
   end
   object OpenDialog1: TOpenDialog
     Title = 'Open the experiment''s overview file'
     Filter = 'Overview|Overview.txt'
-    left = 744
-    top = 280
+    Left = 744
+    Top = 280
   end
 end
