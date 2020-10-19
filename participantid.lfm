@@ -1,0 +1,354 @@
+object ParticipantIDForm: TParticipantIDForm
+  Left = 1259
+  Height = 336
+  Top = 485
+  Width = 574
+  Caption = 'ParticipantIDForm'
+  ClientHeight = 336
+  ClientWidth = 574
+  OnCreate = FormCreate
+  Position = poDesktopCenter
+  LCLVersion = '1.2.4.0'
+  Visible = True
+  object ComboBox8: TComboBox
+    Left = 368
+    Height = 24
+    Top = 80
+    Width = 100
+    Font.CharSet = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'MS Sans Serif'
+    Font.Pitch = fpVariable
+    Font.Quality = fqDraft
+    ItemHeight = 16
+    Items.Strings = (
+      'A'
+      'B'
+      'C'
+      'D'
+      'E'
+      'F'
+      'G'
+      'H'
+      'I'
+      'J'
+      'K'
+      'L'
+      'M'
+      'N'
+      'O'
+      'P'
+      'Q'
+      'R'
+      'S'
+      'T'
+      'U'
+      'V'
+      'W'
+      'X'
+      'Y'
+      'Z'
+    )
+    OnChange = UpdateLabel
+    ParentFont = False
+    Style = csDropDownList
+    TabOrder = 0
+  end
+  object ComboBox9: TComboBox
+    Left = 368
+    Height = 24
+    Top = 109
+    Width = 100
+    Font.CharSet = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'MS Sans Serif'
+    Font.Pitch = fpVariable
+    Font.Quality = fqDraft
+    ItemHeight = 16
+    Items.Strings = (
+      'A'
+      'B'
+      'C'
+      'D'
+      'E'
+      'F'
+      'G'
+      'H'
+      'I'
+      'J'
+      'K'
+      'L'
+      'M'
+      'N'
+      'O'
+      'P'
+      'Q'
+      'R'
+      'S'
+      'T'
+      'U'
+      'V'
+      'W'
+      'X'
+      'Y'
+      'Z'
+    )
+    OnChange = UpdateLabel
+    ParentFont = False
+    Style = csDropDownList
+    TabOrder = 1
+  end
+  object ComboBox10: TComboBox
+    Left = 368
+    Height = 24
+    Top = 143
+    Width = 100
+    Font.CharSet = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'MS Sans Serif'
+    Font.Pitch = fpVariable
+    Font.Quality = fqDraft
+    ItemHeight = 16
+    Items.Strings = (
+      'A'
+      'B'
+      'C'
+      'D'
+      'E'
+      'F'
+      'G'
+      'H'
+      'I'
+      'J'
+      'K'
+      'L'
+      'M'
+      'N'
+      'O'
+      'P'
+      'Q'
+      'R'
+      'S'
+      'T'
+      'U'
+      'V'
+      'W'
+      'X'
+      'Y'
+      'Z'
+    )
+    OnChange = UpdateLabel
+    ParentFont = False
+    Style = csDropDownList
+    TabOrder = 2
+  end
+  object ComboBox11: TComboBox
+    Left = 368
+    Height = 24
+    Top = 176
+    Width = 100
+    Font.CharSet = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'MS Sans Serif'
+    Font.Pitch = fpVariable
+    Font.Quality = fqDraft
+    ItemHeight = 16
+    Items.Strings = (
+      '01'
+      '02'
+      '03'
+      '04'
+      '05'
+      '06'
+      '07'
+      '08'
+      '09'
+      '10'
+      '11'
+      '12'
+      '13'
+      '14'
+      '15'
+      '16'
+      '17'
+      '18'
+      '19'
+      '20'
+      '21'
+      '22'
+      '23'
+      '24'
+      '25'
+      '26'
+      '27'
+      '28'
+      '29'
+      '30'
+      '31'
+    )
+    OnChange = UpdateLabel
+    ParentFont = False
+    Style = csDropDownList
+    TabOrder = 3
+  end
+  object ComboBox12: TComboBox
+    Left = 368
+    Height = 24
+    Top = 205
+    Width = 100
+    Font.CharSet = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'MS Sans Serif'
+    Font.Pitch = fpVariable
+    Font.Quality = fqDraft
+    ItemHeight = 16
+    Items.Strings = (
+      '01'
+      '02'
+      '03'
+      '04'
+      '05'
+      '06'
+      '07'
+      '08'
+      '09'
+      '10'
+      '11'
+      '12'
+    )
+    OnChange = UpdateLabel
+    ParentFont = False
+    Style = csDropDownList
+    TabOrder = 4
+  end
+  object Label14: TLabel
+    Left = 121
+    Height = 16
+    Top = 80
+    Width = 235
+    Caption = 'Your 1st initial (for example, Laura is "L")'
+    Font.CharSet = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'MS Sans Serif'
+    Font.Pitch = fpVariable
+    Font.Quality = fqDraft
+    ParentColor = False
+    ParentFont = False
+  end
+  object Label15: TLabel
+    Left = 64
+    Height = 16
+    Top = 109
+    Width = 292
+    Caption = 'Your mother''s  1st initial (for example, Mary is "M")'
+    Font.CharSet = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'MS Sans Serif'
+    Font.Pitch = fpVariable
+    Font.Quality = fqDraft
+    ParentColor = False
+    ParentFont = False
+  end
+  object Label16: TLabel
+    Left = 71
+    Height = 16
+    Top = 144
+    Width = 285
+    Caption = 'Your father''s 1st initial (for example, Adam is "A")'
+    Font.CharSet = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'MS Sans Serif'
+    Font.Pitch = fpVariable
+    Font.Quality = fqDraft
+    ParentColor = False
+    ParentFont = False
+  end
+  object Label17: TLabel
+    Left = 113
+    Height = 16
+    Top = 176
+    Width = 243
+    Caption = 'Your 2-digit day of birth (for example "17")'
+    Font.CharSet = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'MS Sans Serif'
+    Font.Pitch = fpVariable
+    Font.Quality = fqDraft
+    ParentColor = False
+    ParentFont = False
+  end
+  object Label18: TLabel
+    Left = 100
+    Height = 16
+    Top = 208
+    Width = 256
+    Caption = 'Your 2-digit month of birth (for example "09")'
+    Font.CharSet = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'MS Sans Serif'
+    Font.Pitch = fpVariable
+    Font.Quality = fqDraft
+    ParentColor = False
+    ParentFont = False
+  end
+  object Label19: TLabel
+    Left = 48
+    Height = 40
+    Top = 8
+    Width = 493
+    Caption = 'Please create your 7-digit "Participant ID code" from the menus below.'#13#10'You will need this if you wish to withdraw at a later stage.'
+    Font.CharSet = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -16
+    Font.Name = 'MS Sans Serif'
+    Font.Pitch = fpVariable
+    Font.Quality = fqDraft
+    ParentColor = False
+    ParentFont = False
+  end
+  object Label20: TLabel
+    Left = 248
+    Height = 29
+    Top = 256
+    Width = 94
+    Caption = 'Label20'
+    Font.CharSet = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -24
+    Font.Name = 'MS Sans Serif'
+    Font.Pitch = fpVariable
+    Font.Quality = fqDraft
+    Font.Style = [fsBold]
+    ParentColor = False
+    ParentFont = False
+  end
+  object Button2: TButton
+    Left = 466
+    Height = 25
+    Top = 288
+    Width = 75
+    Caption = 'OK'
+    Enabled = False
+    OnClick = Button2Click
+    TabOrder = 5
+  end
+  object Button1: TButton
+    Left = 48
+    Height = 25
+    Top = 288
+    Width = 75
+    Caption = 'Quit'
+    OnClick = Button1Click
+    TabOrder = 6
+  end
+end

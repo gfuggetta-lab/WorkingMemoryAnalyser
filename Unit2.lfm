@@ -1,0 +1,66 @@
+object Form2: TForm2
+  Left = 640
+  Height = 1002
+  Top = 0
+  Width = 1264
+  Caption = 'Instructions'
+  ClientHeight = 1002
+  ClientWidth = 1264
+  Color = clBtnFace
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'MS Sans Serif'
+  Position = poDesktopCenter
+  LCLVersion = '1.2.4.0'
+  WindowState = wsMaximized
+  object Button1: TButton
+    Left = 1832
+    Height = 25
+    Top = 952
+    Width = 75
+    Caption = 'Begin'
+    OnClick = Button1Click
+    TabOrder = 0
+  end
+  object Button2: TButton
+    Left = 8
+    Height = 25
+    Top = 952
+    Width = 75
+    Caption = 'Quit'
+    OnClick = Button2Click
+    TabOrder = 1
+  end
+  object Image1: TImage
+    Left = 16
+    Height = 900
+    Top = 16
+    Width = 1904
+  end
+  object Button3: TButton
+    Left = 968
+    Height = 25
+    Top = 944
+    Width = 75
+    Caption = 'Continue'
+    OnClick = Button3Click
+    TabOrder = 2
+    Visible = False
+  end
+  object Label1: TLabel
+    Left = 104
+    Height = 29
+    Top = 940
+    Width = 73
+    Caption = 'Label1'
+    Font.CharSet = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -24
+    Font.Name = 'MS Sans Serif'
+    Font.Pitch = fpVariable
+    Font.Quality = fqDraft
+    ParentColor = False
+    ParentFont = False
+    Visible = False
+  end
+end
