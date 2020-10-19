@@ -1806,6 +1806,8 @@ begin
   selMonitor := TMonitor(radiogroup4.items.Objects[radiogroup4.itemindex]);
   if (selMonitor <> nil) then
   begin
+    REFRESH_RATE := ROUND(selMonitor.Frequency);
+    if REFRESH_RATE = 0 then REFRESH_RATE := Monitor_refresh_rate;
     ef.displayWindowXpos:=selMonitor.Bounds.Left;
     ef.displayWindowYpos:=selMonitor.Bounds.Top;
     ef.Width := selMonitor.Resolution.cx;
