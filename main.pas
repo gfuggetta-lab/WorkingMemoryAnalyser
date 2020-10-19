@@ -1231,17 +1231,17 @@ end;
 
 //------------------------------------------------------------------------------
 procedure drawS2cues(s2_shape_position_1, s2_shape_position_2, s2_shape_position_3, s2_shape_position_4, s2_shape_position_5,
-  s2_colour_position_1, s2_colour_position_2, s2_colour_position_3, s2_colour_position_4, s2_colour_position_5: integer);
+  s2_colour_position_1, s2_colour_position_2, s2_colour_position_3, s2_colour_position_4, s2_colour_position_5: integer;
+  cuesDiameterDeg : Real = 4.0);
 
 var
   c:integer;
   x,y,theta,radiusCM:real;
   shape,col:integer;
-
-const
-  radiusDeg = 2;
+  radiusDeg : real;
 
 begin
+  radiusDeg := cuesDiameterDeg / 2;
 
   for c:=1 to 5 do
   begin
@@ -1654,7 +1654,9 @@ var
      BMPwidthPixels, BMPheightPixels:integer;
 
   selMonitor: TMonitor;
-  Background_diameter_deg : Real;
+  Background_diameter_deg   : Real; // the size of the "gray background" r
+  Placeholders_diameter_deg : Real; // "virtual" circle of where the 4 place holders and a target are drawn at
+  Sample_diameter_deg       : Real; // "virtual" circle of where the samples are drawn
 
 
 const
@@ -1671,7 +1673,7 @@ const
   // target parameters
   targetRadiusDeg = SCALE_FACTOR  * 6.923;// 10; // radius of target position in degrees
 
-
+  Sample_diameter_deg_DEFAULT = 4.1;
 
 
 
@@ -1782,6 +1784,11 @@ begin
   Background_diameter_deg := getRealForParameter(configDataFilename, 'Background_diameter_deg:');
   if Background_diameter_deg <= 0 then Background_diameter_deg := backgroundRadiusDeg * 2;
 
+  Placeholders_diameter_deg := getRealForParameter(configDataFilename, 'Placeholders_diameter_deg:');
+  if Placeholders_diameter_deg <= 0 then Placeholders_diameter_deg := targetRadiusDeg * 2;
+
+  Sample_diameter_deg := getRealForParameter(configDataFilename, 'Sample_diameter_deg:');
+  if Sample_diameter_deg <= 0 then Sample_diameter_deg := Sample_diameter_deg_DEFAULT;
 
   //////////////////////////////////////////////////////////////////////////////
 
@@ -2275,8 +2282,10 @@ begin
       s1_colour, s2_colour_position_1, s2_colour_position_2, s2_colour_position_3, s2_colour_position_4, s2_colour_position_5, s3_colour, s3_distractor_colour, s4_colour, s4_distractor_colour, keyMapping, taskType, TMS_s3_SOA,Experimental_Condition);
 
 
-    targetRadiusCM := tan(targetRadiusDeg*(pi/180))*ef.distance;
-    cueRadiusCM := tan(targetRadiusDeg*(pi/180))*ef.distance;
+
+
+    targetRadiusCM := tan(Placeholders_diameter_deg / 2 *(pi/180))*ef.distance;
+    cueRadiusCM := tan(Placeholders_diameter_deg / 2 *(pi/180))*ef.distance;
 
 
 
@@ -2715,7 +2724,8 @@ begin
       end;
 
       drawS2cues(s2_shape_position_1, s2_shape_position_2, s2_shape_position_3, s2_shape_position_4, s2_shape_position_5,
-        s2_colour_position_1, s2_colour_position_2, s2_colour_position_3, s2_colour_position_4, s2_colour_position_5);
+        s2_colour_position_1, s2_colour_position_2, s2_colour_position_3, s2_colour_position_4, s2_colour_position_5
+          ,Sample_diameter_deg);
 
 
       glClear(GL_DEPTH_BUFFER_BIT);

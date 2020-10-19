@@ -367,6 +367,7 @@ var
   data: real;
 
 begin
+  data := 0;
   AssignFile(f, filename);
 
   try
