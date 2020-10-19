@@ -3,6 +3,9 @@ unit main;
 
 
 {$MODE Delphi}
+{$ifdef mswindows}
+{$define triggerstation}
+{$endif}
 
 interface
 
@@ -12,7 +15,7 @@ uses
   Forms, Dialogs, StdCtrls, ExtCtrls, ActnList, SDL2, SDL2_Mixer, SDL2_ttf, gl,
   Useful, GLTextureDistortion, Display2, Timing, math, IOR_Shapes, FileUtil, inputfileunit1, ParticipantID, loadImages
   ,edidMonitorUtils
-  {$ifdef mswindows}
+  {$ifdef triggerstation}
   ,TriggerStationDevice_DLL_1_0_TLB
   {$endif}
   ;
@@ -105,12 +108,12 @@ var
 
   //----------------------------------------------------
   // TriggerStation variables     - not used with fmri
-
+  {$ifdef triggerstation}
   TriggerStation: ITriggerStationDevice;
   iNumDevices, i: Integer;
   userID: Byte;
   serialNumber: Integer;
-
+  {$endif}
   isTriggerStation : boolean = false;
 
   //----------------------------------------------------
@@ -201,7 +204,7 @@ uses Unit2;
 //------------------------------------------------------------------------------
 procedure ConnectTriggerStation;
 begin
-
+  {$ifdef triggerstation}
   try
     TriggerStation := CoTriggerStationDevice.Create;
     isTriggerStation := true;
@@ -230,6 +233,7 @@ begin
          isTriggerStation := false;
      end;
   end;
+  {$endif}
 end;
 //------------------------------------------------------------------------------
 
@@ -907,7 +911,8 @@ var
 
   // Shape 9.
   // square with area equal to bar
-  r := tan(0.978923077*(pi/180) * SCALE_FACTOR  * Shape_scale_factor)*ef.distance;
+  //r := tan(0.978923077*(pi/180) * SCALE_FACTOR  * Shape_scale_factor)*ef.distance;
+  r := shapeSizeCM / 2;
   DL_SQUARE_EA:= glGenLists(1);
   glNewList(DL_SQUARE_EA,GL_COMPILE);
     bar(0,0,-ef.distance+0.01, r, r, 0);
@@ -915,7 +920,8 @@ var
 
   // Shape 10.
   // circle with area equal to bar
-  r := tan(0.5532*(pi/180) * SCALE_FACTOR * Shape_scale_factor)*ef.distance;
+  //r := tan(0.5532*(pi/180) * SCALE_FACTOR * Shape_scale_factor)*ef.distance;
+  r := shapeSizeCM / 2;
   DL_CIRCLE_EA:= glGenLists(1);
   glNewList(DL_CIRCLE_EA,GL_COMPILE);
     circle(0,0,-ef.distance+0.01,r,0,20,true);
@@ -924,7 +930,8 @@ var
    // Shape 11.
   // Star with radius equal to placeholder's radius. Area of 0.82627615cm2 on AOC monitor at 71cm
   // To make this equal area to bar, replace the decimal value below with 1.145
-  r := tan(0.69230769  *(pi/180) * SCALE_FACTOR * Shape_scale_factor)*ef.distance;
+  //r := tan(0.69230769  *(pi/180) * SCALE_FACTOR * Shape_scale_factor)*ef.distance;
+  r := shapeSizeCM / 2;
   DL_STAR:= glGenLists(1);
   glNewList(DL_STAR,GL_COMPILE);
    pentagram(0,0,-ef.distance+0.01, r);
@@ -1030,7 +1037,7 @@ end;
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-procedure DrawShapeOrChar(shapeNo:integer; shapeCol, bgrCol:TcolourReal;x,y:real);
+procedure DrawShapeOrChar(shapeNo:integer; shapeCol, bgrCol:TcolourReal;x,y:real; ImageSizeCm: real);
 begin
 
   case (shapeNo) of
@@ -1048,8 +1055,8 @@ begin
 
   300..397:
     begin
-       displayBMPimageXYcm(BMPimages,shapeNo-300, x,y, ef.Width, ef.height, ef.WidthCM, ef.heightCM
-         , ef.ImageScaleHorz, ef.ImageScaleVert);
+       displayBMPimageXYSizeCm(BMPimages[shapeNo-300], x,y, ef.WidthCM, ef.heightCM
+         , ImageSizeCm, ImageSizeCm);
     end;
 
   1033..1255:
@@ -1159,7 +1166,8 @@ end;
 
 //------------------------------------------------------------------------------
 procedure targetImage(targetRadiusCM: real;  targetShape:integer; targetQuadrant,distractorShape, target_colour, distractor_colour: integer;
-  drawPeripheral: boolean; showPlaceholderCentre: Boolean );
+  drawPeripheral: boolean; showPlaceholderCentre: Boolean;
+  ImageSizeCm: real );
 
 
 var
@@ -1189,7 +1197,7 @@ begin
       //glcolor3f(colours[distractor_colour].r,colours[distractor_colour].g,colours[distractor_colour].b);
 
       //drawShape(distractorShape);
-      DrawShapeOrChar(distractorShape,colours[distractor_colour], Run_background_circle_colour,x,y);
+      DrawShapeOrChar(distractorShape,colours[distractor_colour], Run_background_circle_colour,x,y, ImageSizeCm);
       //if (distractorShape<1033)then begin drawShape(distractorShape); end else begin drawTextStim(pfont2,colours[distractor_colour],Run_background_circle_colour,x,y,char(distractorShape-1000)); end;
 
       // draw outline of circle
@@ -1211,7 +1219,7 @@ begin
 
     //drawShape(targetShape);
 
-    DrawShapeOrChar(targetShape,colours[target_colour], Run_background_circle_colour,x,y);
+    DrawShapeOrChar(targetShape,colours[target_colour], Run_background_circle_colour,x,y, imageSizeCm);
     //if (targetShape<1033)then begin drawShape(targetShape); end else begin drawTextStim(pfont2,colours[target_colour],Run_background_circle_colour,x,y,char(targetShape-1000)); end;
 
     // draw outline of circle
@@ -1229,16 +1237,16 @@ end;
 //------------------------------------------------------------------------------
 procedure drawS2cues(s2_shape_position_1, s2_shape_position_2, s2_shape_position_3, s2_shape_position_4, s2_shape_position_5,
   s2_colour_position_1, s2_colour_position_2, s2_colour_position_3, s2_colour_position_4, s2_colour_position_5: integer;
-  cuesDiameterDeg : Real = 4.0);
+  cuesDiameterCm : Real;
+  imageSizeCm : Real);
 
 var
   c:integer;
   x,y,theta,radiusCM:real;
   shape,col:integer;
-  radiusDeg : real;
 
 begin
-  radiusDeg := cuesDiameterDeg / 2;
+  radiusCm := cuesDiameterCm / 2;
 
   for c:=1 to 5 do
   begin
@@ -1263,12 +1271,11 @@ begin
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity;
-    radiusCM := ef.distance * (radiusDeg*(pi/180));
     objectLocation(x,y,radiusCM,c);
     gltranslatef(x,y,0);
 
     //drawShape(shape);
-    DrawShapeOrChar(shape,colours[col], Run_background_circle_colour,x,y)
+    DrawShapeOrChar(shape,colours[col], Run_background_circle_colour,x,y, imageSizeCm)
   end;
 end;
 //------------------------------------------------------------------------------
@@ -1654,11 +1661,14 @@ var
   Background_diameter_deg   : Real; // the size of the "gray background" r
   Placeholders_diameter_deg : Real; // "virtual" circle of where the 4 place holders and a target are drawn at
   Sample_diameter_deg       : Real; // "virtual" circle of where the samples are drawn
+  Sample_diameter_Cm        : Real;
   Fixation_dot_deg          : Real;
   Shape_size_deg            : Real;
   Shape_size_CM             : Real;
   Image_feedback_deg: real;
   Image_feedback_CM: real;
+  Image_size_deg: real;
+  Image_size_CM: real;
 
 const
   show_s1:boolean=true;
@@ -1677,6 +1687,7 @@ const
   Sample_diameter_deg_DEFAULT = 4.1;
   Shape_size_deg_DEFAULT = 1.6;
   Image_feedback_deg_DEFAULT = 3.2;
+  Image_size_deg_DEFAULT = 1.6; // seems to be too much. 0.07 seems to be better
 
   bgrColour: array [0..2] of real = (0, 0, 0);
 
@@ -1799,6 +1810,9 @@ begin
 
   Image_feedback_deg := getRealForParameter(configDataFilename, 'Image_feedback_deg:');
   if Image_feedback_deg <= 0 then Image_feedback_deg := Image_feedback_deg_DEFAULT;
+
+  Image_size_deg := getRealForParameter(configDataFilename, 'Image_size_deg:');
+  if Image_size_deg <= 0 then Image_size_deg := Image_size_deg_DEFAULT;
 
   //////////////////////////////////////////////////////////////////////////////
 
@@ -2035,10 +2049,12 @@ begin
    // set trigger station parameters
   if (isTriggerstation) then
   begin
+    {$ifdef triggerstation}
     TriggerStation.ParallelPort(0);
     triggerStation.WriteSharedRam(1,1); // enable photodiode 1 (left side)
     triggerStation.WriteSharedRam(2,1); // enable photodiode 2 (right side)
     triggerStation.WriteSharedRam(3,1); // enable BNC1 for the TMS. (BNC1 triggers TMS 1ms after Photodiode 1 is triggered)
+    {$endif}
   end;
 
   fixSpotSizeCM:=ef.distance*(Fixation_dot_deg*(pi/180));
@@ -2089,6 +2105,8 @@ begin
   backgroundRadiusCM := tan(Background_diameter_deg / 2*(pi/180))*ef.distance;
   Shape_size_CM := tan(Shape_size_deg*(pi/180))*ef.distance;
   Image_feedback_CM := tan(Image_feedback_deg*(pi/180))*ef.distance;
+  Image_size_CM := tan(Image_size_deg*(pi/180))*ef.distance;
+  Sample_diameter_Cm := tan(Sample_diameter_deg*(pi/180))*ef.distance;
   makeDisplayLists(tan(placeholderRadiusDeg*(pi/180))*ef.distance, backgroundRadiusCM, Shape_size_CM);
 
 
@@ -2279,7 +2297,9 @@ begin
 
     if (isTriggerstation) then
     begin
+      {$ifdef triggerstation}
       triggerStation.WriteSharedRam(1,0); // set triggerstation slot 1 to zero: required to initialise triggerstation timer;
+      {$endif}
     end;
 
     trialDone := false;
@@ -2501,7 +2521,9 @@ begin
       if (isTriggerstation) then
       begin
         triggerStationData:= s1_marker;
+        {$ifdef triggerstation}
         TriggerStation.ParallelPort(triggerStationData);   // load the trigger station with trigger data
+        {$endif}
       end;
 
       doPhotodiode:=true;
@@ -2527,7 +2549,7 @@ begin
           glMatrixMode(GL_MODELVIEW);
           glLoadIdentity;
           gltranslatef(0,0,0);
-          DrawShapeOrChar(s1_shape,colours[s1_colour], Run_background_circle_colour,x,y);
+          DrawShapeOrChar(s1_shape,colours[s1_colour], Run_background_circle_colour,x,y, Image_size_deg);
         end
         else
         begin
@@ -2537,7 +2559,7 @@ begin
             glLoadIdentity;
             objectLocation(x,y,cueCurrentRadiusCM,s1_quad);
             gltranslatef(x,y,0);
-            DrawShapeOrChar(s1_shape,colours[s1_colour], Run_background_circle_colour,x,y)
+            DrawShapeOrChar(s1_shape,colours[s1_colour], Run_background_circle_colour,x,y, Image_size_deg)
           end
           else
           begin
@@ -2545,25 +2567,25 @@ begin
             glLoadIdentity;
             objectLocation(x,y,cueCurrentRadiusCM,1);
             gltranslatef(x,y,0);
-            DrawShapeOrChar(s1_shape,colours[s1_colour], Run_background_circle_colour,x,y);
+            DrawShapeOrChar(s1_shape,colours[s1_colour], Run_background_circle_colour,x,y, Image_size_deg);
 
             glMatrixMode(GL_MODELVIEW);
             glLoadIdentity;
             objectLocation(x,y,cueCurrentRadiusCM,2);
             gltranslatef(x,y,0);
-            DrawShapeOrChar(s1_shape,colours[s1_colour], Run_background_circle_colour,x,y);
+            DrawShapeOrChar(s1_shape,colours[s1_colour], Run_background_circle_colour,x,y, Image_size_deg);
 
             glMatrixMode(GL_MODELVIEW);
             glLoadIdentity;
             objectLocation(x,y,cueCurrentRadiusCM,3);
             gltranslatef(x,y,0);
-            DrawShapeOrChar(s1_shape,colours[s1_colour], Run_background_circle_colour,x,y);
+            DrawShapeOrChar(s1_shape,colours[s1_colour], Run_background_circle_colour,x,y, Image_size_deg);
 
             glMatrixMode(GL_MODELVIEW);
             glLoadIdentity;
             objectLocation(x,y,cueCurrentRadiusCM,4);
             gltranslatef(x,y,0);
-            DrawShapeOrChar(s1_shape,colours[s1_colour], Run_background_circle_colour,x,y);
+            DrawShapeOrChar(s1_shape,colours[s1_colour], Run_background_circle_colour,x,y, Image_size_deg);
             end;
         end;
 
@@ -2705,7 +2727,9 @@ begin
     if (isTriggerstation) then
     begin
       triggerStationData:= s2_marker;
+      {$ifdef triggerstation}
       TriggerStation.ParallelPort(triggerStationData);   // load the trigger station with trigger data
+      {$endif}
     end;
 
     doPhotodiode:=true;
@@ -2737,7 +2761,7 @@ begin
 
       drawS2cues(s2_shape_position_1, s2_shape_position_2, s2_shape_position_3, s2_shape_position_4, s2_shape_position_5,
         s2_colour_position_1, s2_colour_position_2, s2_colour_position_3, s2_colour_position_4, s2_colour_position_5
-          ,Sample_diameter_deg);
+          ,Sample_diameter_Cm, Image_size_deg);
 
 
       glClear(GL_DEPTH_BUFFER_BIT);
@@ -2861,7 +2885,9 @@ begin
     if (isTriggerstation) then
     begin
       triggerStationData:= s3_marker;
+      {$ifdef triggerstation}
       TriggerStation.ParallelPort(triggerStationData);   // load the trigger station with trigger data
+      {$endif}
     end;
 
     doPhotodiode:=true;
@@ -2873,7 +2899,7 @@ begin
       drawBackgroundFixation(fixSpotSizeCM, Run_background_circle_colour, Fixation_and_placeholders_colour);
 
       if (s3_shape<>12) then targetImage(targetRadiusCM, s3_shape, s3_quad,s3_distractor_shape, s3_colour, s3_distractor_colour
-        , Show_S3_peripheral_placeholders, Show_S3_placeholder_when_centre);
+        , Show_S3_peripheral_placeholders, Show_S3_placeholder_when_centre, Image_size_deg);
 
       glClear(GL_DEPTH_BUFFER_BIT);
       drawFixationWithPlaceholders(fixSpotSizeCM, targetRadiusCM, Fixation_and_placeholders_colour, s3_quad <> 5);
@@ -3001,8 +3027,10 @@ begin
   if (isTriggerstation) then
   begin
     triggerStationData:=s4_marker;
+    {$ifdef triggerstation}
     TriggerStation.ParallelPort(triggerStationData);   // load the trigger station with trigger data
     triggerStation.WriteSharedRam(1,0); // set triggerstation slot 1 to zero: required to initialise triggerstation timer;
+    {$endif}
   end;
 
   doPhotodiode:=true;
@@ -3025,12 +3053,14 @@ begin
     drawBackgroundFixation(fixSpotSizeCM, Run_background_circle_colour, Fixation_and_placeholders_colour);
 
     if (s4_shape<>12) then targetImage(targetRadiusCM, s4_shape, s4_quad,s4_distractor_shape, s4_colour, s4_distractor_colour
-      , Show_S4_peripheral_placeholders, Show_S4_placeholder_when_centre);
+      , Show_S4_peripheral_placeholders, Show_S4_placeholder_when_centre, Image_size_deg);
 
     // photodiode patch left trigger station will send s4_marker on detecting the patch
     if (doPhotodiode=true) then
     begin
+      {$ifdef triggerstation}
       if (isTriggerstation) then  triggerStation.WriteSharedRam(1,2000); // set triggerstation to start timer on photodiode patch detection
+      {$endif}
       if (isTriggerstation) then    glCallList(DL_PHOTODIODE_PATCH_LEFT); //photodiode patch left side
       if (Show_S4_photodiode_patch = 1) then glCallList(DL_PHOTODIODE_PATCH_CENTRE); //photodiode patch at location specified for S4.
 
@@ -3078,9 +3108,9 @@ begin
       responseEventTime:=eventTime;
      // triggerStationRT := triggerStation.ReadSharedRam(2); // read trigger station timer from slot 2. RT
 
-
+     {$ifdef triggerstation}
      if (isTriggerstation) then  triggerStation.WriteSharedRam(1,0); // set triggerstation slot 1 to zero: required to initialise triggerstation timer;
-
+     {$endif}
       //showmessage('reading trigger station during stimulus');
     end;
     frameNoTotal := frameNoTotal+1;
@@ -3172,9 +3202,9 @@ begin
           //##################################################
           // read trigger station timer from slot 2. RT
          // triggerStationRT := triggerStation.ReadSharedRam(2);
-
+          {$ifdef triggerstation}
           if (isTriggerstation) then  triggerStation.WriteSharedRam(1,0); // set triggerstation slot 1 to zero: required to initialise triggerstation timer;
-
+          {$endif}
           //showmessage('reading trigger station during blank');
           //##################################################
 
@@ -3287,7 +3317,9 @@ begin
           if (isTriggerstation) then
           begin
             triggerStationData:=254;
+            {$ifdef triggerstation}
             TriggerStation.ParallelPort(triggerStationData);
+            {$endif}
           end;
           {TimerPulse.start;
           Out32($378, 101);
@@ -3305,7 +3337,9 @@ begin
           if (isTriggerstation) then
           begin
             triggerStationData:=255;
+            {$ifdef triggerstation}
             TriggerStation.ParallelPort(triggerStationData);
+            {$endif}
           end;
           {TimerPulse.start;
           Out32($378, 100);
@@ -3352,7 +3386,9 @@ begin
         if (isTriggerstation) then
         begin
           triggerStationData:=254;
+          {$ifdef triggerstation}
           TriggerStation.ParallelPort(triggerStationData);
+          {$endif}
           doPhotodiode := true;
         end;
         {TimerPulse.start;
@@ -3378,7 +3414,9 @@ begin
         if (isTriggerstation) then
         begin
           triggerStationData:=255;
+          {$ifdef triggerstation}
           TriggerStation.ParallelPort(triggerStationData);
+          {$endif}
           doPhotodiode := true;
         end;
         {TimerPulse.start;
@@ -3812,7 +3850,11 @@ begin
   label12.visible:=true;
   if (isTriggerStation) then
   begin
+    {$ifdef triggerstation}
     label12.caption:=('TriggerStationUSB Serial: ' + IntToStr(serialNumber));
+    {$else}
+    label12.caption:=('No triggerstation');
+    {$endif}
   end
   else
   begin
