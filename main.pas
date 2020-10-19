@@ -151,7 +151,10 @@ var
 
   Pause_background_circle_colour : TcolourReal;
   Run_background_circle_colour : TcolourReal ;
-  Fixation_and_placeholders_colour: TcolourReal ;
+
+  _Fix_Plc_colour: TcolourReal;
+  Fixation_colour: TcolourReal;
+  Placeholders_colour : TcolourReal;
   Incorrect_feedback_colour : TcolourReal ;
   Correct_feedback_colour : TcolourReal ;
 
@@ -1077,30 +1080,35 @@ end;
 
 //------------------------------------------------------------------------------
 
-procedure drawBackgroundFixation(fixSpotSizeCM:real; contextColour:TcolourReal;Fixation_and_placeholders_colour:TcolourReal  );
+procedure drawBackgroundFixation(fixSpotSizeCM:real; contextColour:TcolourReal;
+  AFixation_colour: TcolourReal);
 begin
 
       glMatrixMode(GL_MODELVIEW);
       glLoadIdentity;
-      drawFixationSpot(fixSpotSizeCM,Fixation_and_placeholders_colour);
+      drawFixationSpot(fixSpotSizeCM, AFixation_colour);
       glcolor3f(contextColour.r,contextColour.g,contextColour.b);
       glCallList(DL_CIRCLE_BACKGROUND);
 end;
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-procedure drawBackgroundFixationWithPlaceholders(fixSpotSizeCM:real; targetRadiusCM: real; contextColour:TcolourReal;Fixation_and_placeholders_colour:TcolourReal  );
+procedure drawBackgroundFixationWithPlaceholders(fixSpotSizeCM:real;
+  targetRadiusCM       : real;
+  contextColour        : TcolourReal;
+  AFixation_colour     : TcolourReal;
+  APlaceholders_colour : TcolourReal);
 
 var x,y:real;
   begin
 
       glMatrixMode(GL_MODELVIEW);
       glLoadIdentity;
-      drawFixationSpot(fixSpotSizeCM,Fixation_and_placeholders_colour);
+      drawFixationSpot(fixSpotSizeCM, AFixation_colour);
       glcolor3f(contextColour.r,contextColour.g,contextColour.b);
       glCallList(DL_CIRCLE_BACKGROUND);
 
-      glcolor3f(Fixation_and_placeholders_colour.r,Fixation_and_placeholders_colour.g,Fixation_and_placeholders_colour.b);
+      glcolor3f(Aplaceholders_colour.r, Aplaceholders_colour.g, Aplaceholders_colour.b);
 
       glMatrixMode(GL_MODELVIEW);
       glLoadIdentity;
@@ -1131,8 +1139,10 @@ end;
 
 //------------------------------------------------------------------------------
 
-procedure drawFixationWithPlaceholders(fixSpotSizeCM:real; targetRadiusCM: real;Fixation_and_placeholders_colour:TcolourReal;
-  doDrawFixationSpot: Boolean = true);
+procedure drawFixationWithPlaceholders(fixSpotSizeCM:real; targetRadiusCM: real;
+  AFixation_colour     : TcolourReal;
+  APlaceholders_colour : TcolourReal;
+  doDrawFixationSpot   : Boolean = true);
 
 var x,y:real;
   begin
@@ -1140,9 +1150,9 @@ var x,y:real;
       glMatrixMode(GL_MODELVIEW);
       glLoadIdentity;
       if doDrawFixationSpot then
-        drawFixationSpot(fixSpotSizeCM,Fixation_and_placeholders_colour);
+        drawFixationSpot(fixSpotSizeCM, AFixation_colour);
 
-      glcolor3f(Fixation_and_placeholders_colour.r,Fixation_and_placeholders_colour.g,Fixation_and_placeholders_colour.b);
+      glcolor3f(APlaceholders_colour.r, APlaceholders_colour.g, APlaceholders_colour.b);
 
       glMatrixMode(GL_MODELVIEW);
       glLoadIdentity;
@@ -1210,7 +1220,7 @@ begin
       //if (distractorShape<1033)then begin drawShape(distractorShape); end else begin drawTextStim(pfont2,colours[distractor_colour],Run_background_circle_colour,x,y,char(distractorShape-1000)); end;
 
       // draw outline of circle
-      glcolor3f(Fixation_and_placeholders_colour.r,Fixation_and_placeholders_colour.g,Fixation_and_placeholders_colour.b);
+      glcolor3f(Placeholders_colour.r,Placeholders_colour.g,Placeholders_colour.b);
       glCallList(DL_CIRCLE_OUTLINE);
       end;
     end;
@@ -1234,7 +1244,7 @@ begin
     // draw outline of circle
     if (showPlaceholderCentre or (targetQuadrant <> 5)) then
     begin
-    glcolor3f(Fixation_and_placeholders_colour.r,Fixation_and_placeholders_colour.g,Fixation_and_placeholders_colour.b);
+    glcolor3f(Placeholders_colour.r,Placeholders_colour.g,Placeholders_colour.b);
     glCallList(DL_CIRCLE_OUTLINE);
     end;
     end;
@@ -1412,8 +1422,8 @@ begin
     ef.ProjectionTrans;
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity;
-    drawBackgroundFixation(fixSpotSizeCM,Pause_background_circle_colour, Fixation_and_placeholders_colour);
-    drawFixationWithPlaceholders(fixSpotSizeCM,targetRadiusCM, Fixation_and_placeholders_colour);
+    drawBackgroundFixation(fixSpotSizeCM,Pause_background_circle_colour, Fixation_colour);
+    drawFixationWithPlaceholders(fixSpotSizeCM,targetRadiusCM, Fixation_colour, Placeholders_colour);
     glpushmatrix();
     glviewport(0,0,ef.width,ef.height);
     glMatrixMode(GL_PROJECTION);
@@ -1437,15 +1447,17 @@ begin
         ef.ProjectionTrans;
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity;
-        drawBackgroundFixation(fixSpotSizeCM,Run_background_circle_colour, Fixation_and_placeholders_colour);
-        drawFixationWithPlaceholders(fixSpotSizeCM,targetRadiusCM, Fixation_and_placeholders_colour);
+        drawBackgroundFixation(fixSpotSizeCM,Run_background_circle_colour, Fixation_colour);
+        drawFixationWithPlaceholders(fixSpotSizeCM,targetRadiusCM,
+          Fixation_colour, Placeholders_colour);
         ef.renderStereo;
       end;
       ef.ProjectionTrans;
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity;
-        drawBackgroundFixation(fixSpotSizeCM,Run_background_circle_colour, Fixation_and_placeholders_colour);
-        drawFixationWithPlaceholders(fixSpotSizeCM,targetRadiusCM, Fixation_and_placeholders_colour);
+        drawBackgroundFixation(fixSpotSizeCM,Run_background_circle_colour, Fixation_colour);
+        drawFixationWithPlaceholders(fixSpotSizeCM,targetRadiusCM,
+          Fixation_colour, Placeholders_colour);
     end;
   end;
 end;
@@ -1763,8 +1775,8 @@ var
   selMonitor: TMonitor;
   Background_diameter_deg   : Real; // the size of the "gray background" r
   Placeholders_diameter_deg : Real; // "virtual" circle of where the 4 place holders and a target are drawn at
-  Sample_diameter_deg       : Real; // "virtual" circle of where the samples are drawn
-  Sample_diameter_Cm        : Real;
+  s2_sample_diameter_deg    : Real; // "virtual" circle of where the samples are drawn
+  s2_sample_diameter_cm     : Real;
   Fixation_dot_deg          : Real;
   Shape_size_deg            : Real;
   Shape_size_CM             : Real;
@@ -1879,7 +1891,11 @@ begin
 
   getColoursForParameter(configDataFilename, 'Pause_background_circle_colour:', Pause_background_circle_colour);
   getColoursForParameter(configDataFilename, 'Run_background_circle_colour:', Run_background_circle_colour);
-  getColoursForParameter(configDataFilename, 'Fixation_&_placeholders_colour:', Fixation_and_placeholders_colour);
+  getColoursForParameter(configDataFilename, 'Fixation_&_placeholders_colour:', _Fix_Plc_colour);
+  if not getColoursForParameter(configDataFilename, 'Fixation_colour:', Fixation_colour) then
+    Fixation_colour := _Fix_Plc_colour;
+  if not getColoursForParameter(configDataFilename, 'Placeholders_colour:', Placeholders_colour) then
+    Placeholders_colour := _Fix_Plc_colour;
 
   getColoursForParameter(configDataFilename, 'Incorrect_feedback_colour:', Incorrect_feedback_colour);
   getColoursForParameter(configDataFilename, 'Correct_feedback_colour:', Correct_feedback_colour);
@@ -1903,8 +1919,8 @@ begin
   Placeholders_diameter_deg := getRealForParameter(configDataFilename, 'Placeholders_diameter_deg:');
   if Placeholders_diameter_deg <= 0 then Placeholders_diameter_deg := Placeholders_diameter_deg_DEFAULT;
 
-  Sample_diameter_deg := getRealForParameter(configDataFilename, 'Sample_diameter_deg:');
-  if Sample_diameter_deg <= 0 then Sample_diameter_deg := Sample_diameter_deg_DEFAULT;
+  S2_Sample_diameter_deg := getRealForParameter(configDataFilename, 'S2_Sample_diameter_deg:');
+  if S2_Sample_diameter_deg <= 0 then S2_Sample_diameter_deg := Sample_diameter_deg_DEFAULT;
 
   Fixation_dot_deg := getRealForParameter(configDataFilename, 'Fixation_dot_deg:');
   if Fixation_dot_deg <= 0 then Fixation_dot_deg := Fixation_dot_deg_DEFAULT;
@@ -2210,7 +2226,7 @@ begin
   Shape_size_CM := tan(Shape_size_deg*(pi/180))*ef.distance;
   Image_feedback_CM := tan(Image_feedback_deg*(pi/180))*ef.distance;
   Image_size_CM := tan(Image_size_deg*(pi/180))*ef.distance;
-  Sample_diameter_Cm := tan(Sample_diameter_deg*(pi/180))*ef.distance;
+  s2_sample_diameter_cm := tan(S2_sample_diameter_deg*(pi/180))*ef.distance;
   makeDisplayLists(tan(placeholderRadiusDeg*(pi/180))*ef.distance, backgroundRadiusCM, Shape_size_CM);
   CalculatePhotodiodeCm(Photodiode_S3, ef.distance);
   CalculatePhotodiodeCm(Photodiode_TMS_S3, ef.distance);
@@ -2279,10 +2295,14 @@ begin
     inttostr(round(Run_background_circle_colour.r*255)) +','+
     inttostr(round(Run_background_circle_colour.g*255)) +','+
     inttostr(round(Run_background_circle_colour.b*255)));
-  writeln(f, 'Fixation_&_placeholders_colour:	' + #9+
-    inttostr(round(Fixation_and_placeholders_colour.r*255)) +','+
-    inttostr(round(Fixation_and_placeholders_colour.g*255)) +','+
-    inttostr(round(Fixation_and_placeholders_colour.b*255)));
+  writeln(f, 'Fixation_colour:	' + #9+
+    inttostr(round(Fixation_colour.r*255)) +','+
+    inttostr(round(Fixation_colour.g*255)) +','+
+    inttostr(round(Fixation_colour.b*255)));
+  writeln(f, 'Placeholders_colour:	' + #9+
+    inttostr(round(Placeholders_colour.r*255)) +','+
+    inttostr(round(Placeholders_colour.g*255)) +','+
+    inttostr(round(Placeholders_colour.b*255)));
 
   writeln(f, 'Incorrect_feedback_colour:	' + #9+
     inttostr(round(Incorrect_feedback_colour.r*255)) +','+
@@ -2531,8 +2551,8 @@ begin
           gldisable(gl_lighting);
           glMatrixMode(GL_MODELVIEW);
           glLoadIdentity;
-          drawBackgroundFixation(fixSpotSizeCM,Pause_background_circle_colour, Fixation_and_placeholders_colour);
-          drawFixationWithPlaceholders(fixSpotSizeCM,targetRadiusCM, Fixation_and_placeholders_colour);
+          drawBackgroundFixation(fixSpotSizeCM,Pause_background_circle_colour, Fixation_colour);
+          drawFixationWithPlaceholders(fixSpotSizeCM,targetRadiusCM, Fixation_colour, Placeholders_colour);
 
           glpushmatrix();
           glviewport(0,0,ef.width,ef.height);
@@ -2560,8 +2580,8 @@ begin
           checkKeypressAndButtonbox(state, eventTime) ;
 
           ef.ProjectionTrans;
-          drawBackgroundFixation(fixSpotSizeCM,Pause_background_circle_colour, Fixation_and_placeholders_colour);
-          drawFixationWithPlaceholders(fixSpotSizeCM,targetRadiusCM, Fixation_and_placeholders_colour);
+          drawBackgroundFixation(fixSpotSizeCM,Pause_background_circle_colour, Fixation_colour);
+          drawFixationWithPlaceholders(fixSpotSizeCM,targetRadiusCM, Fixation_colour, Placeholders_colour);
 
           glpushmatrix();
           glviewport(0,0,ef.width,ef.height);
@@ -2592,8 +2612,8 @@ begin
       for c:=0 to Nframes-1 do
       begin
          ef.ProjectionTrans;
-         drawBackgroundFixation(fixSpotSizeCM,Run_background_circle_colour, Fixation_and_placeholders_colour);
-         drawFixationWithPlaceholders(fixSpotSizeCM,targetRadiusCM, Fixation_and_placeholders_colour);
+         drawBackgroundFixation(fixSpotSizeCM,Run_background_circle_colour, Fixation_colour);
+         drawFixationWithPlaceholders(fixSpotSizeCM,targetRadiusCM, Fixation_colour, Placeholders_colour);
          handledSuspended(isRuinedTrial);
          pollevent(state, eventTime) ;
         ef.renderStereo;
@@ -2639,7 +2659,7 @@ begin
       begin
         ef.ProjectionTrans;
 
-        drawBackgroundFixation(fixSpotSizeCM,Run_background_circle_colour, Fixation_and_placeholders_colour);
+        drawBackgroundFixation(fixSpotSizeCM,Run_background_circle_colour, Fixation_colour);
 
         cueCurrentRadiusCM:=cueRadiusCM;
 
@@ -2697,7 +2717,8 @@ begin
         end;
 
         glclear(GL_DEPTH_BUFFER_BIT);
-        drawFixationWithPlaceholders(fixSpotSizeCM, targetRadiusCM, Fixation_and_placeholders_colour);
+        drawFixationWithPlaceholders(fixSpotSizeCM, targetRadiusCM,
+          Fixation_colour, Placeholders_colour);
 
         pollevent(state, eventTime) ;
         if showTrialsRemaining then showCountdown(pfontGeneral,fontCol,inttostr(Ntrials-trialNo));
@@ -2768,7 +2789,9 @@ begin
       for frameNo:=0 to Nframes-1 do
       begin
         ef.ProjectionTrans;
-        drawBackgroundFixationWithPlaceholders(fixSpotSizeCM, targetRadiusCM, Run_background_circle_colour, Fixation_and_placeholders_colour);
+        drawBackgroundFixationWithPlaceholders(fixSpotSizeCM, targetRadiusCM,
+          Run_background_circle_colour,
+          Fixation_colour, Placeholders_colour);
 
         pollevent(state, eventTime) ;
         if showTrialsRemaining then showCountdown(pfontGeneral,fontCol,inttostr(Ntrials-trialNo));
@@ -2851,7 +2874,8 @@ begin
      // drawFixationSpot(fixSpotSizeCM,Fixation_and_placeholders_colour);
      // glcolor3f(Run_background_circle_colour.r,Run_background_circle_colour.g,Run_background_circle_colour.b);
       //glCallList(DL_CIRCLE_BACKGROUND);
-      drawBackgroundFixation(fixSpotSizeCM,Run_background_circle_colour, Fixation_and_placeholders_colour);
+      drawBackgroundFixation(fixSpotSizeCM,Run_background_circle_colour,
+        Fixation_colour);
 
       glMatrixMode(GL_MODELVIEW);
       gltranslatef(0,0,+0.00015);
@@ -2868,12 +2892,13 @@ begin
 
       drawS2cues(s2_shape_position_1, s2_shape_position_2, s2_shape_position_3, s2_shape_position_4, s2_shape_position_5,
         s2_colour_position_1, s2_colour_position_2, s2_colour_position_3, s2_colour_position_4, s2_colour_position_5
-          ,Sample_diameter_Cm, Image_size_CM);
+          ,s2_sample_diameter_cm, Image_size_CM);
 
 
       glClear(GL_DEPTH_BUFFER_BIT);
 
-      drawFixationWithPlaceholders(fixSpotSizeCM, targetRadiusCM, Fixation_and_placeholders_colour);
+      drawFixationWithPlaceholders(fixSpotSizeCM, targetRadiusCM,
+        Fixation_colour, Placeholders_colour);
 
       pollevent(state, eventTime) ;
       if showTrialsRemaining then showCountdown(pfontGeneral,fontCol,inttostr(Ntrials-trialNo));
@@ -2943,7 +2968,8 @@ begin
     for frameNo:=0 to Nframes-1 do
     begin
       ef.ProjectionTrans;
-      drawBackgroundFixationWithPlaceholders(fixSpotSizeCM, targetRadiusCM, Run_background_circle_colour, Fixation_and_placeholders_colour);
+      drawBackgroundFixationWithPlaceholders(fixSpotSizeCM, targetRadiusCM,
+        Run_background_circle_colour, Fixation_colour, Placeholders_colour);
       pollevent(state, eventTime) ;
       if showTrialsRemaining then showCountdown(pfontGeneral,fontCol,inttostr(Ntrials-trialNo));
 
@@ -3003,13 +3029,13 @@ begin
     begin
       ef.ProjectionTrans;
 
-      drawBackgroundFixation(fixSpotSizeCM, Run_background_circle_colour, Fixation_and_placeholders_colour);
+      drawBackgroundFixation(fixSpotSizeCM, Run_background_circle_colour, Fixation_colour);
 
       if (s3_shape<>12) then targetImage(targetRadiusCM, s3_shape, s3_quad,s3_distractor_shape, s3_colour, s3_distractor_colour
         , Show_S3_peripheral_placeholders, Show_S3_placeholder_when_centre, Image_size_CM, -1);
 
       glClear(GL_DEPTH_BUFFER_BIT);
-      drawFixationWithPlaceholders(fixSpotSizeCM, targetRadiusCM, Fixation_and_placeholders_colour, s3_quad <> 5);
+      drawFixationWithPlaceholders(fixSpotSizeCM, targetRadiusCM, Fixation_colour, Placeholders_colour, s3_quad <> 5);
 
 
       // s3 onset photodiode patch: left. trigger station will send s3_marker on detecting the patch
@@ -3027,7 +3053,9 @@ begin
 
       if ((frameNoTotal = TMS_frameNo) and (isTriggerStation)) then
       begin
-        glCallList(DL_PHOTODIODE_PATCH_RIGHT);
+        //glCallList(DL_PHOTODIODE_PATCH_RIGHT);
+        if (Photodiode_TMS_S3.Show) then
+          DrawPhotodiode(Photodiode_TMS_S3, ef.WidthCM, ef.HeightCM);
       end;
 
        handledSuspended(isRuinedTrial); // suspend rendering the stimulus if IS_SUSPENDED
@@ -3096,16 +3124,11 @@ begin
     for frameNo:=0 to Nframes-1 do
     begin
       ef.ProjectionTrans;
-      drawBackgroundFixationWithPlaceholders(fixSpotSizeCM, targetRadiusCM, Run_background_circle_colour, Fixation_and_placeholders_colour);
+      drawBackgroundFixationWithPlaceholders(fixSpotSizeCM, targetRadiusCM,
+        Run_background_circle_colour, Fixation_colour, Placeholders_colour);
 
       pollevent(state, eventTime) ;
       if showTrialsRemaining then showCountdown(pfontGeneral,fontCol,inttostr(Ntrials-trialNo));
-
-      if doPhotodiode then begin
-        if (Photodiode_TMS_S3.Show) then
-          DrawPhotodiode(Photodiode_TMS_S3, ef.WidthCM, ef.HeightCM);
-        doPhotodiode := false;
-      end;
 
       if ((frameNoTotal = TMS_frameNo) and (isTriggerStation)) then
       begin
@@ -3166,7 +3189,7 @@ begin
   for frameNo:=0 to Nframes-1 do
   begin
     ef.ProjectionTrans;
-    drawBackgroundFixation(fixSpotSizeCM, Run_background_circle_colour, Fixation_and_placeholders_colour);
+    drawBackgroundFixation(fixSpotSizeCM, Run_background_circle_colour, Fixation_colour);
 
     if (s4_shape<>12) then targetImage(targetRadiusCM, s4_shape, s4_quad,s4_distractor_shape, s4_colour, s4_distractor_colour
       , Show_S4_peripheral_placeholders, Show_S4_placeholder_when_centre, Image_size_CM, -1);
@@ -3189,7 +3212,8 @@ begin
     if showTrialsRemaining then showCountdown(pfontGeneral,fontCol,inttostr(Ntrials-trialNo));
 
     glClear(GL_DEPTH_BUFFER_BIT);
-    drawFixationWithPlaceholders(fixSpotSizeCM, targetRadiusCM, Fixation_and_placeholders_colour, s4_quad <> 5);
+    drawFixationWithPlaceholders(fixSpotSizeCM, targetRadiusCM,
+      Fixation_colour, Placeholders_colour, s4_quad <> 5);
 
     // TMS photodiode patch
     if ((frameNoTotal = TMS_frameNo) and (isTriggerStation)) then
@@ -3256,7 +3280,8 @@ begin
   //state:=-1;
   repeat;
     ef.projectionTrans;
-    drawBackgroundFixationWithPlaceholders(fixSpotSizeCM, targetRadiusCM, Run_background_circle_colour, Fixation_and_placeholders_colour);
+    drawBackgroundFixationWithPlaceholders(fixSpotSizeCM, targetRadiusCM, Run_background_circle_colour,
+      Fixation_colour, Placeholders_colour);
 
     //do photodiode so send response data via triggerstation
     if doPhotodiode then
