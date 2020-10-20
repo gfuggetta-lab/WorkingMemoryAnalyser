@@ -845,7 +845,7 @@ var
 
   // Shape 1.
   //diamond with equal area to bar
-  r := shapeSizeCM / 2; // tan(0.978923077*(pi/180) * SCALE_FACTOR * Shape_scale_factor)*ef.distance;
+  r := sqrt(2*sqr(shapeSizeCM / 2)); // tan(0.978923077*(pi/180) * SCALE_FACTOR * Shape_scale_factor)*ef.distance;
   DL_DIAMOND:= glGenLists(1);
   glNewList(DL_DIAMOND,GL_COMPILE);
     bar(0,0,-ef.distance+0.01, r, r, pi/4);
@@ -864,7 +864,7 @@ var
 
   // Shape 3.
   // Triangle, area equal to bar
-  r := shapeSizeCM / 2; //tan(0.858912367 *(pi/180) * SCALE_FACTOR * Shape_scale_factor)*ef.distance;
+  r := sqrt(3)/3*shapeSizeCM; // Equilateral_triangle, with a side equal the shapeSizeCM
   DL_TRIANGLE:= glGenLists(1);
   glNewList(DL_TRIANGLE,GL_COMPILE);
     circle(0,0,-ef.distance+0.01,r,r*0.01,3,true);
@@ -873,7 +873,7 @@ var
   // Shape 4.
   // Box, area equal to bar
   DL_BOX:= glGenLists(1);
-  r := shapeSizeCM / 2;
+  r := sqrt(2*sqr(shapeSizeCM / 2)); // hypotenuse for a triangle with 2 legs of length (shapeSizeCm/2)
   glNewList(DL_BOX,GL_COMPILE);
    glpushmatrix;
    glmatrixmode(GL_MODELVIEW);
@@ -926,7 +926,7 @@ var
   // Shape 9.
   // square with area equal to bar
   //r := tan(0.978923077*(pi/180) * SCALE_FACTOR  * Shape_scale_factor)*ef.distance;
-  r := shapeSizeCM / 2;
+  r := shapeSizeCM;
   DL_SQUARE_EA:= glGenLists(1);
   glNewList(DL_SQUARE_EA,GL_COMPILE);
     bar(0,0,-ef.distance+0.01, r, r, 0);
@@ -945,7 +945,7 @@ var
   // Star with radius equal to placeholder's radius. Area of 0.82627615cm2 on AOC monitor at 71cm
   // To make this equal area to bar, replace the decimal value below with 1.145
   //r := tan(0.69230769  *(pi/180) * SCALE_FACTOR * Shape_scale_factor)*ef.distance;
-  r := shapeSizeCM / 2;
+  r := (sqrt(5) - 1)* shapeSizeCM / 2; // using (shapeSize/2) for inscribed circle of the star
   DL_STAR:= glGenLists(1);
   glNewList(DL_STAR,GL_COMPILE);
    pentagram(0,0,-ef.distance+0.01, r);
