@@ -825,7 +825,9 @@ end;
 procedure makeDisplayLists(placeHolderRadiusCM, backgroundradiusCM, shapeSizeCM: real);
 var
     r, r1, r2: real;
-
+const
+  PENTAGON_ANGLE = (5-2)*180 / 5;
+  PENTAGON_SIDETORADIUS = sqrt(10)*sqrt(5 + sqrt(5)) / 10;
 
  begin
 
@@ -945,7 +947,13 @@ var
   // Star with radius equal to placeholder's radius. Area of 0.82627615cm2 on AOC monitor at 71cm
   // To make this equal area to bar, replace the decimal value below with 1.145
   //r := tan(0.69230769  *(pi/180) * SCALE_FACTOR * Shape_scale_factor)*ef.distance;
-  r := (sqrt(5) - 1)* shapeSizeCM / 2; // using (shapeSize/2) for inscribed circle of the star
+  //r := (sqrt(5) - 1)* shapeSizeCM / 2; // using (shapeSize/2) for inscribed circle of the star
+
+  // r - is now a side of a pentagon
+  r := (shapeSizeCM / 2) / sin( DegToRad(PENTAGON_ANGLE / 2));
+  // r is now a radius of
+  r := PENTAGON_SIDETORADIUS * r; // sqrt(10)*sqrt(5 + sqrt(5)) / 10 * r;
+
   DL_STAR:= glGenLists(1);
   glNewList(DL_STAR,GL_COMPILE);
    pentagram(0,0,-ef.distance+0.01, r);
