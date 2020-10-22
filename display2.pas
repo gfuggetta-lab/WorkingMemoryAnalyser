@@ -17,7 +17,8 @@ unit display2;
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms,
+  LCLType, LCLIntf,
+  SysUtils, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, Useful, ExtCtrls, Menus,SDL2,gl,glu,
   GLTextureDistortion, Buttons,{logger,}SDL2_Mixer;
 
