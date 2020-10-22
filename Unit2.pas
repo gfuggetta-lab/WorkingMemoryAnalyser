@@ -5,7 +5,8 @@ unit Unit2;
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  LCLType,
+  SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls, ExtCtrls,gl, main, display2, SDL2;
 
 type
