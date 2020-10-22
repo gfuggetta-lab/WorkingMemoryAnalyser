@@ -5,7 +5,7 @@ unit Timing;
 interface
 
 uses
-  windows,Dialogs,sysutils,math;
+  {$ifdef mswindows}windows,{$endif}Dialogs,sysutils,math;
 
 type
   TMetronome = class
@@ -91,8 +91,10 @@ implementation
 procedure TMetronome.Start(freq:real);
 begin
   Frequency:=freq;
+  {$ifdef mswindows}
   QueryPerformanceFrequency(lpClockFrequency);
   queryperformancecounter(lpStartTime);
+  {$endif}
   Count:=0;
   Period:=1/freq;
 end;
@@ -123,7 +125,9 @@ end;
 function TMetronome.Query:boolean;
 
 begin
-
+    {$ifndef mswindows}
+    Result := false;
+    {$else}
     queryperformancecounter(lpCurrentTime);
     ElapsedTime:=(lpCurrentTime-lpStartTime)/lpClockFrequency;
     if ElapsedTime > ((Count)*Period) then
@@ -136,7 +140,7 @@ begin
     begin
       result:=false;
     end;
-
+    {$endif}
 end;
 //------------------------------------------------------------------------------
 
@@ -146,8 +150,10 @@ end;
 //------------------------------------------------------------------------------
 procedure TTimer.Start;
 begin
+  {$ifdef mswindows}
   QueryPerformanceFrequency(lpClockFrequency);
   queryperformancecounter(lpStartTime);
+  {$endif}
 end;
 //------------------------------------------------------------------------------
 
@@ -157,9 +163,13 @@ end;
 //------------------------------------------------------------------------------
 function TTimer.Query:extended;
 begin
+  {$ifdef mswindows}
   queryperformancecounter(lpCurrentTime);
   TimeOfQuery:= (lpCurrentTime-lpStartTime) / lpClockFrequency;
   result:=TimeOfQuery;
+  {$else}
+  Result:=0;
+  {$endif}
 end;
 //------------------------------------------------------------------------------
 
@@ -175,13 +185,16 @@ var
   lpCurrentTime:int64;
 
 begin
+  {$ifdef mswindows}
   QueryPerformanceFrequency(lpClockFrequency);
   queryperformancecounter(lpStartTime);
 
   repeat
      queryperformancecounter(lpCurrentTime);
   until ((lpCurrentTime-lpStartTime) / lpClockFrequency) >= Secs;
-  
+  {$else}
+  Sleep(Round(Secs*1000));
+  {$endif}
 end;
 //------------------------------------------------------------------------------
 

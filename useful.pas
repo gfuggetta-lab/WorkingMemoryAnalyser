@@ -115,7 +115,7 @@ implementation
 
 
 uses
-  Math,SDL,{OpenGL12,}windows,dialogs;
+  Math,SDL,{OpenGL12,}dialogs;
 
 
 //------------------------------------------------------------------------------
