@@ -464,7 +464,7 @@ end;
 // Return a string filename to access a file
 function DataFile(filename: string): string;
 begin
-  result := PChar(currentDir + '\Sounds\' + filename);
+  result := PChar(currentDir + PathDelim+'Sounds'+ PathDelim + filename);
 end;
 //------------------------------------------------------------------------------
 
@@ -1951,7 +1951,7 @@ begin
   //////////////////////////////////////////////////////////////////////////////
   // Check  InputDataFileName data
 
-  inputDataFilename := experiment_dir + 'Input data\' + 'InputData_'+inttostr(trialOrderFileNo)+'.txt';
+  inputDataFilename := experiment_dir + 'Input data'+PathDelim + 'InputData_'+inttostr(trialOrderFileNo)+'.txt';
   if not FileExists(inputDataFilename)  then
   begin
     showmessage('File does not exist: '+ inputDataFilename);
@@ -3530,7 +3530,7 @@ begin
       begin
         if (isBaselineCondition=false) then
         begin
-           if (Feedback_shape=0) then Mix_PlayChannel(Ord(CORRECT_WAV),  sounds[Ord(CORRECT_WAV)], 0);
+          if (Feedback_shape=0) then Mix_PlayChannel(Ord(CORRECT_WAV),  sounds[Ord(CORRECT_WAV)], 0);
         end;
 
         feedback_onsetTime := SDL_GetTicks - timeOfExperimentStart;
@@ -3935,7 +3935,7 @@ var
 begin
 
   experiment_dir:=extractfilepath(Opendialog1.filename);
-  inputFileDir :=     experiment_dir + 'Input data\' ;
+  inputFileDir :=     experiment_dir + 'Input data'+ PathDelim ;
 
 
   //determine which input file to load : random or specified
@@ -3955,7 +3955,7 @@ begin
   end;
 
 
-  SaveDialog1.initialdir:= experiment_dir + 'Output data\';
+  SaveDialog1.initialdir:= experiment_dir + 'Output data' +PathDelim;
   SaveDialog1.defaultext:='txt';
 
   participantID := ParticipantIDForm.Label20.caption;
@@ -4084,7 +4084,7 @@ var
 
 begin
 
-  OpenDialog1.initialdir:= (getCurrentDir + '\Experiment Library');
+  OpenDialog1.initialdir:= (getCurrentDir + PathDelim+'Experiment Library');
   //showmessage(  OpenDialog1.initialdir);
   if not OpenDialog1.execute then Exit;
   //showmessage(OpenDialog1.filename);
