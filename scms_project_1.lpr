@@ -1,6 +1,11 @@
 program scms_project_1;
 
 {$MODE Delphi}
+{$ifdef darwin}
+{$linkframework SDL2}
+{$linkframework SDL2_mixer}
+{$linkframework SDL2_ttf}
+{$endif}
 
 uses
   Forms, Interfaces,
