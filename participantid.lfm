@@ -227,10 +227,13 @@ object ParticipantIDForm: TParticipantIDForm
     TabOrder = 4
   end
   object Label14: TLabel
-    Left = 121
+    AnchorSideRight.Control = ComboBox8
+    Left = 123
     Height = 16
     Top = 80
     Width = 235
+    Anchors = [akTop, akRight]
+    BorderSpacing.Right = 10
     Caption = 'Your 1st initial (for example, Laura is "L")'
     Font.CharSet = ANSI_CHARSET
     Font.Color = clWindowText
@@ -242,11 +245,14 @@ object ParticipantIDForm: TParticipantIDForm
     ParentFont = False
   end
   object Label15: TLabel
-    Left = 64
+    AnchorSideRight.Control = ComboBox9
+    Left = 69
     Height = 16
     Top = 109
-    Width = 292
-    Caption = 'Your mother''s  1st initial (for example, Mary is "M")'
+    Width = 289
+    Anchors = [akTop, akRight]
+    BorderSpacing.Right = 10
+    Caption = 'Your mother''s 1st initial (for example, Mary is "M")'
     Font.CharSet = ANSI_CHARSET
     Font.Color = clWindowText
     Font.Height = -13
@@ -257,10 +263,13 @@ object ParticipantIDForm: TParticipantIDForm
     ParentFont = False
   end
   object Label16: TLabel
-    Left = 71
+    AnchorSideRight.Control = ComboBox10
+    Left = 73
     Height = 16
     Top = 144
     Width = 285
+    Anchors = [akTop, akRight]
+    BorderSpacing.Right = 10
     Caption = 'Your father''s 1st initial (for example, Adam is "A")'
     Font.CharSet = ANSI_CHARSET
     Font.Color = clWindowText
@@ -272,10 +281,13 @@ object ParticipantIDForm: TParticipantIDForm
     ParentFont = False
   end
   object Label17: TLabel
-    Left = 113
+    AnchorSideRight.Control = ComboBox11
+    Left = 115
     Height = 16
     Top = 176
     Width = 243
+    Anchors = [akTop, akRight]
+    BorderSpacing.Right = 10
     Caption = 'Your 2-digit day of birth (for example "17")'
     Font.CharSet = ANSI_CHARSET
     Font.Color = clWindowText
@@ -287,10 +299,13 @@ object ParticipantIDForm: TParticipantIDForm
     ParentFont = False
   end
   object Label18: TLabel
-    Left = 100
+    AnchorSideRight.Control = ComboBox12
+    Left = 102
     Height = 16
     Top = 208
     Width = 256
+    Anchors = [akTop, akRight]
+    BorderSpacing.Right = 10
     Caption = 'Your 2-digit month of birth (for example "09")'
     Font.CharSet = ANSI_CHARSET
     Font.Color = clWindowText
