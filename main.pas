@@ -1577,7 +1577,10 @@ function GetFontDir: string;
 begin
   Result := '';
   {$ifdef darwin}
-  Result := ExtractFilePath(ExtractFileDir(Application.ExeName))+'Resources/Fonts'
+  Result := ExpandFileName(Application.ExeName);
+  Result := ExtractFileDir(Result);
+  Result := ExtractFilePath(Result);
+  Result := Result+'Resources/Fonts';
   {$endif}
   {$ifdef mswindows}
   Result := 'C:\windows\fonts'
