@@ -1573,6 +1573,18 @@ begin
   glMatrixMode(md);
 end;
 
+function GetFontDir: string;
+begin
+  Result := '';
+  {$ifdef darwin}
+  Result := ExtractFilePath(ExtractFileDir(Application.ExeName))+'Resources/Fonts'
+  {$endif}
+  {$ifdef mswindows}
+  Result := 'C:\windows\fonts'
+  {$endif}
+end;
+
+
 procedure TForm1.RunExperiment(Sender: TObject);
 
 var
@@ -1796,6 +1808,7 @@ var
   Image_feedback_CM: real;
   Image_size_deg: real;
   Image_size_CM: real;
+  fontdir : string;
 
 const
   show_s1:boolean=true;
@@ -1817,8 +1830,6 @@ const
   Image_size_deg_DEFAULT = 1.6; // seems to be too much. 0.07 seems to be better
 
   bgrColour: array [0..2] of real = (0, 0, 0);
-
-
 
  // NphotodiodeCalibImages = 10; // number of photodiode calibration images
 
@@ -2078,13 +2089,16 @@ begin
 
   // open font for general text display
   if (TTF_init=-1) then TerminateApplication;
-  pfontGeneral:=TTF_openFont('C:\windows\fonts\arial.ttf',round(2*(ef.width/ef.widthCM) * (ef.distance/57)));
+
+  fontdir := IncludeTrailingPathDelimiter(GetFontDir);
+
+  pfontGeneral:=TTF_openFont( PChar(fontdir+'arial.ttf'),round(2*(ef.width/ef.widthCM) * (ef.distance/57)));
   ttf_setFontStyle(pfontGeneral,TTF_STYLE_NORMAL);
 
 
 
   // open font 1 for stimulus display
-  pfontStim1:=TTF_openFont(pchar('C:\windows\fonts\'+ Stimulus_font_1) ,round(Stimulus_font_1_size*(ef.width/ef.widthCM) * (ef.distance/57)));
+  pfontStim1:=TTF_openFont(pchar(fontdir+Stimulus_font_1) ,round(Stimulus_font_1_size*(ef.width/ef.widthCM) * (ef.distance/57)));
 
   if (comparestr(Stimulus_font_1_style,'normal')=0) then
   begin
@@ -2103,7 +2117,7 @@ begin
 
 
   // open font 2 for stimulus display
-  pfontStim2:=TTF_openFont(pchar('C:\windows\fonts\'+ Stimulus_font_2) ,round(Stimulus_font_2_size*(ef.width/ef.widthCM) * (ef.distance/57)));
+  pfontStim2:=TTF_openFont(pchar(fontdir+ Stimulus_font_2) ,round(Stimulus_font_2_size*(ef.width/ef.widthCM) * (ef.distance/57)));
 
   if (comparestr(Stimulus_font_2_style,'normal')=0) then
   begin
@@ -2122,7 +2136,7 @@ begin
 
 
     // open font for feedback
-  pfontFeedback:=TTF_openFont(pchar('C:\windows\fonts\'+ Feedback_font) ,round(Feedback_font_size*(ef.width/ef.widthCM) * (ef.distance/57)));
+  pfontFeedback:=TTF_openFont(pchar(fontdir+ Feedback_font) ,round(Feedback_font_size*(ef.width/ef.widthCM) * (ef.distance/57)));
 
   if (comparestr(Feedback_font_style,'normal')=0) then
   begin
