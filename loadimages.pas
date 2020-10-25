@@ -212,8 +212,7 @@ begin
   Result := 0;
   for c:=0 to 99 do
   begin
-    BMPimageFilename := experiment_dir + 'Stimulus images\' + {'Image_'+} inttostr(c+300)+'.bmp';
-
+    BMPimageFilename := experiment_dir + 'Stimulus images' + PathDelim + {'Image_'+} inttostr(c+300)+'.bmp';
     if fileExists(BMPimageFilename) then
     begin
     // showmessage(BMPimageFilename + '  ok');
@@ -222,7 +221,7 @@ begin
   end;
 
   // load 'correct.bmp'
-  BMPimageFilename := experiment_dir + 'Stimulus images\' + 'correct.bmp';
+  BMPimageFilename := experiment_dir + 'Stimulus images' + PathDelim + 'correct.bmp';
   if fileExists(BMPimageFilename) then
   begin
     // showmessage(BMPimageFilename + '  ok');
@@ -230,7 +229,7 @@ begin
   end;
 
   // load 'correct.bmp'
-  BMPimageFilename := experiment_dir + 'Stimulus images\' + 'incorrect.bmp';
+  BMPimageFilename := experiment_dir + 'Stimulus images' + PathDelim + 'incorrect.bmp';
   if fileExists(BMPimageFilename) then
   begin
     // showmessage(BMPimageFilename + '  ok');
