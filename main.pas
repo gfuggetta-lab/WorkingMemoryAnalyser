@@ -19,6 +19,7 @@ uses
   Useful, GLTextureDistortion, Display2, Timing, math, IOR_Shapes, FileUtil, inputfileunit1, ParticipantID, loadImages
   ,Menus
   ,edidMonitorUtils, aboutFormUnit
+  ,successResultForm
   {$ifdef triggerstation}
   ,TriggerStationDevice_DLL_1_0_TLB
   {$endif}
@@ -3927,6 +3928,9 @@ var
   numstr:string;
   c:integer;
   selMonitor : TMonitor;
+
+  outDir: string;
+  outFn : string;
 begin
 
   experiment_dir:=extractfilepath(Opendialog1.filename);
@@ -3995,6 +3999,9 @@ begin
   end;
 
   if RunExperiment(Sender) then begin
+    outDir := ExtractFileDir(Form1.Savedialog1.filename);
+    outFn := ExtractFileName(Form1.Savedialog1.filename);
+    ShowSuccessForm(outDir, outFn);
   end;
   TerminateApplication;
 end;
