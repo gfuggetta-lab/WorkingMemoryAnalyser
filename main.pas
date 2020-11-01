@@ -83,7 +83,7 @@ type
 
 
     function RunExperiment(Sender: TObject): Boolean;
-
+    function GetURls(out uploadUrl, questionUrl: string): Boolean;
 
   private
     { Private declarations }
@@ -3820,6 +3820,24 @@ begin
   //TerminateApplication;
 end;//end of experiment
 
+function TForm1.GetURls(out uploadUrl, questionUrl: string): Boolean;
+var
+  experiment_dir: string;
+  configDataFilename : string;
+begin
+  uploadUrl := '';
+  questionUrl := '';
+  experiment_dir:=extractfilepath(Opendialog1.filename);
+  configDataFilename := experiment_dir +  'Configuration.txt';
+  try
+    uploadUrl := trim(getStringLineForParameter(configDataFilename, 'Upload_Output_file_online:'));
+    questionUrl := trim(getStringLineForParameter(configDataFilename, 'Complete_Questionnaires_online:'));
+    Result := true;
+  except
+    Result := false;
+  end;
+end;
+
 procedure TForm1.PopulateMonitorsList;
 var
   i : integer;
@@ -3931,6 +3949,7 @@ var
 
   outDir: string;
   outFn : string;
+  upUrl, qUrl: string;
 begin
 
   experiment_dir:=extractfilepath(Opendialog1.filename);
@@ -3968,7 +3987,7 @@ begin
   sessionNo := strtoint(Combobox2.items[Combobox2.Itemindex]);
   SaveDialog1.filename:='OutputData_'+ numstr + '_' + inttostr(trialOrderFileNo) + '_' + inttostr(sessionNo) + '_'+ participantID;
 
-  SaveDialog1.execute;
+  if not SaveDialog1.execute then Exit;
 
   configDataFilename := experiment_dir +  'Configuration.txt';
 
@@ -4001,7 +4020,8 @@ begin
   if RunExperiment(Sender) then begin
     outDir := ExtractFileDir(Form1.Savedialog1.filename);
     outFn := ExtractFileName(Form1.Savedialog1.filename);
-    ShowSuccessForm(outDir, outFn);
+    GetURls(upUrl, qUrl);
+    ShowSuccessForm(outDir, outFn, upUrl, qUrl);
   end;
   TerminateApplication;
 end;
