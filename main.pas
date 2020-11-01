@@ -81,7 +81,7 @@ type
     procedure ShowControlsIfReady(Sender: TObject);
 
 
-    procedure RunExperiment(Sender: TObject);
+    function RunExperiment(Sender: TObject): Boolean;
 
 
   private
@@ -256,8 +256,7 @@ begin
   Mix_CloseAudio;
   SDL_QUIT;
   //UnLoadOpenGL;
-  Halt(0);
-  Application.terminate;
+  Application.Terminate;
 end;
 //------------------------------------------------------------------------------
 
@@ -1588,7 +1587,7 @@ begin
 end;
 
 
-procedure TForm1.RunExperiment(Sender: TObject);
+function TForm1.RunExperiment(Sender: TObject): Boolean;
 
 var
   DataValue :word; //DAS6014 auxport vals
@@ -1735,6 +1734,7 @@ var
   Fixation_and_placeholders_colour: TcolourReal ;
   }
   Minimum_training_accuracy: real;
+  actual_accuracy: real;
   N_trials_before_pause: integer;
   N_trials_before_pause_main : integer;
   N_trials_before_pause_training: integer;
@@ -1839,6 +1839,7 @@ const
 
 
 begin
+  Result := false;
   N_trials_before_pause_main := 10000;
   N_trials_before_pause_training := 0;
 
@@ -3796,40 +3797,16 @@ begin
         if (observedDataCorrectResponseRecord[c]=1) then tot := tot + 1;
       end;
 
-
-      if ((tot/(trialNo+1)) < Minimum_training_accuracy) then  // performance is not yet at minimum acceptable level
-      begin
-       // showmessage ('Not good enough');
-      //
-        SDL_hidewindow(ef.surface);
-        Form2.visible:=true;
-
-        Form2.BringToFront;
-        Form2.Button1.visible:=false;
-        Form2.Button2.visible:=false;
-        Form2.Button3.visible:=true;
-        Form2.label1.visible:=true;
-        Form2.label1.Caption:=('Your accuracy is ' + format('%f',[( tot/(trialNo+1)*100)]) + '%. You need to reach ' + format('%f',[( Minimum_training_accuracy*100)]) + '%. Please continue training.');
-        trialNo:=0;
-      end
+      actual_accuracy:=tot/(trialNo+1);
+      if actual_accuracy < Minimum_training_accuracy then
+        trialNo:=0
       else
-      begin
-      //  showmessage('Satisfactory');
-         // Display the instructions again at the end of the training phase
-
-          SDL_hidewindow(ef.surface);
-          Form2.visible:=true;
-          Form2.BringToFront;
-          Form2.Button1.visible:=false;
-          Form2.Button2.visible:=false;
-          Form2.Button3.visible:=true;
-          Form2.label1.visible:=true;
-          Form2.label1.Caption:=('Your accuracy is ' + format('%f',[( tot/(trialNo+1)*100)]) + '%. Well done. Please continue with the main experiment.');
-
         trialNo:=trialNo+1;
-      end;
 
-
+      SDL_hidewindow(ef.surface);
+      TrialResultsShow(actual_accuracy, Minimum_training_accuracy);
+      SDL_maximizeWindow(ef.surface);
+      SDL_ShowWindow(eF.surface);
     end
     else
     begin
@@ -3838,7 +3815,8 @@ begin
 
   end;// when all trials are done
 
-  TerminateApplication;
+  Result := true;
+  //TerminateApplication;
 end;//end of experiment
 
 procedure TForm1.PopulateMonitorsList;
@@ -4009,12 +3987,16 @@ begin
      Form2.BoundsRect := selMonitor.Bounds;
  end;
 
- //// change this back************************************************************
- Form2.visible:=true;
- Form1.visible:=false;
-// RunExperiment(Sender);      //delete this after debugging
+  //// change this back************************************************************
+  Form1.visible:=false;
+  if not IntroShowModal then begin
+    Form1.visible:=true;
+    Exit;
+  end;
 
-
+  if RunExperiment(Sender) then begin
+  end;
+  TerminateApplication;
 end;
 //------------------------------------------------------------------------------
 

@@ -21,6 +21,7 @@ object Form2: TForm2
     Width = 75
     Anchors = [akRight, akBottom]
     Caption = 'Begin'
+    ModalResult = 1
     OnClick = Button1Click
     TabOrder = 0
   end
@@ -31,6 +32,7 @@ object Form2: TForm2
     Width = 75
     Anchors = [akLeft, akBottom]
     Caption = 'Quit'
+    ModalResult = 2
     OnClick = Button2Click
     TabOrder = 1
   end
@@ -56,6 +58,7 @@ object Form2: TForm2
     Anchors = [akLeft, akBottom]
     BorderSpacing.Left = 20
     Caption = 'Continue'
+    ModalResult = 1
     OnClick = Button3Click
     TabOrder = 2
     Visible = False

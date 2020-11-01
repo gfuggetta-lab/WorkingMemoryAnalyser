@@ -35,6 +35,9 @@ var
   Form2: TForm2;
 
 
+function IntroShowModal: Boolean;
+procedure TrialResultsShow(const accuracy, minAccuracy: Double);
+
 implementation
 
 {$R *.lfm}
@@ -42,38 +45,46 @@ implementation
 
 procedure TForm2.Button1Click(Sender: TObject);
 begin
- form1.RunExperiment(Sender);
+ //form1.RunExperiment(Sender);
+ ModalResult:=mrOK;
 end;
 
 procedure TForm2.Button2Click(Sender: TObject);
 begin
-  TerminateApplication;
 end;
 
 procedure TForm2.Button3Click(Sender: TObject);
-var
-  wnd:hWnd;
 begin
- Form2.visible:=false;
-
- //SetForegroundWindow(eF.Wnd);
- // SDL_hidewindow(ef.surface);
-
- SDL_maximizeWindow(ef.surface);
- SDL_ShowWindow(eF.surface);
-
-//SDL_RaiseWindow(eF.surface);
-               {
-
- setForegroundWindow(ef.Wnd);
- SetWindowPos(ef.Wnd, HWND_TOP, 0,0,0,0, SWP_NOMOVE or SWP_NOSIZE	);
- application.processmessages;
-               }
 end;
 
 procedure TForm2.FormResize(Sender: TObject);
 begin
   Button3.Left := (ClientWidth - Button3.Width) div 2;
+end;
+
+function IntroShowModal: Boolean;
+begin
+  Form2.Button1.visible:=true;
+  Form2.Button2.visible:=true;
+  Form2.Button3.visible:=false;
+  Form2.label1.visible:=false;
+  Result := Form2.ShowModal = mrOK;
+end;
+
+procedure TrialResultsShow(const accuracy, minAccuracy: Double);
+const
+  BadAccuracy  : string = 'Your accuracy is %f%%. You need to reach %f%%. Please continue training.';
+  GoodAccuracy : string = 'Your accuracy is %f%%. Well done. Please continue with the main experiment.';
+begin
+  Form2.Button1.visible:=false;
+  Form2.Button2.visible:=false;
+  Form2.Button3.visible:=true;
+  Form2.label1.visible:=true;
+  if accuracy < minAccuracy then
+    Form2.label1.Caption:=format(BadAccuracy, [accuracy*100, minAccuracy*100])
+  else
+    Form2.label1.Caption:=format(GoodAccuracy, [accuracy*100]);
+  Form2.ShowModal;
 end;
 
 end.
