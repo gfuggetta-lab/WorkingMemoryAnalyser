@@ -76,12 +76,13 @@ object SuccessForm: TSuccessForm
     AnchorSideLeft.Side = asrCenter
     AnchorSideTop.Control = Label3
     AnchorSideTop.Side = asrBottom
-    Left = 302
+    Left = 274
     Height = 25
     Top = 152
-    Width = 75
+    Width = 131
+    AutoSize = True
     BorderSpacing.Top = 10
-    Caption = 'Open Folder'
+    Caption = 'Open Results Folder'
     OnClick = Button1Click
     TabOrder = 0
   end
