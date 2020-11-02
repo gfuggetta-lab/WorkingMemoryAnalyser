@@ -210,6 +210,9 @@ uses Unit2;
 {$R *.lfm}
 
 
+var
+  GLOBAL_pollKey1: TSDL_KeyCode = SDLK_a;
+  GLOBAL_pollKey2: TSDL_KeyCode = SDLK_f;
 
 
 //------------------------------------------------------------------------------
@@ -1322,10 +1325,10 @@ begin
  //  if ((state <> -1) ) then showmessage('checkKeypressAndButtonbox' + inttostr(state));
 
   // keyboard 'a' or keypad 1, or mouse button left.
-  if ((state = SDLK_a) or (state = SDLK_KP_1) or (state = SDL_BUTTON_LEFT)) then state := RESPONSE_LEFT_BUTTON;
+  if ((state = GLOBAL_pollKey1) or (state = SDLK_KP_1) or (state = SDL_BUTTON_LEFT)) then state := RESPONSE_LEFT_BUTTON;
 
   // keyboard 'f' or keypad 4 or mouse button right
-  if ((state = SDLK_f) or (state = SDLK_KP_4) or (state = SDL_BUTTON_RIGHT)) then state := RESPONSE_RIGHT_BUTTON;
+  if ((state = GLOBAL_pollKey2) or (state = SDLK_KP_4) or (state = SDL_BUTTON_RIGHT)) then state := RESPONSE_RIGHT_BUTTON;
 
 
   if (state = RESPONSE_LEFT_BUTTON) then
@@ -1588,6 +1591,35 @@ begin
 end;
 
 
+// keys is a space or comman or semi-colon separated string
+procedure KeyboardSetupResponse(const keys: string);
+var
+  s: string;
+  key1,key2: Char;
+  i : integer;
+  f : integer;
+  C : char;
+begin
+  key1:=#0;
+  key2:=#0;
+  s := Trim(keys);
+  if s<>'' then begin
+    for i:=1 to length(s) do begin
+      c:=lowerCase(s[i]);
+      if (c<>'p') and (c in ['a'..'z','0'..'9']) then begin
+        if (key1=#0) then key1:=c
+        else if (key2=#0) then key2:=c;
+      end;
+    end;
+  end;
+  if (key1 = #0) or (key2 = #0) or (key1=key2) then begin
+    key1 := 'a';
+    key2 := 'f';
+  end;
+  GLOBAL_pollKey1:=TSDL_KeyCode(key1);
+  GLOBAL_pollKey2:=TSDL_KeyCode(key2);
+end;
+
 function TForm1.RunExperiment(Sender: TObject): Boolean;
 
 var
@@ -1813,6 +1845,7 @@ var
   Image_size_deg: real;
   Image_size_CM: real;
   fontdir : string;
+  keyboards : string;
 
 const
   show_s1:boolean=true;
@@ -1961,6 +1994,9 @@ begin
 
   Image_size_deg := getRealForParameter(configDataFilename, 'Image_size_deg:');
   if Image_size_deg <= 0 then Image_size_deg := Image_size_deg_DEFAULT;
+
+  keyboards := getStringLineForParameter(configDataFilename, 'Keyboard_keys_used_to_respond:');
+  KeyboardSetupResponse(keyboards);
 
   //////////////////////////////////////////////////////////////////////////////
 
