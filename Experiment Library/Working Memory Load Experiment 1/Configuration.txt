@@ -99,7 +99,7 @@ S3_photodiode_patch_horz_distance_deg: 0.3
 S3_photodiode_patch_size_deg: 1.0
 
 
-Show_TMS_S3_photodiode_patch: 1			[1 yes 0 no]
+Show_TMS_S3_photodiode_patch: 0			[1 yes 0 no]
 
 TMS_S3_photodiode_patch_position: top_centre	(top_left/top_centre/top_right) 
 
