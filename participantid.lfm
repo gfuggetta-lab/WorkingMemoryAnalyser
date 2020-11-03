@@ -6,6 +6,7 @@ object ParticipantIDForm: TParticipantIDForm
   Caption = 'Participant ID Form'
   ClientHeight = 336
   ClientWidth = 574
+  OnClose = FormClose
   OnCreate = FormCreate
   Position = poScreenCenter
   LCLVersion = '2.0.10.0'
