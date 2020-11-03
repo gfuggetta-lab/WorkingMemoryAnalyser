@@ -3119,9 +3119,9 @@ begin
       pollevent(state, eventTime) ;
       if showTrialsRemaining then showCountdown(pfontGeneral,fontCol,inttostr(Ntrials-trialNo));
 
-      if ((frameNoTotal = TMS_frameNo) and (isTriggerStation)) then
+      if (frameNoTotal = TMS_frameNo) then
       begin
-        //glCallList(DL_PHOTODIODE_PATCH_RIGHT);
+        if (isTriggerStation) then glCallList(DL_PHOTODIODE_PATCH_RIGHT);
         if (Photodiode_TMS_S3.Show) then
           DrawPhotodiode(Photodiode_TMS_S3, ef.WidthCM, ef.HeightCM);
       end;
