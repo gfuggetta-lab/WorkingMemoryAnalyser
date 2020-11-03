@@ -37,6 +37,15 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 Source: "scms_project_1.exe"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
+Source: "zlib1.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "libfreetype-6.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "SDL2_mixer.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "inpout32.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "SDL2_ttf.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "SDL2.dll"; DestDir: "{app}"; Flags: ignoreversion
+
+Source: "Experiment Library\Working Memory Load Experiment 1\*"; DestDir: "{userdocs}\Working Memory Analyzer\Working Memory Load Experiment 1"; Flags: ignoreversion recursesubdirs
+Source: "Experiment Library\Working Memory Load Experiment 2\*"; DestDir: "{userdocs}\Working Memory Analyzer\Working Memory Load Experiment 2"; Flags: ignoreversion recursesubdirs
 
 [Icons]
 Name: "{commonprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
