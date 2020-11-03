@@ -28,11 +28,13 @@ type
     Label20: TLabel;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
+    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure UpdateLabel(Sender: Tobject);
 
   private
     { private declarations }
+    didHitOk: Boolean;
   public
     { public declarations }
   end;
@@ -59,13 +61,20 @@ end;
 
 procedure TParticipantIDForm.Button1Click(Sender: TObject);
 begin
-  Application.Terminate;
+  Close;
 end;
 
 procedure TParticipantIDForm.Button2Click(Sender: TObject);
 begin
+  didHitOk := true;
   hide;
   Form1.show;
+end;
+
+procedure TParticipantIDForm.FormClose(Sender: TObject;
+  var CloseAction: TCloseAction);
+begin
+  if (not didHitOk) then Application.Terminate;
 end;
 
 procedure TParticipantIDForm.UpdateLabel(Sender: Tobject);
