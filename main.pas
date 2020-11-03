@@ -4165,10 +4165,17 @@ procedure TForm1.Button3Click(Sender: TObject);
 
 var
   configDataFilename,experiment_dir:string;
+  docDir : string;
 
 begin
+  docDir := IncludeTrailingPathDelimiter(GetDocumentsDir) + 'Working Memory Analyzer';
+  if not DirectoryExists(docDir) then begin
+    docDir := IncludeTrailingPathDelimiter(GetCurrentDir) + 'Experiment Library';
+    if not DirectoryExists(docDir) then
+      docDir := GetCurrentDir;
+  end;
 
-  OpenDialog1.initialdir:= ( IncludeTrailingPathDelimiter(GetDocumentsDir) + 'Working Memory Analyzer');
+  OpenDialog1.initialdir:= docDir;
   //showmessage(  OpenDialog1.initialdir);
   if not OpenDialog1.execute then Exit;
   //showmessage(OpenDialog1.filename);
