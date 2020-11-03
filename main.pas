@@ -4168,7 +4168,7 @@ var
   docDir : string;
 
 begin
-  docDir := IncludeTrailingPathDelimiter(GetDocumentsDir) + 'Working Memory Analyzer';
+  docDir := IncludeTrailingPathDelimiter(GetDocumentsDir) + 'Working Memory Analyser';
   if not DirectoryExists(docDir) then begin
     docDir := IncludeTrailingPathDelimiter(GetCurrentDir) + 'Experiment Library';
     if not DirectoryExists(docDir) then
