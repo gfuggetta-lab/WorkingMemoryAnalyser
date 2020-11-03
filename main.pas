@@ -14,6 +14,7 @@ interface
 
 
 uses
+  {$ifdef mswindows}Windows, ShlObj,{$endif}
   LCLIntf, LCLType, LMessages, Messages, SysUtils, Classes, Graphics, Controls,
   Forms, Dialogs, StdCtrls, ExtCtrls, ActnList, SDL2, SDL2_Mixer, SDL2_ttf, gl,
   Useful, GLTextureDistortion, Display2, Timing, math, IOR_Shapes, FileUtil, inputfileunit1, ParticipantID, loadImages
@@ -4009,7 +4010,7 @@ begin
   end;
 
 
-  SaveDialog1.initialdir:= experiment_dir + 'Output data' +PathDelim;
+  SaveDialog1.initialdir:= IncludeTrailingPathDelimiter(experiment_dir) + 'Output data';
   SaveDialog1.defaultext:='txt';
 
   participantID := ParticipantIDForm.Label20.caption;
@@ -4138,6 +4139,27 @@ end;
 //------------------------------------------------------------------------------
 
 
+function GetDocumentsDir: string;
+{$ifdef mswindows}
+var
+  ws : WideString;
+  l  : integer;
+begin
+  SetLength(ws, MAX_PATH);
+  if SHGetSpecialFolderPathW (0, @ws[1], CSIDL_PERSONAL, false) then begin
+    l := StrLen(PWideChar(@ws[1]));
+    SetLength(ws, l);
+    Result := UTF8Encode(ws);
+  end else
+    Result := IncludeTrailingPathDelimiter(GetUserDir)+'Documents';
+end;
+{$else}
+begin
+  Result := IncludeTrailingPathDelimiter(GetUserDir)+'Documents';
+end:
+{$endif}
+
+
 //------------------------------------------------------------------------------
 procedure TForm1.Button3Click(Sender: TObject);
 
@@ -4146,7 +4168,7 @@ var
 
 begin
 
-  OpenDialog1.initialdir:= (getCurrentDir + PathDelim+'Experiment Library');
+  OpenDialog1.initialdir:= ( IncludeTrailingPathDelimiter(GetDocumentsDir) + 'Working Memory Analyzer');
   //showmessage(  OpenDialog1.initialdir);
   if not OpenDialog1.execute then Exit;
   //showmessage(OpenDialog1.filename);
