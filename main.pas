@@ -210,6 +210,11 @@ uses Unit2;
 
 {$R *.lfm}
 
+type
+  // to save on rewritting the code, the exception is used to terminate the application
+  // The actual termination occurs, if a user presses Escape key.
+  // see pollevent() for the use
+  ExperimentTerminateException = class(Exception);
 
 var
   GLOBAL_pollKey1: TSDL_KeyCode = SDLK_a;
@@ -623,7 +628,10 @@ begin
 
 
               SDLK_ESCAPE :
+              begin
                 TerminateApplication;
+                raise ExperimentTerminateException.Create('User pressed escape');
+              end;
 
               SDLK_PRINTSCREEN :
               begin
@@ -2487,6 +2495,8 @@ begin
   // trial loop
   trialNo:=0;
 
+  try // catching ExperimateTerminate exception. It can be thrown by pollevent()
+
   while trialNo<Ntrials do
   begin
 
@@ -3854,6 +3864,11 @@ begin
   end;// when all trials are done
 
   Result := true;
+
+  except
+    on e: ExperimentTerminateException do // can be thrown by pollevent()
+      Result := false; // terminated. Resultng false
+  end;
   //TerminateApplication;
 end;//end of experiment
 
