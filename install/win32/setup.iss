@@ -22,7 +22,7 @@ AppUpdatesURL={#MyAppURL}
 DefaultDirName={pf}\{#MyAppName}
 DisableProgramGroupPage=yes
 LicenseFile=LICENSE
-OutputBaseFilename=setup
+OutputBaseFilename=Working_Memory_Analyzer_setup_{#MyAppVersion}
 Compression=lzma
 SolidCompression=yes
 SourceDir=..\..
@@ -46,6 +46,10 @@ Source: "SDL2.dll"; DestDir: "{app}"; Flags: ignoreversion
 
 Source: "Experiment Library\Working Memory Load Experiment 1\*"; DestDir: "{userdocs}\Working Memory Analyzer\Working Memory Load Experiment 1"; Flags: ignoreversion recursesubdirs
 Source: "Experiment Library\Working Memory Load Experiment 2\*"; DestDir: "{userdocs}\Working Memory Analyzer\Working Memory Load Experiment 2"; Flags: ignoreversion recursesubdirs
+
+[Dirs]
+Name: "{userdocs}\Working Memory Analyzer\Working Memory Load Experiment 1\Output Data"; Permissions: users-modify; 
+Name: "{userdocs}\Working Memory Analyzer\Working Memory Load Experiment 2\Output Data"; Permissions: users-modify; 
 
 [Icons]
 Name: "{commonprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
