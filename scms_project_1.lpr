@@ -20,6 +20,7 @@ uses
 {$R *.res}
 
 begin
+  Application.Scaled:=True;
   Application.Initialize;
   Application.ShowMainForm:=false;
   Application.CreateForm(TForm1, Form1);

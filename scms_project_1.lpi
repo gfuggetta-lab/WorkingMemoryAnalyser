@@ -12,8 +12,13 @@
       <SessionStorage Value="InProjectDir"/>
       <MainUnit Value="0"/>
       <Title Value="scms_project_1"/>
+      <Scaled Value="True"/>
       <UseAppBundle Value="False"/>
       <ResourceType Value="res"/>
+      <UseXPManifest Value="True"/>
+      <XPManifest>
+        <DpiAware Value="True"/>
+      </XPManifest>
       <Icon Value="0"/>
     </General>
     <i18n>
@@ -84,6 +89,7 @@
         <Filename Value="aboutformunit.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="AboutForm"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="aboutFormUnit"/>
       </Unit8>
@@ -91,6 +97,7 @@
         <Filename Value="successresultform.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="SuccessForm"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="SuccessResultForm"/>
       </Unit9>
