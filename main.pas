@@ -4134,7 +4134,7 @@ begin
   begin
     label12.caption:=('No triggerstation');
   end;
-
+  ShowControlsIfReady(nil);
   hide;
 end;
 //------------------------------------------------------------------------------
@@ -4144,12 +4144,9 @@ end;
 procedure TForm1.ShowControlsIfReady(Sender: TObject);
 
 begin
-   if((combobox3.itemindex > -1) and
+   Button3.enabled := ((combobox3.itemindex > -1) and
    (combobox13.itemindex > -1) and
-   (combobox14.itemindex > -1))then
-   begin
-      Button3.enabled := true;
-   end;
+   (combobox14.itemindex > -1));
 end;
 //------------------------------------------------------------------------------
 
