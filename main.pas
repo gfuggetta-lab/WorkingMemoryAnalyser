@@ -4168,7 +4168,7 @@ end;
 {$else}
 begin
   Result := IncludeTrailingPathDelimiter(GetUserDir)+'Documents';
-end:
+end;
 {$endif}
 
 
