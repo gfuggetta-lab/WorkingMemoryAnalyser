@@ -1588,6 +1588,9 @@ end;
 function GetFontDir: string;
 begin
   Result := '';
+  {$ifdef linux}
+  Result := GetCurrentDir+PathDelim+'fonts';
+  {$endif}
   {$ifdef darwin}
   Result := ExpandFileName(Application.ExeName);
   Result := ExtractFileDir(Result);
