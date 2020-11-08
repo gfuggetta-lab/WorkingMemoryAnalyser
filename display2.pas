@@ -839,6 +839,7 @@ end;
 //------------------------------------------------------------------------------
 procedure TDisplayEnviroForm.PositionSDLWindow;
 begin
+  if Wnd = 0 then Exit; // GetForegroundWindow doesn't work in Linux
   // displayWindowXpos := strtoint(edit9.text);
   // displayWindowYpos := strtoint(edit10.text);
   // Width := strtoint(edit2.text);
