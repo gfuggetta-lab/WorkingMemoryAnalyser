@@ -424,16 +424,15 @@ end;
 //------------------------------------------------------------------------------
 procedure drawTextStim(pfont:PTTF_font ;fontCol,bgrCol:TcolourReal;x,y:real; text:string);
 var
-
-  fcol,bcol: pSDL_color;
+  fcol,bcol: TSDL_color;
 begin
 
   //convert opengl colour triplet into sdl colour triplet
-  new(fcol);
-  fcol^.r:=round(fontCol.r*255); fcol^.g:=round(fontCol.g*255); fcol^.b:=round(fontCol.b*255);
+  fcol.r:=round(fontCol.r*255); fcol.g:=round(fontCol.g*255); fcol.b:=round(fontCol.b*255);
+  fcol.a:=255;
 
-  new(bcol);
-  bcol^.r:=round(bgrCol.r*255); bcol^.g:=round(bgrCol.g*255); bcol^.b:=round(bgrCol.b*255);
+  bcol.r:=round(bgrCol.r*255); bcol.g:=round(bgrCol.g*255); bcol.b:=round(bgrCol.b*255);
+  bcol.a:=0;
 
   // convert screen cm locations to pixel locations
   x:=x*(ef.Width/ef.widthCM);
@@ -446,9 +445,10 @@ begin
 
 
   glMatrixMode(GL_MODELVIEW);
+  glpushmatrix();
   glLoadIdentity;
   glortho(-ef.width/2,ef.width/2,-ef.height/2,ef.height/2,-1,1);
-  renderTextWithBackgroundColCentred(pfont,text,fcol,bcol,x,y,1{ef.Distance/57} ) ; // note size is scaled relative to stim at 57cm
+  renderTextWithBackgroundColCentred(pfont,text,@fcol,@bcol,x,y,1{ef.Distance/57} ) ; // note size is scaled relative to stim at 57cm
   glpopmatrix();
 
 
