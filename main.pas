@@ -1425,19 +1425,17 @@ procedure handledSuspended(var isRuinedTrial: integer);
 var
   state, c,Nframes: integer  ;
   eventTime : uint32 ;
-  fontCol, fontBgrColBlack:pSDL_color;
+  fontCol, fontBgrColBlack:TSDL_color;
 
   wasSuspended:boolean = false;
 begin
     // set font colours
-  new(fontCol);
-  fontCol^.r:=255; fontCol^.g:=255; fontCol^.b:=255; fontCol^.a:=0;
+  fontCol.r:=255; fontCol.g:=255; fontCol.b:=255; fontCol.a:=0;
 
-  new(fontBgrColBlack);
-  fontBgrColBlack^.r := 0;
-  fontBgrColBlack^.g := 0;
-  fontBgrColBlack^.b := 0;
-  fontBgrColBlack^.a :=0;
+  fontBgrColBlack.r := 0;
+  fontBgrColBlack.g := 0;
+  fontBgrColBlack.b := 0;
+  fontBgrColBlack.a :=0;
 
   while IS_SUSPENDED do
   begin
@@ -1456,7 +1454,7 @@ begin
     glLoadIdentity;
     glcolor3f(1,1,1);
     glortho(-ef.width/2,ef.width/2,-ef.height/2,ef.height/2,-1,1);
-    renderTextWithBackgroundColCentred(pfontGeneral,  'PAUSED', fontCol, fontBgrColBlack, 0,0,1);
+    renderTextWithBackgroundColCentred(pfontGeneral,  'PAUSED', @fontCol, @fontBgrColBlack, 0,0,1);
     glpopmatrix();
     ef.renderStereo;
 
