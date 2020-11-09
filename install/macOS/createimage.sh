@@ -1,0 +1,1 @@
+hdiutil create ./WorkingMemoryAnalyser.dmg -ov -volname "Working Memory Analyser" -fs HFS+ -srcfolder "./diskimage"
