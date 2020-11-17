@@ -36,12 +36,15 @@
         <Mode0 Name="default"/>
       </Modes>
     </RunParams>
-    <RequiredPackages Count="1">
+    <RequiredPackages Count="2">
       <Item1>
-        <PackageName Value="LCL"/>
+        <PackageName Value="richmemopackage"/>
       </Item1>
+      <Item2>
+        <PackageName Value="LCL"/>
+      </Item2>
     </RequiredPackages>
-    <Units Count="10">
+    <Units Count="11">
       <Unit0>
         <Filename Value="scms_project_1.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -101,6 +104,12 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="SuccessResultForm"/>
       </Unit9>
+      <Unit10>
+        <Filename Value="consentformunit.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="ConsentForm"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit10>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
