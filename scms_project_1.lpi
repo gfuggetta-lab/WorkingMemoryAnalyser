@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
-    <Version Value="12"/>
+    <Version Value="11"/>
     <PathDelim Value="\"/>
     <General>
       <Flags>
         <MainUnitHasUsesSectionForAllUnits Value="False"/>
         <MainUnitHasCreateFormStatements Value="False"/>
         <MainUnitHasTitleStatement Value="False"/>
-        <CompatibilityMode Value="True"/>
       </Flags>
       <SessionStorage Value="InProjectDir"/>
+      <MainUnit Value="0"/>
       <Title Value="scms_project_1"/>
       <Scaled Value="True"/>
       <UseAppBundle Value="False"/>
@@ -108,7 +108,6 @@
         <Filename Value="consentformunit.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="ConsentForm"/>
-        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit10>
     </Units>
@@ -125,6 +124,13 @@
         <SyntaxMode Value="Delphi"/>
       </SyntaxOptions>
     </Parsing>
+    <Linking>
+      <Options>
+        <Win32>
+          <GraphicApplication Value="True"/>
+        </Win32>
+      </Options>
+    </Linking>
   </CompilerOptions>
   <Debugging>
     <Exceptions Count="3">
