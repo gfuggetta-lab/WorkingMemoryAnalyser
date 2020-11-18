@@ -8,6 +8,7 @@ object ParticipantIDForm: TParticipantIDForm
   ClientWidth = 574
   OnClose = FormClose
   OnCreate = FormCreate
+  OnShow = FormShow
   Position = poScreenCenter
   LCLVersion = '2.0.10.0'
   Visible = True

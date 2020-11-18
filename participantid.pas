@@ -5,7 +5,8 @@ unit ParticipantID;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls;
+  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls
+  ,consentformunit;
 
 type
 
@@ -30,8 +31,9 @@ type
     procedure Button2Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
+    procedure FormShow(Sender: TObject);
     procedure UpdateLabel(Sender: Tobject);
-
+    function GetConsentFileName: string;
   private
     { private declarations }
     didHitOk: Boolean;
@@ -41,6 +43,9 @@ type
 
 var
   ParticipantIDForm: TParticipantIDForm;
+
+const
+  ConsentFileName='participant_consent.rtf';
 
 implementation
 
@@ -57,6 +62,14 @@ begin
    Label20.visible:=false;
    Form1.hide;
    UpdateLabel(nil);
+end;
+
+procedure TParticipantIDForm.FormShow(Sender: TObject);
+begin
+
+  if not ShowConsentForm('participant_consent.rtf') then begin
+    Close;
+  end;
 end;
 
 procedure TParticipantIDForm.Button1Click(Sender: TObject);
@@ -97,6 +110,15 @@ begin
     and (ComboBox10.Text <> '')
     and (ComboBox11.Text <> '')
     and (ComboBox12.Text <> '');
+end;
+
+function TParticipantIDForm.GetConsentFileName: string;
+begin
+  {$ifdef mswindows}
+  Result:=ConsentFileName;
+  {$else}
+  Result:=ConsentFileName;
+  {$endif}
 end;
 
 end.
