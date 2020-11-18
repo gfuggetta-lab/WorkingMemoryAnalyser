@@ -1,35 +1,39 @@
 object ConsentForm: TConsentForm
-  Left = 397
-  Height = 240
-  Top = 140
-  Width = 320
-  Caption = 'ConsentForm'
-  ClientHeight = 240
-  ClientWidth = 320
+  Left = 237
+  Height = 456
+  Top = 133
+  Width = 695
+  Caption = 'Participant Consent Form'
+  ClientHeight = 456
+  ClientWidth = 695
   OnCreate = FormCreate
   OnResize = FormResize
+  Position = poWorkAreaCenter
   LCLVersion = '2.1.0.0'
   object btnProceed: TButton
-    Left = 232
+    Left = 607
     Height = 25
-    Top = 200
+    Top = 416
     Width = 75
     Anchors = [akRight, akBottom]
     Caption = 'Proceed'
+    OnClick = btnProceedClick
     TabOrder = 0
   end
   object RichMemo1: TRichMemo
     AnchorSideBottom.Control = Label1
     Left = 8
-    Height = 115
+    Height = 331
     Top = 8
-    Width = 299
+    Width = 674
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Bottom = 8
     HideSelection = False
     Lines.Strings = (
       'RichMemo1'
     )
+    ReadOnly = True
+    ScrollBars = ssAutoVertical
     TabOrder = 1
     ZoomFactor = 1
   end
@@ -38,7 +42,7 @@ object ConsentForm: TConsentForm
     AnchorSideTop.Side = asrCenter
     Left = 12
     Height = 19
-    Top = 129
+    Top = 345
     Width = 20
     TabOrder = 2
   end
@@ -47,7 +51,7 @@ object ConsentForm: TConsentForm
     AnchorSideTop.Side = asrCenter
     Left = 12
     Height = 19
-    Top = 152
+    Top = 368
     Width = 20
     TabOrder = 3
   end
@@ -56,7 +60,7 @@ object ConsentForm: TConsentForm
     AnchorSideTop.Side = asrCenter
     Left = 12
     Height = 19
-    Top = 175
+    Top = 391
     Width = 20
     TabOrder = 4
   end
@@ -66,7 +70,7 @@ object ConsentForm: TConsentForm
     AnchorSideBottom.Control = Label2
     Left = 37
     Height = 15
-    Top = 131
+    Top = 347
     Width = 34
     Anchors = [akLeft, akBottom]
     AutoSize = False
@@ -85,7 +89,7 @@ object ConsentForm: TConsentForm
     AnchorSideBottom.Control = Label3
     Left = 37
     Height = 15
-    Top = 154
+    Top = 370
     Width = 34
     Anchors = [akLeft, akBottom]
     AutoSize = False
@@ -102,7 +106,7 @@ object ConsentForm: TConsentForm
     AnchorSideBottom.Control = btnProceed
     Left = 37
     Height = 15
-    Top = 177
+    Top = 393
     Width = 34
     Anchors = [akLeft, akBottom]
     AutoSize = False

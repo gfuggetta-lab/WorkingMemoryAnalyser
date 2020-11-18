@@ -21,6 +21,7 @@ type
     Label2: TLabel;
     Label3: TLabel;
     RichMemo1: TRichMemo;
+    procedure btnProceedClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormResize(Sender: TObject);
     procedure Label1Click(Sender: TObject);
@@ -36,7 +37,35 @@ type
 var
   ConsentForm: TConsentForm;
 
+function ShowConsentForm(const inputFile: string): Boolean;
+
 implementation
+
+function ShowConsentForm(const inputFile: string): Boolean;
+var
+  cf : TConsentForm;
+  fs : TFileStream;
+begin
+  if not FileExists(inputFile) then
+    Result:=true;
+
+  cf := TConsentForm.Create(Application);
+  try
+   try
+   fs := TFileStream.Create(inputFile, fmOpenRead or fmShareDenyNone);
+   try
+     cf.RichMemo1.LoadRichText(fs);
+   finally
+     fs.Free;
+   end;
+     Result := (cf.ShowModal = mrOK)
+   except
+     Result := true;
+   end;
+  finally
+    cf.Free;
+  end;
+end;
 
 {$R *.lfm}
 
@@ -93,6 +122,14 @@ begin
   Label1.Caption:='I have read this form (or a person with parental responsibility have read the information for children under the age of 16), and consent to participate, and understand what is required.';
   Label2.Caption:='I am aware that I can withdraw at any time by pressing “Esc” while the computer task is running.';
   Label3.Caption:='I understand I can withdraw my data after the experiment has finished, up to 4 months from my participation by emailing the researcher with my unique Participant ID code.';
+end;
+
+procedure TConsentForm.btnProceedClick(Sender: TObject);
+begin
+  if (CheckBox1.Checked) and (CheckBox2.Checked) and (CheckBox3.Checked) then
+    ModalResult:=mrOK
+  else
+    ModalResult:=mrCancel;
 end;
 
 end.
