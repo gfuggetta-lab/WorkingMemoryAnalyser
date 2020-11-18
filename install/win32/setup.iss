@@ -2,7 +2,8 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Working Memory Analyser"
-#define MyAppVersion "1.0"
+#define MyAppVersion "1.0.1"
+; 1.0.1 - adding consent form
 #define MyAppPublisher "Giorgio Fuggetta"
 #define MyAppURL "https://github.com/gfuggetta-lab/WorkingMemoryAnalyser"
 #define MyAppExeName "WorkingMemoryAnalyser.exe"
@@ -43,6 +44,7 @@ Source: "SDL2_mixer.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "inpout32.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "SDL2_ttf.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "SDL2.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "participant_consent.rtf"; DestDir: "{app}"; Flags: ignoreversion
 
 Source: "Experiment Library\Working Memory Load Experiment 1\*"; DestDir: "{userdocs}\Working Memory Analyser\Working Memory Load Experiment 1"; Flags: ignoreversion recursesubdirs
 Source: "Experiment Library\Working Memory Load Experiment 2\*"; DestDir: "{userdocs}\Working Memory Analyser\Working Memory Load Experiment 2"; Flags: ignoreversion recursesubdirs
