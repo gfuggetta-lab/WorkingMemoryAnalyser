@@ -3877,7 +3877,10 @@ function TForm1.GetURls(out uploadUrl, questionUrl: string): Boolean;
 var
   experiment_dir: string;
   configDataFilename : string;
+  age: integer;
+  youngurl :string;
 begin
+  age := StrToIntDef(ComboBox3.Text, 30);
   uploadUrl := '';
   questionUrl := '';
   experiment_dir:=extractfilepath(Opendialog1.filename);
@@ -3885,6 +3888,11 @@ begin
   try
     uploadUrl := trim(getStringLineForParameter(configDataFilename, 'Upload_Output_file_online:'));
     questionUrl := trim(getStringLineForParameter(configDataFilename, 'Complete_Questionnaires_online:'));
+    if age < 18 then begin
+      youngurl := trim(getStringLineForParameter(configDataFilename, 'Complete_Questionnaires_online_under_18:'));
+      if youngurl<>'' then
+        questionUrl := youngurl;
+    end;
     Result := true;
   except
     Result := false;
