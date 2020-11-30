@@ -216,6 +216,10 @@ type
   // see pollevent() for the use
   ExperimentTerminateException = class(Exception);
 
+  TExtraInputData = record
+    Factor: array[1..9] of string;
+  end;
+
 var
   GLOBAL_pollKey1: TSDL_KeyCode = SDLK_a;
   GLOBAL_pollKey2: TSDL_KeyCode = SDLK_f;
@@ -769,7 +773,8 @@ end;
     var Response_Time_after_S4, Feedback_shape, Feedback_duration_after_response_time, ITI_after_feedback  : integer;
     var s1_colour, s2_colour_position_1, s2_colour_position_2, s2_colour_position_3, s2_colour_position_4, s2_colour_position_5 ,s3_colour, s3_distractor_colour,s4_colour, s4_distractor_colour, keyMapping, taskType:integer;
     var TMS_s3_SOA:integer;
-    var Experimental_Condition: string);
+    var Experimental_Condition: string;
+    var extra: TExtraInputData);
 var
   dat: char;
   dat1: integer;
@@ -801,7 +806,11 @@ begin
     s4_shape, s4_distractor_shape, s4_quad,
     s4_duration,
     Response_Time_after_S4, Feedback_shape, Feedback_duration_after_response_time, ITI_after_feedback,
-    s1_colour, s2_colour_position_1,s2_colour_position_2,s2_colour_position_3,s2_colour_position_4,s2_colour_position_5 ,s3_colour, s3_distractor_colour,s4_colour, s4_distractor_colour, keyMapping, taskType,TMS_s3_SOA,Experimental_Condition);
+    s1_colour, s2_colour_position_1,s2_colour_position_2,s2_colour_position_3,s2_colour_position_4,s2_colour_position_5 ,s3_colour, s3_distractor_colour,s4_colour, s4_distractor_colour, keyMapping, taskType,TMS_s3_SOA,Experimental_Condition,
+    extra.Factor[1],extra.Factor[2],extra.Factor[3],
+    extra.Factor[4],extra.Factor[5],extra.Factor[6],
+    extra.Factor[7],extra.Factor[8],extra.Factor[9]
+    );
 
   until (dat1=sessionNo);
    { showmessage( 'dat1 :' + inttostr(dat1)  +
@@ -1857,6 +1866,8 @@ var
   fontdir : string;
   keyboards : string;
 
+  extraInp : TExtraInputData;
+
 const
   show_s1:boolean=true;
   show_s2:boolean=true;
@@ -2455,8 +2466,17 @@ begin
              'taskType' +#9+
              'TMS_s3_SOA' +#9+
              'Experimental_Condition' +#9+
+             'Factor_1' +#9+
+             'Factor_2' +#9+
+             'Factor_3' +#9+
+             'Factor_4' +#9+
+             'Factor_5' +#9+
+             'Factor_6' +#9+
+             'Factor_7' +#9+
+             'Factor_8' +#9+
+             'Factor_9' +#9+
              'response' +#9+
-             'observedDataCorrectResponseRecord' +#9+
+             'Accuracy' +#9+
              'RT_ms' +#9+
              'RT_ms_minus_constant_error' +#9+
           //   'timeStamp_ms' +#9+
@@ -2517,10 +2537,8 @@ begin
       s2_shape_position_1, s2_shape_position_2, s2_shape_position_3, s2_shape_position_4, s2_shape_position_5, s2_duration, s2_s3_isi,
       s3_shape, s3_distractor_shape, s3_quad, s3_duration, s3_s4_isi,
       s4_shape, s4_distractor_shape, s4_quad, s4_duration, Response_Time_after_S4, Feedback_shape, Feedback_duration_after_response_time,ITI_after_feedback,
-      s1_colour, s2_colour_position_1, s2_colour_position_2, s2_colour_position_3, s2_colour_position_4, s2_colour_position_5, s3_colour, s3_distractor_colour, s4_colour, s4_distractor_colour, keyMapping, taskType, TMS_s3_SOA,Experimental_Condition);
-
-
-
+      s1_colour, s2_colour_position_1, s2_colour_position_2, s2_colour_position_3, s2_colour_position_4, s2_colour_position_5, s3_colour, s3_distractor_colour, s4_colour, s4_distractor_colour, keyMapping, taskType, TMS_s3_SOA,Experimental_Condition
+      ,extraInp);
 
     targetRadiusCM := tan(Placeholders_diameter_deg / 2 *(pi/180))*ef.distance;
     cueRadiusCM := tan(Placeholders_diameter_deg / 2 *(pi/180))*ef.distance;
@@ -3756,7 +3774,7 @@ begin
   timeStamp_ms :=  timeStampRecord[trialNo];//*1000);
 
 
-  writeln(f, experimentName +#9+
+  write(f, experimentName +#9+
              currentDate +#9+
              currentTime +#9+
              inttostr(trialOrderFileNo) +#9+
@@ -3810,7 +3828,10 @@ begin
              inttostr(taskType) +#9+
             // floattostr(TMS_s3_SOA) +#9+
              inttostr(TMS_s3_SOA) +#9+
-             Experimental_Condition +#9+
+             Experimental_Condition +#9);
+  for i:=low(extraInp.Factor) to High(extraInp.Factor) do
+    write(f, extraInp.Factor[i], #9);
+  write(f,
              inttostr(observedDataResponseRecord[trialNo]) +#9+
              inttostr(observedDataCorrectResponseRecord[trialNo]) +#9+
             // floattostrf(RT_ms,fffixed,6,2) +#9+
@@ -3830,6 +3851,7 @@ begin
              {inttostr(triggerStationRT)   }
 
              );
+    writeln(f);
 
     closefile(f);
 
