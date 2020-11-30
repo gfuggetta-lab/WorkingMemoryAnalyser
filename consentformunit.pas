@@ -31,7 +31,9 @@ type
   private
 
   public
-
+    procedure ConsentLink(Sender: TObject;
+      ALinkAction: TLinkAction; const info: TLinkMouseInfo;
+      LinkStart, LinkLen: Integer);
   end;
 
 var
@@ -85,6 +87,13 @@ begin
   CheckBox3.Checked:=not CheckBox3.Checked;
 end;
 
+procedure TConsentForm.ConsentLink(Sender: TObject; ALinkAction: TLinkAction;
+  const info: TLinkMouseInfo; LinkStart, LinkLen: Integer);
+begin
+  if info.LinkRef<>'' then
+    OpenDocument(info.LinkRef);
+end;
+
 procedure AutoSizeLable(l: TLabel; w: integer);
 var
   b : TBitmap;
@@ -119,6 +128,7 @@ end;
 
 procedure TConsentForm.FormCreate(Sender: TObject);
 begin
+  RichMemo1.OnLinkAction := ConsentLink;
   Label1.Caption:='I have read this form (or a person with parental responsibility have read the information for children under the age of 16), and consent to participate, and understand what is required.';
   Label2.Caption:='I am aware that I can withdraw at any time by pressing “Esc” while the computer task is running.';
   Label3.Caption:='I understand I can withdraw my data after the experiment has finished, up to 4 months from my participation by emailing the researcher with my unique Participant ID code.';
