@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Working Memory Analyser"
-#define MyAppVersion "1.0.1"
+#define MyAppVersion "1.0.2"
 ; 1.0.1 - adding consent form
 #define MyAppPublisher "Giorgio Fuggetta"
 #define MyAppURL "https://github.com/gfuggetta-lab/WorkingMemoryAnalyser"
