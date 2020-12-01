@@ -847,7 +847,8 @@ begin
     s4_shape, s4_distractor_shape, s4_quad,
     s4_duration,
     Response_Time_after_S4, Feedback_shape, Feedback_duration_after_response_time, ITI_after_feedback,
-    s1_colour, s2_colour_position_1,s2_colour_position_2,s2_colour_position_3,s2_colour_position_4,s2_colour_position_5 ,s3_colour, s3_distractor_colour,s4_colour, s4_distractor_colour, keyMapping, taskType,TMS_s3_SOA,ec
+    s1_colour, s2_colour_position_1,s2_colour_position_2,s2_colour_position_3,s2_colour_position_4,s2_colour_position_5 ,s3_colour, s3_distractor_colour,s4_colour, s4_distractor_colour, keyMapping, taskType,TMS_s3_SOA
+    ,ec
     );
     SplitTabsIntoParts(ec, Experimental_Condition, extra);
 
@@ -871,8 +872,9 @@ begin
     s4_shape, s4_distractor_shape, s4_quad,
     s4_duration,
     Response_Time_after_S4, Feedback_shape, Feedback_duration_after_response_time, ITI_after_feedback,
-    s1_colour, s2_colour_position_1,s2_colour_position_2,s2_colour_position_3,s2_colour_position_4,s2_colour_position_5 ,s3_colour, s3_distractor_colour,s4_colour, s4_distractor_colour, keyMapping, taskType,TMS_s3_SOA,Experimental_Condition);
-
+    s1_colour, s2_colour_position_1,s2_colour_position_2,s2_colour_position_3,s2_colour_position_4,s2_colour_position_5 ,s3_colour, s3_distractor_colour,s4_colour, s4_distractor_colour, keyMapping, taskType,TMS_s3_SOA
+    ,ec);
+    SplitTabsIntoParts(ec, Experimental_Condition, extra);
   end;
 
 
