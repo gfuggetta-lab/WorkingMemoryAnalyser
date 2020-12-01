@@ -3,16 +3,16 @@
 
 #define MyAppName "Working Memory Analyser"
 #define MyAppVersion "1.0.2"
-; 1.0.1 - adding consent form
 #define MyAppPublisher "Giorgio Fuggetta"
 #define MyAppURL "https://github.com/gfuggetta-lab/WorkingMemoryAnalyser"
-#define MyAppExeName "WorkingMemoryAnalyser.exe"
+#define MyAppExeName "Working Memory Analyser.exe"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
 ; Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{941CDF3B-CACF-42DB-A38E-12DF4D1BA89D}
+; AppId={{AE344CFB-89D4-4562-8B21-3E23D52D31FA} 
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 ;AppVerName={#MyAppName} {#MyAppVersion}
@@ -37,7 +37,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 
-Source: "scms_project_1.exe"; DestDir: "{app}"; DestName: "WorkingMemoryAnalyser.exe"; Flags: ignoreversion
+Source: "scms_project_1.exe"; DestDir: "{app}"; DestName: "Working Memory Analyser.exe"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 Source: "zlib1.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "libfreetype-6.dll"; DestDir: "{app}"; Flags: ignoreversion
@@ -46,9 +46,12 @@ Source: "inpout32.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "SDL2_ttf.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "SDL2.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "participant_consent.rtf"; DestDir: "{app}"; Flags: ignoreversion
+Source: "Sounds\correct.wav"; DestDir: "{app}\Sounds"; Flags: ignoreversion
+Source: "Sounds\incorrect.wav"; DestDir: "{app}\Sounds"; Flags: ignoreversion
+Source: "Sounds\HIBEEP.wav"; DestDir: "{app}\Sounds"; Flags: ignoreversion
 
-Source: "Experiment Library\Working Memory Load Experiment 1\*"; DestDir: "{userdocs}\Working Memory Analyser\Working Memory Load Experiment 1"; Flags: ignoreversion recursesubdirs
-Source: "Experiment Library\Working Memory Load Experiment 2\*"; DestDir: "{userdocs}\Working Memory Analyser\Working Memory Load Experiment 2"; Flags: ignoreversion recursesubdirs
+Source: "Experiment Library\Exp 01 Working Memory Capacity\*"; DestDir: "{userdocs}\Working Memory Analyser\Exp 01 Working Memory Capacity"; Flags: ignoreversion recursesubdirs
+Source: "Experiment Library\Exp 02 Working Memory Load and Distractor processing\*"; DestDir: "{userdocs}\Working Memory Analyser\Exp 02 Working Memory Load and Distractor processing"; Flags: ignoreversion recursesubdirs
 
 [Dirs]
 Name: "{userdocs}\Working Memory Analyser\Working Memory Load Experiment 1\Output Data"; Permissions: users-modify; 
