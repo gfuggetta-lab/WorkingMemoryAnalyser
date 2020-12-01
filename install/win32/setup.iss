@@ -54,8 +54,8 @@ Source: "Experiment Library\Exp 01 Working Memory Capacity\*"; DestDir: "{userdo
 Source: "Experiment Library\Exp 02 Working Memory Load and Distractor processing\*"; DestDir: "{userdocs}\Working Memory Analyser\Exp 02 Working Memory Load and Distractor processing"; Flags: ignoreversion recursesubdirs
 
 [Dirs]
-Name: "{userdocs}\Working Memory Analyser\Working Memory Load Experiment 1\Output Data"; Permissions: users-modify; 
-Name: "{userdocs}\Working Memory Analyser\Working Memory Load Experiment 2\Output Data"; Permissions: users-modify; 
+Name: "{userdocs}\Working Memory Analyser\Exp 01 Working Memory Capacity\Output Data"; Permissions: users-modify; 
+Name: "{userdocs}\Working Memory Analyser\Exp 02 Working Memory Load and Distractor processing\Output Data"; Permissions: users-modify; 
 
 [Icons]
 Name: "{commonprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
