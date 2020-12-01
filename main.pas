@@ -2412,7 +2412,7 @@ begin
   end;
   writeln(f);
 
-  writeln(f, 'Experiment' + #9+
+  write(f, 'Experiment' + #9+
              'Date' + #9+
              'Start_Time' +#9+
              'Trial_Order_File_No' +#9+
@@ -2466,15 +2466,6 @@ begin
              'taskType' +#9+
              'TMS_s3_SOA' +#9+
              'Experimental_Condition' +#9+
-             'Factor_1' +#9+
-             'Factor_2' +#9+
-             'Factor_3' +#9+
-             'Factor_4' +#9+
-             'Factor_5' +#9+
-             'Factor_6' +#9+
-             'Factor_7' +#9+
-             'Factor_8' +#9+
-             'Factor_9' +#9+
              'response' +#9+
              'Accuracy' +#9+
              'RT_ms' +#9+
@@ -2493,6 +2484,19 @@ begin
             // 'photodiode_threshold'
 
              );
+  write(f,
+    'Factor_1',#9,
+    'Factor_2',#9,
+    'Factor_3',#9,
+    'Factor_4',#9,
+    'Factor_5',#9,
+    'Factor_6',#9,
+    'Factor_7',#9,
+    'Factor_8',#9,
+    'Factor_9');
+
+  writeln(f);
+
   //writeln(f);
   closefile(f);
 
@@ -3829,8 +3833,7 @@ begin
             // floattostr(TMS_s3_SOA) +#9+
              inttostr(TMS_s3_SOA) +#9+
              Experimental_Condition +#9);
-  for i:=low(extraInp.Factor) to High(extraInp.Factor) do
-    write(f, extraInp.Factor[i], #9);
+
   write(f,
              inttostr(observedDataResponseRecord[trialNo]) +#9+
              inttostr(observedDataCorrectResponseRecord[trialNo]) +#9+
@@ -3851,6 +3854,9 @@ begin
              {inttostr(triggerStationRT)   }
 
              );
+  for i:=low(extraInp.Factor) to High(extraInp.Factor) do
+    write(f, extraInp.Factor[i], #9);
+
     writeln(f);
 
     closefile(f);
