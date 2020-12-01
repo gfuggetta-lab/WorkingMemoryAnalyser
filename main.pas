@@ -2484,7 +2484,7 @@ begin
             // 'photodiode_threshold'
 
              );
-  write(f,
+  write(f, #9,
     'Factor_1',#9,
     'Factor_2',#9,
     'Factor_3',#9,
@@ -3854,6 +3854,8 @@ begin
              {inttostr(triggerStationRT)   }
 
              );
+
+  write(f,#9);
   for i:=low(extraInp.Factor) to High(extraInp.Factor) do
     write(f, extraInp.Factor[i], #9);
 
