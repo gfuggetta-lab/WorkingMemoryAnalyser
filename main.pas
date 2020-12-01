@@ -756,6 +756,46 @@ begin
 end;
 //------------------------------------------------------------------------------
 
+
+procedure SplitTabsIntoParts(const ec: string;
+  var Experimental_Condition: string;
+  var extra: TExtraInputData);
+var
+  i : integer;
+  j : integer;
+  idx : integer;
+  t   : string;
+
+  procedure ConsumeT;
+  begin
+    if idx = 0 then
+      Experimental_Condition := t
+    else if idx <= high(extra.Factor) then
+      extra.Factor[idx] := t;
+  end;
+
+begin
+  Experimental_Condition :='';
+  idx := 0;
+  if (length(ec)>0) and (ec[1]=#9) then
+    j:=2
+  else
+    j:=1;
+  for i:=j to length(ec) do begin
+    if ec[i]=#9 then begin
+      t :=Copy(ec, j, i-j);
+      ConsumeT;
+      inc(idx);
+      j:=i+1;
+    end;
+  end;
+  if j<=length(ec) then begin
+    i:=length(ec)+1;
+    t :=Copy(ec, j, i-j);
+    ConsumeT;
+  end;
+end;
+
 //------------------------------------------------------------------------------
  procedure readTrialOrderData(filename: string ;
     sessionNo:integer;
@@ -782,6 +822,7 @@ var
 
   c:integer;
   ff:textfile;
+  ec:string;
 begin
 //showmessage(filename);
   AssignFile(ff, filename);
@@ -806,11 +847,9 @@ begin
     s4_shape, s4_distractor_shape, s4_quad,
     s4_duration,
     Response_Time_after_S4, Feedback_shape, Feedback_duration_after_response_time, ITI_after_feedback,
-    s1_colour, s2_colour_position_1,s2_colour_position_2,s2_colour_position_3,s2_colour_position_4,s2_colour_position_5 ,s3_colour, s3_distractor_colour,s4_colour, s4_distractor_colour, keyMapping, taskType,TMS_s3_SOA,Experimental_Condition,
-    extra.Factor[1],extra.Factor[2],extra.Factor[3],
-    extra.Factor[4],extra.Factor[5],extra.Factor[6],
-    extra.Factor[7],extra.Factor[8],extra.Factor[9]
+    s1_colour, s2_colour_position_1,s2_colour_position_2,s2_colour_position_3,s2_colour_position_4,s2_colour_position_5 ,s3_colour, s3_distractor_colour,s4_colour, s4_distractor_colour, keyMapping, taskType,TMS_s3_SOA,ec
     );
+    SplitTabsIntoParts(ec, Experimental_Condition, extra);
 
   until (dat1=sessionNo);
    { showmessage( 'dat1 :' + inttostr(dat1)  +
