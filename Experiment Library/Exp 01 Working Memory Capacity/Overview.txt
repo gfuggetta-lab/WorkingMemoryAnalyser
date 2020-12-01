@@ -1,0 +1,13 @@
+Experiment:	Exp_01_WM_capacity
+
+This experiment is assessing individual differences in Working memory capacity for both abstract shapes and letters types of working memory load.
+
+You should keep a viewing distance of about 57 centimetres from the screen. If possible, you should use a mouse to respond. You should put the mouse in line with the centre of your screen and your body. The index finger of your left hand should be on the left mouse button. Whereas the index finger of your right hand should be on the right mouse button. If you do not have a mouse, then please use the laptop’s Touchpad.
+
+In this computer task, you will perform 16 training trials and 8 blocks of 32 trials, for a total number of 256 trials. There will be breaks in between the 8 blocks of trials as it a quite a lengthy experiment and fatigue could affect the results.
+
+Please note that this is a Reaction Times (RTs) experiment, so please try to be as quick and as accurate as possible in making your responses.
+
+Please fixate the central fixation dot at the centre of the screen while performing the computer task.  If you need to blink, you can do it after the feedback. 
+
+Thank you.
