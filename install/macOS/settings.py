@@ -1,7 +1,7 @@
-files = [ '../../Working Memory Analyzer.app', '../../Experiment Library' ]
+files = [ './diskimage/Working Memory Analyser.app', './diskimage/Experiment Library' ]
 symlinks = { 'Applications': '/Applications' }
 icon_locations = {
-    'Working Memory Analyzer.app': (100, 100),
+    'Working Memory Analyser.app': (100, 100),
     'Applications': (300, 100),
     'Experiment Library': (100, 300)
 }
