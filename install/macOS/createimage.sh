@@ -1,1 +1,2 @@
-hdiutil create ./WorkingMemoryAnalyser.dmg -ov -volname "Working Memory Analyser" -fs HFS+ -srcfolder "./diskimage"
+cp -r "../../scms_project_1.app" "../../Working Memory Analyzer.app"
+dmgbuild -s settings.py "Working Memory Analyzer" wma.dmg
