@@ -33,11 +33,11 @@ PrivilegesRequired=lowest
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Tasks]
-Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
 
 [Files]
 
-Source: "scms_project_1.exe"; DestDir: "{app}"; DestName: "Working Memory Analyser.exe"; Flags: ignoreversion
+Source: "scms_project_1.exe"; DestDir: "{app}"; DestName: "{#MyAppExeName}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 Source: "zlib1.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "libfreetype-6.dll"; DestDir: "{app}"; Flags: ignoreversion
@@ -58,8 +58,8 @@ Name: "{userdocs}\Working Memory Analyser\Exp 01 Working Memory Capacity\Output 
 Name: "{userdocs}\Working Memory Analyser\Exp 02 Working Memory Load and Distractor processing\Output Data"; Permissions: users-modify; 
 
 [Icons]
-Name: "{commonprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
-Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
+Name: "{userprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
+Name: "{userdesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
