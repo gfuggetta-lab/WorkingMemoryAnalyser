@@ -129,6 +129,11 @@ end;
 procedure TConsentForm.FormCreate(Sender: TObject);
 begin
   RichMemo1.OnLinkAction := ConsentLink;
+  {$ifdef LCLCocoa}
+  Label1.Font.Size:=10;
+  Label2.Font.Size:=10;
+  Label3.Font.Size:=10;
+  {$endif}
   Label1.Caption:='I have read this form (or a person with parental responsibility have read the information for children under the age of 16), and consent to participate, and understand what is required.';
   Label2.Caption:='I am aware that I can withdraw at any time by pressing “Esc” while the computer task is running.';
   Label3.Caption:='I understand I can withdraw my data after the experiment has finished, up to 4 months from my participation by emailing the researcher with my unique Participant ID code.';
