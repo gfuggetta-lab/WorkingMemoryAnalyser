@@ -66,8 +66,7 @@ end;
 
 procedure TParticipantIDForm.FormShow(Sender: TObject);
 begin
-
-  if not ShowConsentForm('participant_consent.rtf') then begin
+  if not ShowConsentForm(GetConsentFileName) then begin
     Close;
   end;
 end;
@@ -117,7 +116,14 @@ begin
   {$ifdef mswindows}
   Result:=ConsentFileName;
   {$else}
+  {$ifdef darwin}
+  Result := ExpandFileName(Application.ExeName);
+  Result := ExtractFileDir(Result);
+  Result := ExtractFilePath(Result);
+  Result := Result+'Resources/'+ConsentFileName;
+  {$else}
   Result:=ConsentFileName;
+  {$endif}
   {$endif}
 end;
 
