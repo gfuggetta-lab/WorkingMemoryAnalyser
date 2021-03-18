@@ -31,18 +31,19 @@ object AboutForm: TAboutForm
     Width = 614
     Anchors = [akTop, akLeft, akRight, akBottom]
     Lines.Strings = (
-      'Working Memory Analyser (Version 1.0.3)'
+      'Working Memory Analyser (Version 1.0.2)'
       ''
       'Copyright © 2020 – 2021 by Phil Duke and Giorgio Fuggetta. All rights reserved.'
       ''
       'Contribution:'
       ''
-      'Dr Phil Duke (email: pad11@leicester.ac.uk) conceived and primarily developed the software for Windows.'
+      'Dr Phil Duke (email: pad11@leicester.ac.uk), conceived and primarily developed the software for Windows.'
       ''
-      'Dr Giorgio Fuggetta (email: giorgio.fuggetta@roehampton.ac.uk) conceived the software and created the sequences of cognitive tasks available as part of the software''s experiment library. '
+      'Dr Giorgio Fuggetta (email: giorgio.fuggetta@roehampton.ac.uk), conceived the software, its data-processing modules and created the sequences of cognitive tasks available as part of the software's experiment library. '
       ''
       'skalogryz (email: unspecified), additional developed, optimised and compiled the software for MacOS.'
       ''
+      'Howard Page-Clark (email: pageclarkhoward@gmail.com), refactored earlier code to make the experiment resource-based rather than file-based, and developed the wizard interface and data-processing modules. '
       ''
       'The latest version of Working Memory Analyser and updated experiment library can be downloaded from: https://github.com/gfuggetta-lab/WorkingMemoryAnalyser/releases '
       ''
