@@ -45,6 +45,8 @@ Source: "SDL2_mixer.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "inpout32.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "SDL2_ttf.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "SDL2.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "libpng16-16.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "SDL2_image.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "participant_consent.rtf"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Sounds\correct.wav"; DestDir: "{app}\Sounds"; Flags: ignoreversion
 Source: "Sounds\incorrect.wav"; DestDir: "{app}\Sounds"; Flags: ignoreversion
