@@ -5,7 +5,7 @@ unit loadImages;
 interface
 
 uses
-  Classes, SysUtils,SDL2,gl,glu, dialogs;
+  Classes, SysUtils,SDL2,gl,glu, dialogs, sdl2_image;
 
 function  LoadGLTextures():integer;
 procedure  LoadGLTexture(pathAndFilename: pchar; var textureID : GLUint; var widthPixels, heightPixels: integer);
@@ -199,44 +199,45 @@ end;
 //------------------------------------------------------------------------------
 
 
+function TryToLoadImage(const fnNoExt: string): PSDL_Surface;
+var
+  fn  : string;
+  i   : integer;
+const
+  ext : array [0..1] of string = ('.png','.bmp');
+begin
+  Result := nil;
+  for i:=0 to length(ext)-1 do begin
+    fn := ChangeFileExt(fnNoExt, ext[i]);
+    if fileExists(fn) then begin
+      // showmessage(BMPimageFilename + '  ok');
+      Result := IMG_Load(PAnsiChar(fn));
+      if Assigned(Result) then EXit;
+    end;
+  end;
+end;
 
 //------------------------------------------------------------------------------
 // load BMP images with filenames 300.bmp up to 399.bmp
 function loadBMPimages (experiment_dir: string; var BMPimages : array of TBMPimages): integer;
-
 var
-    c : integer;
-    BMPimageFilename: string;
-
+  c   : integer;
+  fn  : string;
 begin
   Result := 0;
   for c:=0 to 99 do
   begin
-    BMPimageFilename := experiment_dir + 'Stimulus images' + PathDelim + {'Image_'+} inttostr(c+300)+'.bmp';
-    if fileExists(BMPimageFilename) then
-    begin
-    // showmessage(BMPimageFilename + '  ok');
-    BMPimages[c].TextureImage := SDL_LoadBMP(pchar(BMPimageFilename));
-    end;
+    fn := experiment_dir + 'Stimulus images' + PathDelim + {'Image_'+} inttostr(c+300);
+    BMPimages[c].TextureImage := TryToLoadImage(fn);
   end;
 
   // load 'correct.bmp'
-  BMPimageFilename := experiment_dir + 'Stimulus images' + PathDelim + 'correct.bmp';
-  if fileExists(BMPimageFilename) then
-  begin
-    // showmessage(BMPimageFilename + '  ok');
-    BMPimages[100].TextureImage := SDL_LoadBMP(pchar(BMPimageFilename));
-  end;
+  fn := experiment_dir + 'Stimulus images' + PathDelim + 'correct';
+  BMPimages[100].TextureImage := TryToLoadImage(fn);
 
   // load 'correct.bmp'
-  BMPimageFilename := experiment_dir + 'Stimulus images' + PathDelim + 'incorrect.bmp';
-  if fileExists(BMPimageFilename) then
-  begin
-    // showmessage(BMPimageFilename + '  ok');
-    BMPimages[101].TextureImage := SDL_LoadBMP(pchar(BMPimageFilename));
-  end;
-
-
+  fn := experiment_dir + 'Stimulus images' + PathDelim + 'incorrect';
+  BMPimages[101].TextureImage := TryToLoadImage(fn);
 end;
 //------------------------------------------------------------------------------
 

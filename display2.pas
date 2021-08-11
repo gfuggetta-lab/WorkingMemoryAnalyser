@@ -20,7 +20,7 @@ uses
   LCLType, LCLIntf,
   SysUtils, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, Useful, ExtCtrls, Menus,SDL2,gl,glu,
-  GLTextureDistortion, Buttons,{logger,}SDL2_Mixer;
+  GLTextureDistortion, Buttons,{logger,}SDL2_Mixer, sdl2_image;
 
 
 const
@@ -905,6 +905,7 @@ end;
     TerminateApplication;
   end;
 
+  IMG_Init(IMG_INIT_PNG);
 
   surface:= SDL_CreateWindow(
     'My window',
