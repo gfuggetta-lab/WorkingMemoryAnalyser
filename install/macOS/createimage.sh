@@ -9,6 +9,7 @@ mkdir "./diskimage/Working Memory Analyser.app/Contents/Frameworks"
 cp -r /Library/Frameworks/SDL2.framework "./diskimage/Working Memory Analyser.app/Contents/Frameworks/"
 cp -r /Library/Frameworks/SDL2_mixer.framework "./diskimage/Working Memory Analyser.app/Contents/Frameworks/"
 cp -r /Library/Frameworks/SDL2_ttf.framework "./diskimage/Working Memory Analyser.app/Contents/Frameworks/"
+cp -r /Library/Frameworks/SDL2_image.framework "./diskimage/Working Memory Analyser.app/Contents/Frameworks/"
 
 mkdir "./diskimage/Experiment Library"
 cp -r "../../Experiment Library/Exp 01 Working Memory Capacity" "./diskimage/Experiment Library/"
