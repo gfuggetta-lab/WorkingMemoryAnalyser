@@ -13,9 +13,7 @@ uses
   Unit2 in 'Unit2.pas' {Form2},
   aboutFormUnit in 'aboutFormUnit.pas' {AboutForm},
   ParticipantID in 'ParticipantID.pas' {ParticipantIDForm},
-  Display2 in 'Display2.pas'; {Displayenviroform)
-
-{$R *.res}
+  Display2 in 'Display2.pas'; {Displayenviroform}
 
 {$R *.res}
 

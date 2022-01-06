@@ -39,7 +39,7 @@ object AboutForm: TAboutForm
       ''
       'Dr Phil Duke (email: pad11@leicester.ac.uk), conceived and primarily developed the software for Windows.'
       ''
-      'Dr Giorgio Fuggetta (email: giorgio.fuggetta@roehampton.ac.uk), conceived the software, its data-processing modules and created the sequences of cognitive tasks available as part of the software's experiment library. '
+      'Dr Giorgio Fuggetta (email: giorgio.fuggetta@roehampton.ac.uk), conceived the software, its data-processing modules and created the sequences of cognitive tasks available as part of the software''s experiment library. '
       ''
       'skalogryz (email: unspecified), additional developed, optimised and compiled the software for MacOS.'
       ''
