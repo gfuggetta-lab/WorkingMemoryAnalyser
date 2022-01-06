@@ -3898,7 +3898,8 @@ begin
 
   write(f,#9);
   for i:=low(extraInp.Factor) to High(extraInp.Factor) do
-    write(f, extraInp.Factor[i], #9);
+    // trim() is used because sometimes input file might be entered with line breaks or tabs
+    write(f, trim(extraInp.Factor[i]), #9);
 
     writeln(f);
 
