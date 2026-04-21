@@ -1,0 +1,15 @@
+Experiment:	Modified_delayed_match-to-sample_task_with_complex_shapes
+
+This experiment, is assessing the effect of loading information in Visual Working Memory (VWM) on distractibility of task-irrelevant visual information.
+
+Further information about the details of the current visual paradigm (i.e., modified delayed match-to-sample task) can be found in this publication:
+
+Fuggetta, G., Duke, P. A., Chakraborty, R., Murugesan, P., Cocciarelli, J., & Delibashi, E. (2025). The Impact of State Depression on Proactive Control and Distractor Processing in a Memory Task: An Electrophysiological Study. Applied Sciences, 15(6), 3069. https://doi.org/10.3390/app15063069
+
+You should maintain a viewing distance of 57 centimetres from the screen. If possible, you should use a response box. The response box should be positioned in line with the centre of the screen and your body. The index finger of your left hand should rest on the left button, whereas the index finger of your right hand should rest on the right button.
+
+In this computer task, you will complete 20 practice trials followed by 8 blocks of 64 trials, giving a total of 512 trials. There will be breaks between the 8 blocks, as this is quite a lengthy experiment and fatigue could affect the results.
+
+Please note that this is a Reaction Times (RTs) experiment, so please try to be as quick and as accurate as possible in making your responses.
+
+You should fixate on the central dot in the middle of the screen while performing the task. If you need to blink, you may do so after the response.

@@ -1,0 +1,40 @@
+13/04/2026
+16:26:14
+ParticipantID: AAA0101
+Age: 10
+Sex: Female
+
+Experiment:	Modified_delayed_match-to-sample_task_with_complex_shapes
+N_trials_before_pause_training:	16
+N_trials_before_pause_main:	16
+Instructions_ODD_participants:	odd.bmp
+Instructions_EVEN_participants:	even.bmp
+Pause_background_circle_colour:		18,18,18
+Run_background_circle_colour:		38,38,38
+Fixation_colour:		72,72,72
+Placeholders_colour:		38,38,38
+Incorrect_feedback_colour:		170,0,0
+Correct_feedback_colour:		0,101,0
+Shapes_colour_0:	72,72,72
+Shapes_colour_1:	146,0,0
+Shapes_colour_2:	0,85,0
+Shapes_colour_3:	0,0,255
+Shapes_colour_4:	74,74,0
+Shapes_colour_5:	130,0,130
+Shapes_colour_6:	72,72,72
+Shapes_colour_7:	0,83,83
+Shapes_colour_8:	96,65,0
+Shapes_colour_9:	72,72,72
+Shapes_colour_10:	72,72,72
+Shapes_colour_11:	104,0,200
+Shapes_colour_12:	85,85,85
+Shapes_colour_13:	0,0,0
+Shapes_colour_14:	0,0,0
+Shapes_colour_15:	0,0,0
+
+Experiment	Date	Start_Time	Trial_Order_File_No	ParticipantID	Age	sex	Handedness	Display_Type	Observer_number	session_no	s1_marker	s2_marker	s3_marker	s4_marker	s1_shape	s1_sound	s1_quad	s1_duration	s1_s2_isi	s2_shape_position_1(NW)	s2_shape_position_2(NE)	s2_shape_position_3(SE)	s2_shape_position_4(SW)	s2_shape_position_5(centre)	s2_sound	s2_duration	s2_s3_isi	s3_shape	s3_distractor_shape	s3_sound	s3_quad	s3_duration	s3_s4_isi	s4_shape	s4_distractor_shape	s4_sound	s4_quad	s4_duration	Response_Time_after_S4	Feedback_shape	Feedback_sound	Feedback_duration_after_response_time	ITI_after_feedback	s1_colour	s2_colour_position_1(NW)	s2_colour_position_2(NE)	s2_colour_position_3(SE)	s2_colour_position_4(SW)	s2_colour_position_5(centre)	s3_colour	s3_distractor_colour	s4_colour	S4_distractor_colour	keyMapping	taskType	TMS_s3_SOA	Experimental_Condition	response	Accuracy	RT_ms	RT_ms_minus_constant_error	s1_onsetTime_ms	s2_onsetTime_ms	s3_onsetTime_ms	TMS_onsetTime_ms	s4_onsetTime_ms	response_onsetTime_ms	feedback_onsetTime_ms	blank_onsetTime_ms	user_paused_the_trial	Factor_1	Factor_2	Factor_3	Factor_4	Factor_5	Factor_6	Factor_7	Factor_8	Factor_9
+Modified_delayed_match-to-sample_task_with_complex_shapes	13/04/2026	16:26:14	1	AAA0101	10	Female	Left	Config file	0	1	0	0	0	0	43	1	6	500	500	10	329	10	305	0	2	2000	800	4	10	3	3	200	800	329	0	4	1	500	1800	13	1	200	300	0	0	0	0	0	0	0	0	0	0	0	1	-100000	Training_DisTaskSet_No_0000	0	0	800	751	2016	3015	5812	0	6811	7611	9092	9592	0	Training_	DisTaskSet_No_	0	0	0	0	0	0	0	
+Modified_delayed_match-to-sample_task_with_complex_shapes	13/04/2026	16:26:14	1	AAA0101	10	Female	Left	Config file	0	1	0	0	0	0	43	1	6	500	500	10	318	10	10	0	2	2000	800	4	10	3	1	200	800	304	0	4	1	500	1800	13	1	200	300	0	0	0	0	0	0	0	0	0	0	0	1	-100000	Training_DisTaskSet_No_0000	0	1	784	735	9609	10608	13405	0	14405	15189	16685	17185	0	Training_	DisTaskSet_No_	0	0	0	0	0	0	0	
+Modified_delayed_match-to-sample_task_with_complex_shapes	13/04/2026	16:26:14	1	AAA0101	10	Female	Left	Config file	0	1	0	0	0	0	43	1	6	500	500	328	10	314	10	0	2	2000	800	4	10	3	1	200	800	308	0	4	2	500	1800	13	1	200	300	0	0	0	0	0	0	0	0	0	0	0	1	-100000	Training_DisTaskSet_No_0000	1	0	949	900	17202	18201	20998	0	21998	22947	24279	24778	0	Training_	DisTaskSet_No_	0	0	0	0	0	0	0	
+Modified_delayed_match-to-sample_task_with_complex_shapes	13/04/2026	16:26:14	1	AAA0101	10	Female	Left	Config file	0	1	0	0	0	0	43	1	6	500	500	10	325	10	316	0	2	2000	800	4	10	3	3	200	800	325	0	4	3	500	1800	13	1	200	300	0	0	0	0	0	0	0	0	0	0	0	1	-100000	Training_DisTaskSet_No_0000	0	0	2083	2034	24795	25793	28592	0	29590	31673	31872	32371	0	Training_	DisTaskSet_No_	0	0	0	0	0	0	0	
+Modified_delayed_match-to-sample_task_with_complex_shapes	13/04/2026	16:26:14	1	AAA0101	10	Female	Left	Config file	0	1	0	0	0	0	43	1	6	500	500	329	10	10	307	0	2	2000	800	4	10	3	1	200	800	309	0	4	2	500	1800	13	1	200	300	0	0	0	0	0	0	0	0	0	0	0	1	-100000	Training_DisTaskSet_No_0000	0	1	1100	1051	32388	33387	36184	0	37183	38283	39465	39964	0	Training_	DisTaskSet_No_	0	0	0	0	0	0	0	
