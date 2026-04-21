@@ -123,7 +123,7 @@ end;
 
 procedure TConsentForm.Label1Click(Sender: TObject);
 begin
-  CheckBox1.Checked:=not CheckBox1.Checked;
+ CheckBox1.Checked:=not CheckBox1.Checked;
 end;
 
 procedure TConsentForm.FormCreate(Sender: TObject);
@@ -145,6 +145,7 @@ begin
     ModalResult:=mrOK
   else
     ModalResult:=mrCancel;
+ // ModalResult:=mrOK
 end;
 
 end.

@@ -1,7 +1,7 @@
 object Form2: TForm2
-  Left = 353
+  Left = -478
   Height = 541
-  Top = 0
+  Top = 169
   Width = 800
   Caption = 'Instructions'
   ClientHeight = 541
@@ -12,7 +12,7 @@ object Form2: TForm2
   Font.Name = 'MS Sans Serif'
   OnResize = FormResize
   Position = poDesktopCenter
-  LCLVersion = '2.0.8.0'
+  LCLVersion = '2.0.12.0'
   Scaled = False
   WindowState = wsMaximized
   object Button1: TButton

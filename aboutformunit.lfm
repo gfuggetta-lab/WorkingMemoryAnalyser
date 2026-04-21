@@ -1,7 +1,7 @@
 object AboutForm: TAboutForm
-  Left = 437
+  Left = -378
   Height = 381
-  Top = 123
+  Top = 243
   Width = 631
   BorderIcons = []
   Caption = 'About'
@@ -12,7 +12,7 @@ object AboutForm: TAboutForm
   OnKeyPress = FormKeyPress
   OnResize = FormResize
   Position = poOwnerFormCenter
-  LCLVersion = '2.0.4.0'
+  LCLVersion = '2.0.12.0'
   object btnClose: TButton
     Left = 120
     Height = 25
@@ -31,25 +31,21 @@ object AboutForm: TAboutForm
     Width = 614
     Anchors = [akTop, akLeft, akRight, akBottom]
     Lines.Strings = (
-      'Working Memory Analyser (Version 1.0.2)'
+      'Working Memory Analyser (Version 1.2) Last updated on: 28 March 2026'
       ''
-      'Copyright © 2020 – 2021 by Phil Duke and Giorgio Fuggetta. All rights reserved.'
+      'Copyright (c) 2026 by Phil Duke and Giorgio Fuggetta'
       ''
       'Contribution:'
       ''
-      'Dr Phil Duke (email: pad11@leicester.ac.uk), conceived and primarily developed the software for Windows.'
+      'Dr Phil Duke (email: pad11@leicester.ac.uk) conceived and primarily developed the software for Windows.'
       ''
-      'Dr Giorgio Fuggetta (email: giorgio.fuggetta@roehampton.ac.uk), conceived the software, its data-processing modules and created the sequences of cognitive tasks available as part of the software''s experiment library. '
+      'Dr Giorgio Fuggetta (email: giorgio.fuggetta@kcl.ac.uk) conceived the software and created the sequences of cognitive tasks available as part of the software''s experiment library. '
       ''
       'skalogryz (email: unspecified), additional developed, optimised and compiled the software for MacOS.'
       ''
-      'Howard Page-Clark (email: pageclarkhoward@gmail.com), refactored earlier code to make the experiment resource-based rather than file-based, and developed the wizard interface and data-processing modules. '
+      'The latest version of Working Memory Analyser and updated experiment library can be downloaded from: https://github.com/gfuggetta-lab/WorkingMemoryAnalyser'
       ''
-      'The latest version of Working Memory Analyser and updated experiment library can be downloaded from: https://github.com/gfuggetta-lab/WorkingMemoryAnalyser/releases '
-      ''
-      'This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License v3.0 or later. '
-      ''
-      'This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. '
+      'This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License v3.0. '
     )
     ReadOnly = True
     ScrollBars = ssAutoVertical

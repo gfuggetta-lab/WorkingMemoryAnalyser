@@ -913,7 +913,7 @@ end;
     SDL_WINDOWPOS_UNDEFINED,
     width,
     height,
-   SDL_WINDOW_FULLSCREEN or SDL_WINDOW_OPENGL);
+   SDL_WINDOW_FULLSCREEN {SDL_WINDOW_RESIZABLE} or SDL_WINDOW_OPENGL);
 
 
   glcontext := SDL_GL_CreateContext(surface);

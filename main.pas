@@ -20,7 +20,7 @@ uses
   Useful, GLTextureDistortion, Display2, Timing, math, IOR_Shapes, FileUtil, inputfileunit1, ParticipantID, loadImages
   ,Menus
   ,edidMonitorUtils, aboutFormUnit
-  ,successResultForm
+  ,successResultForm , SynaSer   , usbserialunit
   {$ifdef triggerstation}
   ,TriggerStationDevice_DLL_1_0_TLB
   {$endif}
@@ -49,12 +49,15 @@ type
     ComboBox5: TComboBox;
     ComboBox6: TComboBox;
     ComboBox7: TComboBox;
+    ComboBox8: TComboBox;
     Edit3: TEdit;
+    Label10: TLabel;
     Label11: TLabel;
     Label12: TLabel;
     Label13: TLabel;
     Label14: TLabel;
     Label15: TLabel;
+    Label16: TLabel;
     Label5: TLabel;
     Label7: TLabel;
     Label8: TLabel;
@@ -73,6 +76,7 @@ type
     ComboBox3: TComboBox;
     Label4: TLabel;
     Label6: TLabel;
+    ScrollBar1: TScrollBar;
 
     procedure Button3Click(Sender: TObject);
     procedure btnAboutClick(Sender: TObject);
@@ -80,6 +84,8 @@ type
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure Label16Click(Sender: TObject);
+
     procedure ShowControlsIfReady(Sender: TObject);
 
 
@@ -113,11 +119,14 @@ type
 
 
 
-
-
 var
 
-  //----------------------------------------------------
+
+ // USB serial device object for LUFA USB serial device
+ lufaUSBserial : TBlockSerial;
+ isLufaUSBserial : boolean = false;
+
+ //----------------------------------------------------
   // TriggerStation variables     - not used with fmri
   {$ifdef triggerstation}
   TriggerStation: ITriggerStationDevice;
@@ -140,6 +149,7 @@ var
 
   //SDL sound
   sounds: array[0..2] of PMix_Chunk;
+  sounds_numbered: array[0..10000] of PMix_Chunk;
 
   //display lists
   DL_CIRCLE, DL_HEX, DL_DIAMOND, DL_CIRCLE_BACKGROUND, DL_CIRCLE_OUTLINE,DL_TRIANGLE, DL_BOX, DL_RING, DL_CROSS,
@@ -147,8 +157,6 @@ var
   rr: float = 0;
   gg: float = 0;
   bb: float = 0;
-
-
 
 
   colours: array [0..15] of TcolourReal;
@@ -177,9 +185,11 @@ var
 
   IS_SUSPENDED    :boolean = false;
 
-  BMPimages : array [0..101] of TBMPimages;
+  BMPimages : array [0..10000] of TBMPimages;
 
   const
+
+    ISGREYBOXLOG = FALSE;  // log data received from grey box
 
     // Display device definitions, as they appear on the display radiobox
     DISPLAY_GIORGIO_GSYNC = 1;
@@ -196,8 +206,6 @@ var
 
      SCALE_FACTOR = 1;// (23/29.8);
 
-
-
     PHOTODIODE_PATCH_SIZE_CM = 1;
 
     MAX_PAUSE_TRIALS = 100;
@@ -205,6 +213,7 @@ var
 
 
 implementation
+
 
 uses Unit2;
 
@@ -223,6 +232,29 @@ type
 var
   GLOBAL_pollKey1: TSDL_KeyCode = SDLK_a;
   GLOBAL_pollKey2: TSDL_KeyCode = SDLK_f;
+
+
+
+
+  //------------------------------------------------------------------------------
+function BoxReceiveString(ser : TBlockSerial) : string;
+var txt : string;
+begin
+  txt:='';
+  while ser.canread(0) do begin        //reads buffer empty each cycle
+    //  Write(chr(ser.RecvByte(0)));  //IntToHex for binary
+    txt := ser.RecvString(0);
+  end;
+  if (txt  = '') then begin
+     result :='';
+  end
+  else
+  begin
+    result := txt
+  end;
+end;
+//------------------------------------------------------------------------------
+
 
 
 //------------------------------------------------------------------------------
@@ -267,6 +299,14 @@ end;
 // Terminate program
 procedure TerminateApplication;
 begin
+
+  if (isLufaUSBserial) then begin
+  //lufaUSBserial.sendstring('M 0 I 2 0 O 1 0');
+  //lufaUSBserial.sendstring('X');
+
+  lufaUSBserial.free;
+  end ;
+
   Mix_CloseAudio;
   SDL_QUIT;
   //UnLoadOpenGL;
@@ -274,14 +314,12 @@ begin
 end;
 //------------------------------------------------------------------------------
 
-
 //------------------------------------------------------------------------------
 function DegToCm(deg:real; distance: real):real;
 begin
   result := (((deg/2) * (pi/180)) * distance) *2;
 end;
 //------------------------------------------------------------------------------
-
 
 //------------------------------------------------------------------------------
 // A general OpenGL initialisation function.
@@ -468,27 +506,42 @@ begin
  //(XCoord,Ycoord,ZCoord, OuterRadius,LineWidth:real; Npoints:integer;  Colour:array of real; filled:boolean);
 // coords are cm, Size is degrees
 
-  circle(0,0,-ef.distance,sizeCm/2,0,10,[colour.r, colour.g, colour.b,1],true);
+  circle(0,0,-ef.distance+2.25,sizeCm/2,0,10,[colour.r, colour.g, colour.b,1],true);
 
 end;
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 // Return a string filename to access a file
-function DataFile(filename: string): string;
+function zDataFile(filename: string): string;
 begin
   result := PChar(currentDir + PathDelim+'Sounds'+ PathDelim + filename);
 end;
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-procedure loadSounds;
+procedure loadSounds (experiment_dir:string);
+var c:    integer ;
+var fname : string;
+var fpath : string;
 begin
+
+fpath :=experiment_dir  + 'Stimulus sounds' + PathDelim;
 
 //  sounds[ord(BEEP_WAV)] := Mix_LoadWAV( PChar( DataFile( 'beep.wav' ) ) );
 //  sounds[ord(HIBEEP_WAV)] := Mix_LoadWAV( PChar( DataFile( 'hibeep.wav' ) ) );
-  sounds[ord(CORRECT_WAV)] := Mix_LoadWAV( PChar( DataFile( 'correct.wav' ) ) );
-  sounds[ord(INCORRECT_WAV)] := Mix_LoadWAV( PChar( DataFile( 'incorrect.wav' ) ) );
+  sounds[ord(CORRECT_WAV)] := Mix_LoadWAV( PChar( fpath + 'correct.wav' ) );
+  sounds[ord(INCORRECT_WAV)] := Mix_LoadWAV( PChar( fpath +  'incorrect.wav'  ) );
+
+
+  for c:=0 to 10000 do
+  begin
+      fname :=  inttostr(c) +'.wav' ;
+      if fileexists(fpath + fname) then
+      begin
+           sounds_numbered[c] := Mix_LoadWAV( PChar(fpath + fname ));
+      end;
+  end;
 end;
 //------------------------------------------------------------------------------
 
@@ -552,6 +605,53 @@ begin
   closeFile(f);
 end;
 //------------------------------------------------------------------------------
+
+
+//------------------------------------------------------------------------------
+// APPEND string to a file
+procedure WriteStringToLog(text:string);
+var
+f:    TextFile;
+
+filename:string;
+aDateTime : TDateTime;
+
+begin
+  if((text<>'') and (ISGREYBOXLOG)) then
+  begin
+    FileName := Application.location + '/greyboxlog.txt';
+    AssignFile(f, FileName);
+    if FileExists(FileName) then
+    begin
+      Append(f);
+    end
+    else
+    begin
+      Rewrite(f);
+    end;
+
+    writeln(f,dateTimeToStr(now) + chr(9) + text);
+    CloseFile(F);
+  end;
+end;
+//------------------------------------------------------------------------------
+
+
+//------------------------------------------------------------------------------
+procedure LufaUSBlog(ser : TBlockSerial);
+var
+ strg : string='';
+
+begin
+  strg:='';
+  repeat
+    strg := BoxReceiveString(lufaUSBserial)   ;
+    WriteStringToLog(strg);
+  until (strg ='');
+end;
+//------------------------------------------------------------------------------
+
+
 
 //------------------------------------------------------------------------------
 procedure SaveBMP;
@@ -634,7 +734,7 @@ begin
               SDLK_ESCAPE :
               begin
                 TerminateApplication;
-                raise ExperimentTerminateException.Create('User pressed escape');
+               // raise ExperimentTerminateException.Create('User pressed escape');
               end;
 
               SDLK_PRINTSCREEN :
@@ -802,15 +902,15 @@ end;
     trialNo:integer;
     var s1_marker,s2_marker,s3_marker, s4_marker:integer;
    // var TMS_marker: integer;
-    var s1_shape, s1_cue_quad:integer;
+    var s1_shape, s1_sound, s1_cue_quad:integer;
     var s1_duration, s1_s2_isi:integer;
-    var s2_shape_position_1, s2_shape_position_2, s2_shape_position_3, s2_shape_position_4, s2_shape_position_5  :integer;
+    var s2_shape_position_1, s2_shape_position_2, s2_shape_position_3, s2_shape_position_4, s2_shape_position_5, s2_sound  :integer;
     var s2_duration, s2_s3_isi:integer;
-    var s3_shape, s3_distractor_shape, s3_quad:integer;
+    var s3_shape, s3_distractor_shape, s3_sound, s3_quad:integer;
     var s3_duration, s3_s4_isi:integer;
-    var s4_shape, s4_distractor_shape, s4_quad:integer;
+    var s4_shape, s4_distractor_shape, s4_sound, s4_quad:integer;
     var s4_duration:integer;
-    var Response_Time_after_S4, Feedback_shape, Feedback_duration_after_response_time, ITI_after_feedback  : integer;
+    var Response_Time_after_S4, Feedback_shape, Feedback_sound, Feedback_duration_after_response_time,  ITI_after_feedback  : integer;
     var s1_colour, s2_colour_position_1, s2_colour_position_2, s2_colour_position_3, s2_colour_position_4, s2_colour_position_5 ,s3_colour, s3_distractor_colour,s4_colour, s4_distractor_colour, keyMapping, taskType:integer;
     var TMS_s3_SOA:integer;
     var Experimental_Condition: string;
@@ -838,15 +938,15 @@ begin
   // advance to the specified sessionNo
   repeat
     readln(ff,dat1,s1_marker,s2_marker,s3_marker, s4_marker, {TMS_marker,  }
-    s1_shape, s1_cue_quad,
+    s1_shape, s1_sound, s1_cue_quad,
     s1_duration, s1_s2_isi,
-    s2_shape_position_1, s2_shape_position_2, s2_shape_position_3, s2_shape_position_4,s2_shape_position_5,
+    s2_shape_position_1, s2_shape_position_2, s2_shape_position_3, s2_shape_position_4,s2_shape_position_5,  s2_sound,
     s2_duration, s2_s3_isi,
-    s3_shape, s3_distractor_shape, s3_quad,
+    s3_shape, s3_distractor_shape, s3_sound, s3_quad,
     s3_duration, s3_s4_isi,
-    s4_shape, s4_distractor_shape, s4_quad,
+    s4_shape, s4_distractor_shape, s4_sound, s4_quad,
     s4_duration,
-    Response_Time_after_S4, Feedback_shape, Feedback_duration_after_response_time, ITI_after_feedback,
+    Response_Time_after_S4,  Feedback_shape, Feedback_sound, Feedback_duration_after_response_time,  ITI_after_feedback,
     s1_colour, s2_colour_position_1,s2_colour_position_2,s2_colour_position_3,s2_colour_position_4,s2_colour_position_5 ,s3_colour, s3_distractor_colour,s4_colour, s4_distractor_colour, keyMapping, taskType,TMS_s3_SOA
     ,ec
     );
@@ -863,15 +963,15 @@ begin
   for c:=1 to trialno do
   begin
    readln(ff,dat1,s1_marker,s2_marker,s3_marker, s4_marker, {TMS_marker,  }
-    s1_shape, s1_cue_quad,
+    s1_shape, s1_sound, s1_cue_quad,
     s1_duration, s1_s2_isi,
-    s2_shape_position_1, s2_shape_position_2, s2_shape_position_3, s2_shape_position_4,s2_shape_position_5,
+    s2_shape_position_1, s2_shape_position_2, s2_shape_position_3, s2_shape_position_4,s2_shape_position_5,   s2_sound,
     s2_duration, s2_s3_isi,
-    s3_shape, s3_distractor_shape, s3_quad,
+    s3_shape, s3_distractor_shape, s3_sound, s3_quad,
     s3_duration, s3_s4_isi,
-    s4_shape, s4_distractor_shape, s4_quad,
+    s4_shape, s4_distractor_shape, s4_sound,  s4_quad,
     s4_duration,
-    Response_Time_after_S4, Feedback_shape, Feedback_duration_after_response_time, ITI_after_feedback,
+    Response_Time_after_S4, Feedback_shape, Feedback_sound, Feedback_duration_after_response_time,  ITI_after_feedback,
     s1_colour, s2_colour_position_1,s2_colour_position_2,s2_colour_position_3,s2_colour_position_4,s2_colour_position_5 ,s3_colour, s3_distractor_colour,s4_colour, s4_distractor_colour, keyMapping, taskType,TMS_s3_SOA
     ,ec);
     SplitTabsIntoParts(ec, Experimental_Condition, extra);
@@ -1137,23 +1237,22 @@ begin
       drawTextStim(pfontStim1,shapeCol,Run_background_circle_colour,x,y,char(shapeNo));
     end;
 
-  300..397:
+  300..10300:
     begin
        displayBMPimageXYSizeCm(BMPimages[shapeNo-300], x,y, ef.WidthCM, ef.heightCM
          , ImageSizeCm, ImageSizeCm);
     end;
-
+  {
   1033..1255:
     begin
       drawTextStim(pfontStim2,shapeCol,Run_background_circle_colour,x,y,char(shapeNo-1000));
     end;
-
+     }
   end;
 end;
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-
 procedure drawBackgroundFixation(fixSpotSizeCM:real; contextColour:TcolourReal;
   AFixation_colour: TcolourReal);
 begin
@@ -1680,9 +1779,38 @@ begin
   GLOBAL_pollKey2:=TSDL_KeyCode(key2);
 end;
 
+
+
+
+//------------------------------------------------------------------------------
+procedure LufaUSBwrite(ser : TBlockSerial; s : string; wait_ms : integer);
+begin
+
+      if (ser.CanWrite(1)) then
+      begin
+        ser.sendstring( s);
+        sleep(wait_ms);
+
+        if (ISGREYBOXLOG) then begin
+          lufaUSBlog(lufaUSBserial);
+        end;
+      end
+      else
+      begin
+        showmessage('not ready');
+      end;
+
+end;
+
+
+
+
+
 function TForm1.RunExperiment(Sender: TObject): Boolean;
 
 var
+  PMix_mus: PMix_Music;
+
   DataValue :word; //DAS6014 auxport vals
 
   configDataFilename :string;
@@ -1745,19 +1873,19 @@ var
 
 
 
-  s1_shape, s1_quad: integer;
+  s1_shape, s1_sound, s1_quad: integer;
   s1_duration, s1_s2_isi: integer;
 
-  s2_shape_position_1, s2_shape_position_2, s2_shape_position_3, s2_shape_position_4, s2_shape_position_5: integer;
+  s2_shape_position_1, s2_shape_position_2, s2_shape_position_3, s2_shape_position_4, s2_shape_position_5, s2_sound : integer;
   s2_duration, s2_s3_isi: integer;
 
-  s3_shape, s3_distractor_shape, s3_quad: integer;
+  s3_shape, s3_distractor_shape, s3_sound, s3_quad: integer;
   s3_duration, s3_s4_isi: integer;
 
-  s4_shape, s4_distractor_shape, s4_quad:integer;
+  s4_shape, s4_distractor_shape, s4_sound, s4_quad:integer;
   s4_duration: integer;
 
-  Feedback_shape: integer;
+  Feedback_shape, Feedback_sound: integer;
 
   TMS_s3_SOA: integer;
 
@@ -1909,6 +2037,11 @@ var
 
   extraInp : TExtraInputData;
 
+
+   strg : string = '';
+   strglst : Tstringlist;
+
+
 const
   show_s1:boolean=true;
   show_s2:boolean=true;
@@ -1932,9 +2065,12 @@ const
 
  // NphotodiodeCalibImages = 10; // number of photodiode calibration images
 
-
+  lufaUSBserialPhotodiodeInput  = 0;  //input bit number of photodiode
 
 begin
+
+
+
   Result := false;
   N_trials_before_pause_main := 10000;
   N_trials_before_pause_training := 0;
@@ -1944,6 +2080,8 @@ begin
 
   // get the directory where files and folders for this experiment are located
   experiment_dir:=extractfilepath(Opendialog1.filename);
+
+
   //showmessage('Ex dir: '+ experiment_dir);
 
  // observerNo:= strtoint(Combobox1.items[Combobox1.Itemindex]);
@@ -1965,6 +2103,37 @@ begin
   begin
     showmessage('File does not exist: '+ configDataFilename);
     terminateApplication;
+  end;
+
+
+
+  if (isLufaUSBserial) then  // reset the LUFA device and set all input dead times
+  begin
+    WriteStringToLog('1.......');
+    lufaUSBserial.flush;
+    lufaUSBserial.purge;
+    lufaUSBwrite(lufaUSBserial, 'X' , 5);
+
+    WriteStringToLog('2.......');
+    lufaUSBwrite(lufaUSBserial, 'D I 0 ' + getStringForParameter(configDataFilename, 'LUFA_USB_CDC_dead_time_photodiode_ms:'), 5);
+
+    WriteStringToLog('3.......');
+    lufaUSBwrite(lufaUSBserial, 'D I 1 ' + getStringForParameter(configDataFilename, 'LUFA_USB_CDC_dead_time_photodiode_ms:'), 5);
+
+    WriteStringToLog('4.......');
+    lufaUSBwrite(lufaUSBserial, 'D I 2 ' + getStringForParameter(configDataFilename, 'LUFA_USB_CDC_dead_time_button_ms:'), 5);
+
+    WriteStringToLog('5.......');
+    lufaUSBwrite(lufaUSBserial, 'D I 3 ' + getStringForParameter(configDataFilename, 'LUFA_USB_CDC_dead_time_button_ms:'), 5);
+
+
+    {
+    for  c := 0 to 1000  do
+    begin
+      lufaUSBlog(lufaUSBserial);
+      sleep(10);
+    end;
+     }
   end;
 
 
@@ -2087,98 +2256,41 @@ begin
   ef.ImageScaleHorz:=1.0;
   ef.ImageScaleVert:=1.0;
 
-  selMonitor := TMonitor(radiogroup4.items.Objects[radiogroup4.itemindex]);
-  if (selMonitor <> nil) then
-  begin
-    REFRESH_RATE := ROUND(selMonitor.Frequency);
-    if REFRESH_RATE = 0 then REFRESH_RATE := Monitor_refresh_rate;
-    ef.displayWindowXpos:=selMonitor.Bounds.Left;
-    ef.displayWindowYpos:=selMonitor.Bounds.Top;
-    ef.Width := selMonitor.Resolution.cx;
-    ef.Height := selMonitor.Resolution.cy;
-    ef.ImageScaleHorz := selMonitor.Resolution.cx / Monitor_resolution_h;
-    ef.ImageScaleVert := selMonitor.Resolution.cy / Monitor_resolution_v;
-
-    if (selMonitor.PhysSizeMm.cx>0) and (selMonitor.PhysSizeMm.cy>0) then begin
-      ef.widthCM := selMonitor.PhysSizeMm.cx / 10;
-      ef.heightCM := selMonitor.PhysSizeMm.cy / 10;
-    end else begin
-      ef.widthCM := Monitor_width_cm;
-      ef.heightCM := Monitor_height_cm;
-    end;
-    ef.distance := Monitor_distance_cm;
-  end else begin
-  DISPLAY_TYPE := radiogroup4.itemindex;
-
- // DISPLAY_TYPE := DISPLAY_PC_LAB;
-
-  case (DISPLAY_TYPE) of
-
-    //PC LAB
-    DISPLAY_PC_LAB:
-    begin
-      REFRESH_RATE := Monitor_refresh_rate;
-      ef.Width := Monitor_resolution_h;
-      ef.Height := Monitor_resolution_v;
-      ef.widthCM := Monitor_width_cm;
-      ef.heightCM := Monitor_height_cm;
-      ef.distance := Monitor_distance_cm;
-    end;
-
-    //Giorgio gsync
-    DISPLAY_GIORGIO_GSYNC:
-    begin
-      REFRESH_RATE := 100;
-      ef.Width :=1920;// 1024;
-      ef.Height := 1080;//768;//1024;
-      ef.widthCM := 53.2;//40;
-      ef.heightCM := 30;//30;
-      ef.distance := 71;//57;
-    end;
-
-    {
-    //Phil gsync
-    DISPLAY_PHIL_GSYNC:
-    begin
-      REFRESH_RATE := 100;
-      ef.Width :=1920;// 1024;
-      ef.Height := 1080;//768;//1024;
-      ef.widthCM := 53.1;//40;
-      ef.heightCM := 29.8;//30;
-      ef.distance := 57;
-    end;
 
 
-    //fMRI. Viewing distance  = 71cm, screen max width ~50cm height ~39cm,
-    // estimated at 50 and 37.5 for a 4:3 display
-    DISPLAY_FMRI:
-    begin
-      showTrialsRemaining:=true;
-      REFRESH_RATE := 60;
-      ef.Width :=1024;// 1024;
-      ef.Height := 768;//768;//1024;
-      ef.widthCM := 50;
-      ef.heightCM := 37.5;
-      ef.distance := 71;
-    end;
+
+  //selMonitor := TMonitor(radiogroup4.items.Objects[radiogroup4.itemindex]);
+  //if (selMonitor <> 0) then
+  //begin
+  //  REFRESH_RATE := ROUND(selMonitor.Frequency);
+  //  if REFRESH_RATE = 0 then REFRESH_RATE := Monitor_refresh_rate;
+  //  ef.displayWindowXpos:=selMonitor.Bounds.Left;
+  //  ef.displayWindowYpos:=selMonitor.Bounds.Top;
+  //  ef.Width := selMonitor.Resolution.cx;
+  //  ef.Height := selMonitor.Resolution.cy;
+  //  ef.ImageScaleHorz := selMonitor.Resolution.cx / Monitor_resolution_h;
+  //  ef.ImageScaleVert := selMonitor.Resolution.cy / Monitor_resolution_v;
+  //
+  //  if (selMonitor.PhysSizeMm.cx>0) and (selMonitor.PhysSizeMm.cy>0) then begin
+  //    ef.widthCM := selMonitor.PhysSizeMm.cx / 10;
+  //    ef.heightCM := selMonitor.PhysSizeMm.cy / 10;
+  //  end else begin
+  //    ef.widthCM := Monitor_width_cm;
+  //    ef.heightCM := Monitor_height_cm;
+  //  end;
+  //  ef.distance := Monitor_distance_cm;
+  //end else begin
 
 
-    //CRT
-    DISPLAY_CRT:
-    begin
-      REFRESH_RATE := 100;
-      ef.Width := 1024;
-      ef.Height := 768;
-      ef.widthCM := 40;
-      ef.heightCM := 30;
-      ef.distance := 57;
-    end;
-    }
+  REFRESH_RATE := Monitor_refresh_rate;
+  ef.Width := Monitor_resolution_h;
+  ef.Height := Monitor_resolution_v;
+  ef.widthCM := Monitor_width_cm;
+  ef.heightCM := Monitor_height_cm;
+  ef.distance := Monitor_distance_cm;
 
 
-  end;
-
-  end;
+ // end;
 
 
 
@@ -2344,8 +2456,12 @@ begin
   ef.positionSDLwindow;
 
   // load sounds
-  loadSounds;
-  //Mix_PlayChannel(Ord(CORRECT_WAV),  sounds[Ord(CORRECT_WAV)], 0);
+  loadSounds(experiment_dir);
+{Mix_PlayChannel(Ord(CORRECT_WAV),  sounds[Ord(CORRECT_WAV)], 0);
+  PMix_mus := Mix_LoadMUS(PChar(experiment_dir + 'mus.mp3'));
+  mix_volumeMusic(128);
+   mix_playmusic(PMix_mus,0); }
+
 
   // initialise openGL
   InitGL;
@@ -2397,7 +2513,7 @@ begin
   age:= Form1.combobox3.items[Form1.combobox3.itemindex];
   sex :=  Form1.combobox13.items[Form1.combobox13.itemindex];
   handedness := Form1.combobox14.items[Form1.combobox14.itemindex];
-  displayType:= radiogroup4.items[radiogroup4.itemindex];
+  displayType:= 'Config file';//radiogroup4.items[radiogroup4.itemindex];
 
   outputDataFilename := Form1.Savedialog1.filename;
   AssignFile(f, outputDataFilename);
@@ -2468,8 +2584,9 @@ begin
              's2_marker' + #9+
              's3_marker' + #9+
              's4_marker' + #9+
-             //'TMS_marker' +#9+
+             {//'TMS_marker' +#9+ }
              's1_shape' +#9+
+             's1_sound' +#9+
              's1_quad' +#9+
              's1_duration' +#9+
              's1_s2_isi' +#9+
@@ -2478,19 +2595,23 @@ begin
              's2_shape_position_3(SE)' +#9+
              's2_shape_position_4(SW)' +#9+
              's2_shape_position_5(centre)' +#9+
+             's2_sound' +#9+
              's2_duration' +#9+
              's2_s3_isi' +#9+
              's3_shape' +#9+
              's3_distractor_shape' +#9+
+             's3_sound' +#9+
              's3_quad' +#9+
              's3_duration' +#9+
              's3_s4_isi' +#9+
              's4_shape' +#9+
              's4_distractor_shape' +#9+
+             's4_sound' +#9+
              's4_quad' +#9+
              's4_duration' +#9+
              'Response_Time_after_S4' +#9+
              'Feedback_shape' +#9+
+             'Feedback_sound' +#9+
              'Feedback_duration_after_response_time' +#9+
              'ITI_after_feedback' +#9+
              's1_colour' +#9+
@@ -2573,15 +2694,17 @@ begin
       {$endif}
     end;
 
+
+
     trialDone := false;
     hasResponded := false;
     isRuinedTrial := 0;
 
     readTrialOrderData(InputDataFileName, sessionNo, trialNo,s1_marker,s2_marker,s3_marker,s4_marker, {TMS_marker,}
-      s1_shape, s1_quad,s1_duration, s1_s2_isi,
-      s2_shape_position_1, s2_shape_position_2, s2_shape_position_3, s2_shape_position_4, s2_shape_position_5, s2_duration, s2_s3_isi,
-      s3_shape, s3_distractor_shape, s3_quad, s3_duration, s3_s4_isi,
-      s4_shape, s4_distractor_shape, s4_quad, s4_duration, Response_Time_after_S4, Feedback_shape, Feedback_duration_after_response_time,ITI_after_feedback,
+      s1_shape, s1_sound, s1_quad,s1_duration, s1_s2_isi,
+      s2_shape_position_1, s2_shape_position_2, s2_shape_position_3, s2_shape_position_4, s2_shape_position_5, s2_sound, s2_duration, s2_s3_isi,
+      s3_shape, s3_distractor_shape, s3_sound, s3_quad, s3_duration, s3_s4_isi,
+      s4_shape, s4_distractor_shape, s4_sound, s4_quad, s4_duration, Response_Time_after_S4, Feedback_shape, Feedback_sound, Feedback_duration_after_response_time, ITI_after_feedback,
       s1_colour, s2_colour_position_1, s2_colour_position_2, s2_colour_position_3, s2_colour_position_4, s2_colour_position_5, s3_colour, s3_distractor_colour, s4_colour, s4_distractor_colour, keyMapping, taskType, TMS_s3_SOA,Experimental_Condition
       ,extraInp);
 
@@ -2638,6 +2761,34 @@ begin
     begin
       isBaselineCondition:=false;
     end;
+
+
+
+
+
+      // if LUFA USB serial device is present, load it with trigger data
+      // i.e. send it a photodiode input-parallel port output mapping.
+      if (isLufaUSBserial) then
+      begin
+        WriteStringToLog('');
+        WriteStringToLog('TrialNo = ' + inttostr(TrialNo) + '. S1');
+        lufaUSBserial.flush;
+        lufaUSBserial.purge;
+
+        //Left photodiode
+        // one-shot mapping. Photodiode, falling edge -> Parallel port s1_marker
+        lufaUSBwrite(lufaUSBserial, 'M 1 I '+inttostr(lufaUSBserialPhotodiodeInput)+' 0 P '+ inttostr(s1_marker), 5);
+         // one-shot mapping. Photodiode, falling edge -> Digital output 0, 5ms
+        lufaUSBwrite(lufaUSBserial, 'M 1 I '+inttostr(lufaUSBserialPhotodiodeInput)+' 0 O 0 0 1 5', 5);
+
+        //Right photodiode
+         // one-shot mapping. Photodiode, falling edge -> Parallel port 251
+        lufaUSBwrite(lufaUSBserial, 'M 1 I 1 0 P 251', 5);
+
+         // one-shot mapping. Photodiode, falling edge -> Digital output 1, 1000ms
+        lufaUSBwrite(lufaUSBserial, 'M 1 I 1 0 O 0 0 2 5', 0);
+      end;
+
 
 
 
@@ -2759,10 +2910,7 @@ begin
          handledSuspended(isRuinedTrial);
          pollevent(state, eventTime) ;
         ef.renderStereo;
-
       end;
-
-
     end;
     //=======================================================================================
     //=======================================================================================
@@ -2787,13 +2935,17 @@ begin
       Nframes:=round (s1_duration/1000 / (1/REFRESH_RATE))  ;
       triggerState:= true; // re-latch the trigger for one-shot parallel port data
 
+      // if trigger station is present,load it with trigger data
       if (isTriggerstation) then
       begin
         triggerStationData:= s1_marker;
         {$ifdef triggerstation}
-        TriggerStation.ParallelPort(triggerStationData);   // load the trigger station with trigger data
+        TriggerStation.ParallelPort(triggerStationData);
         {$endif}
       end;
+
+
+
 
       doPhotodiode:=true;
 
@@ -2808,7 +2960,7 @@ begin
         // s1 onset photodiode patch: left. trigger station will send s3_marker on detecting the patch
         if (doPhotodiode=true) then
         begin
-          if (isTriggerstation) then glCallList(DL_PHOTODIODE_PATCH_LEFT);
+          if ((isTriggerstation) or (isLufaUSBserial)) then glCallList(DL_PHOTODIODE_PATCH_LEFT);
           doPhotodiode:=false;
         end;
 
@@ -2818,7 +2970,7 @@ begin
           glMatrixMode(GL_MODELVIEW);
           glLoadIdentity;
           gltranslatef(0,0,0);
-          DrawShapeOrChar(s1_shape,colours[s1_colour], Run_background_circle_colour,x,y, Image_size_CM);
+          DrawShapeOrChar(s1_shape,colours[s1_colour], Run_background_circle_colour,0,0, Image_size_CM);
         end
         else
         begin
@@ -2880,6 +3032,8 @@ begin
         begin
          // s1_onsetTime:=timer2.query;
           s1_onsetTime := SDL_GetTicks - timeOfExperimentStart;
+          // Play a sound on the first frame
+          Mix_PlayChannel(1,  sounds_numbered[s1_sound], 0);
         end;
 
         // get time of TMS onset
@@ -2925,6 +3079,22 @@ begin
       //=======================================================================================
       //  S1-S2 ISI   -------------------------------------------
       //=======================================================================================
+
+      // if LUFA USB serial device is present, load it with trigger data in preparation for s2
+      // i.e. send it a photodiode input-parallel port output mapping.
+      if (isLufaUSBserial) then
+      begin
+        WriteStringToLog('');
+        WriteStringToLog('TrialNo = ' +  inttostr(TrialNo) + '. S2');
+        lufaUSBserial.flush;
+        lufaUSBserial.purge;
+        // one-shot mapping. Photodiode, falling edge -> Parallel port s1_marker
+        lufaUSBwrite(lufaUSBserial, 'M 1 I '+inttostr(lufaUSBserialPhotodiodeInput)+' 0 P '+ inttostr(s2_marker), 5);
+        // one-shot mapping. Photodiode, falling edge -> Digital output 0, 5ms
+        lufaUSBwrite(lufaUSBserial, 'M 1 I '+inttostr(lufaUSBserialPhotodiodeInput)+' 0 O 0 0 1 5', 5);
+      end;
+
+
       Nframes:=round(s1_s2_isi/1000 / (1/REFRESH_RATE))  ;
       timer1.start;
       triggerState:= true; // re-latch the trigger for one-shot parallel port data
@@ -2938,7 +3108,7 @@ begin
         pollevent(state, eventTime) ;
         if showTrialsRemaining then showCountdown(pfontGeneral,fontCol,inttostr(Ntrials-trialNo));
 
-        if ((frameNoTotal = TMS_frameNo) and (isTriggerStation)) then
+        if ((frameNoTotal = TMS_frameNo) and (isTriggerStation or isLufaUSBserial)) then
         begin
           glCallList(DL_PHOTODIODE_PATCH_RIGHT);
         end;
@@ -3004,6 +3174,8 @@ begin
       {$endif}
     end;
 
+
+
     doPhotodiode:=true;
 
     timer1.start;
@@ -3028,7 +3200,7 @@ begin
       // s2 onset photodiode patch: left. trigger station will send s3_marker on detecting the patch
       if (doPhotodiode=true) then
       begin
-        if (isTriggerstation) then   glCallList(DL_PHOTODIODE_PATCH_LEFT);
+        if (isTriggerstation or isLufaUSBserial) then   glCallList(DL_PHOTODIODE_PATCH_LEFT);
         doPhotodiode:=false;
       end;
 
@@ -3045,7 +3217,7 @@ begin
       pollevent(state, eventTime) ;
       if showTrialsRemaining then showCountdown(pfontGeneral,fontCol,inttostr(Ntrials-trialNo));
 
-      if ((frameNoTotal = TMS_frameNo) and (isTriggerStation)) then
+      if ((frameNoTotal = TMS_frameNo) and (isTriggerStation or isLufaUSBserial)) then
       begin
         glCallList(DL_PHOTODIODE_PATCH_RIGHT);
       end;
@@ -3058,6 +3230,8 @@ begin
       if (frameNo=0) then
       begin
         s2_onsetTime := SDL_GetTicks - timeOfExperimentStart;
+        // Play a sound on the first frame
+          Mix_PlayChannel(1,  sounds_numbered[s2_sound], 0);
       end;
 
       // get time of TMS onset
@@ -3104,6 +3278,23 @@ begin
     //=======================================================================================
     // S2 - S3 ISI Blank screen---------------------------------------------
     //=======================================================================================
+
+    // if LUFA USB serial device is present, load it with trigger data in prepaparation for s3
+    // i.e. send it a photodiode input-parallel port output mapping.
+    if (isLufaUSBserial) then
+    begin
+      WriteStringToLog('');
+      WriteStringToLog('TrialNo = ' +  inttostr(TrialNo) + '. S3');
+      lufaUSBserial.flush;
+      lufaUSBserial.purge;
+      // one-shot mapping. Photodiode, falling edge -> Parallel port s1_marker
+      lufaUSBwrite(lufaUSBserial, 'M 1 I '+inttostr(lufaUSBserialPhotodiodeInput)+' 0 P '+ inttostr(s3_marker), 5);
+      // one-shot mapping. Photodiode, falling edge -> Digital output 0, 5ms
+      lufaUSBwrite(lufaUSBserial, 'M 1 I '+inttostr(lufaUSBserialPhotodiodeInput)+' 0 O 0 0 1 5',0);
+    end;
+
+
+
    Nframes:=round (s2_s3_isi/1000 / (1/REFRESH_RATE))  ;
     timer1.start;
 
@@ -3115,7 +3306,7 @@ begin
       pollevent(state, eventTime) ;
       if showTrialsRemaining then showCountdown(pfontGeneral,fontCol,inttostr(Ntrials-trialNo));
 
-      if ((frameNoTotal = TMS_frameNo) and (isTriggerStation)) then
+      if ((frameNoTotal = TMS_frameNo) and (isTriggerStation or isLufaUSBserial)) then
       begin
         glCallList(DL_PHOTODIODE_PATCH_RIGHT);
       end;
@@ -3165,6 +3356,8 @@ begin
       {$endif}
     end;
 
+
+
     doPhotodiode:=true;
     timer1.start;
     for frameNo:=0 to Nframes-1 do
@@ -3183,7 +3376,7 @@ begin
       // s3 onset photodiode patch: left. trigger station will send s3_marker on detecting the patch
       if (doPhotodiode=true) then
       begin
-        if (isTriggerstation) then  glCallList(DL_PHOTODIODE_PATCH_LEFT);
+        if (isTriggerstation) or (isLufaUSBserial) then  glCallList(DL_PHOTODIODE_PATCH_LEFT);
         if (Photodiode_S3.Show) then
           //glCallList(DL_PHOTODIODE_PATCH_CENTRE); //photodiode patch at location specified for S3
           DrawPhotodiode(Photodiode_S3, ef.widthCM, ef.heightCM);
@@ -3204,6 +3397,10 @@ begin
 
       ef.renderStereo;
 
+
+
+
+
       // get time of TMS onset
       if (frameNoTotal = TMS_frameNo) then
       begin
@@ -3216,6 +3413,8 @@ begin
       begin
         //s3_onsetTime:=timer2.query;
         s3_onsetTime := SDL_GetTicks - timeOfExperimentStart;
+        // Play a sound on the first frame
+        Mix_PlayChannel(1,  sounds_numbered[s3_sound], 0);
       end;
 
 
@@ -3260,6 +3459,44 @@ begin
     //=======================================================================================
     // S3 - S4 ISI Blank screen---------------------------------------------
     //=======================================================================================
+
+    // if LUFA USB serial device is present, load it with trigger data in preparation for S4 onset
+    // i.e. send it mappings
+    if (isLufaUSBserial) then
+    begin
+
+
+      WriteStringToLog('');
+      WriteStringToLog('TrialNo = ' +  inttostr(TrialNo) + '. S4');
+      WriteStringToLog('1.......');
+      lufaUSBserial.flush;
+      lufaUSBserial.purge;
+
+      // one-shot mapping. Photodiode, falling edge -> Parallel port s4_marker
+      lufaUSBwrite(lufaUSBserial, 'M 1 I '+inttostr(lufaUSBserialPhotodiodeInput)+' 0 P '+ inttostr(s4_marker),5 );
+
+      // one-shot mapping. Photodiode, falling edge -> Digital output 4, 1000ms
+      WriteStringToLog('2.......');
+      // one-shot mapping. Photodiode, falling edge -> Digital output 0, 5ms
+      lufaUSBwrite(lufaUSBserial, 'M 1 I '+inttostr(lufaUSBserialPhotodiodeInput)+' 0 O 0 0 1 5', 5);
+
+        WriteStringToLog('3.......');
+      // set up one-shot IO mapping :Input 2 falling edge -> parallel port 252
+      lufaUSBwrite(lufaUSBserial, 'M 1 I 2 0 P 252' ,5);
+
+       WriteStringToLog('4.......');
+      // one-shot mapping. Input 2 falling edge -> Digital output 5, 1000ms
+      lufaUSBwrite(lufaUSBserial, 'M 1 I 2 0 O 0 0 4 5', 5);
+
+       WriteStringToLog('5.......');
+      // set up one-shot IO mapping :Input 3 falling edge -> parallel port 253
+      lufaUSBwrite(lufaUSBserial, 'M 1 I 3 0 P 253', 5 );
+
+       WriteStringToLog('6.......');
+      // one-shot mapping. Input 2 falling edge -> Digital output 2, 1000ms
+      lufaUSBwrite(lufaUSBserial, 'M 1 I 3 0 O 0 0 8 5', 5 );
+    end;
+
     Nframes:=round   (s3_s4_isi/1000 / (1/REFRESH_RATE))  ;
     timer1.start;
     doPhotodiode:=true;
@@ -3272,7 +3509,7 @@ begin
       pollevent(state, eventTime) ;
       if showTrialsRemaining then showCountdown(pfontGeneral,fontCol,inttostr(Ntrials-trialNo));
 
-      if ((frameNoTotal = TMS_frameNo) and (isTriggerStation)) then
+      if ((frameNoTotal = TMS_frameNo) and (isTriggerStation or isLufaUSBserial)) then
       begin
         glCallList(DL_PHOTODIODE_PATCH_RIGHT);
       end;
@@ -3314,6 +3551,10 @@ begin
     {$endif}
   end;
 
+
+
+
+
   doPhotodiode:=true;
   timer1.start;
 
@@ -3331,10 +3572,17 @@ begin
   for frameNo:=0 to Nframes-1 do
   begin
     ef.ProjectionTrans;
-    drawBackgroundFixation(fixSpotSizeCM, Run_background_circle_colour, Fixation_colour);
+
+     drawBackgroundFixation(fixSpotSizeCM, Run_background_circle_colour, Fixation_colour);
 
     if (s4_shape<>12) then targetImage(targetRadiusCM, s4_shape, s4_quad,s4_distractor_shape, s4_colour, s4_distractor_colour
       , Show_S4_peripheral_placeholders, Show_S4_placeholder_when_centre, Image_size_CM, -1);
+
+
+     glclear(GL_DEPTH_BUFFER_BIT);
+        drawFixationWithPlaceholders(fixSpotSizeCM, targetRadiusCM,
+          Fixation_colour, Placeholders_colour);
+
 
     // photodiode patch left trigger station will send s4_marker on detecting the patch
     if (doPhotodiode=true) then
@@ -3342,7 +3590,7 @@ begin
       {$ifdef triggerstation}
       if (isTriggerstation) then  triggerStation.WriteSharedRam(1,2000); // set triggerstation to start timer on photodiode patch detection
       {$endif}
-      if (isTriggerstation) then    glCallList(DL_PHOTODIODE_PATCH_LEFT); //photodiode patch left side
+      if ((isTriggerstation) or (isLufaUSBserial)) then    glCallList(DL_PHOTODIODE_PATCH_LEFT); //photodiode patch left side
       if (Photodiode_S4.Show) then
         //glCallList(DL_PHOTODIODE_PATCH_CENTRE); //photodiode patch at location specified for S4.
         DrawPhotodiode(Photodiode_S4, ef.WidthCM, ef.HeightCM);
@@ -3353,12 +3601,12 @@ begin
 
     if showTrialsRemaining then showCountdown(pfontGeneral,fontCol,inttostr(Ntrials-trialNo));
 
-    glClear(GL_DEPTH_BUFFER_BIT);
+    {glClear(GL_DEPTH_BUFFER_BIT);
     drawFixationWithPlaceholders(fixSpotSizeCM, targetRadiusCM,
-      Fixation_colour, Placeholders_colour, s4_quad <> 5);
+      Fixation_colour, Placeholders_colour, s4_quad <> 5);      }
 
     // TMS photodiode patch
-    if ((frameNoTotal = TMS_frameNo) and (isTriggerStation)) then
+    if ((frameNoTotal = TMS_frameNo) and (isTriggerStation or isLufaUSBserial)) then
     begin
       glCallList(DL_PHOTODIODE_PATCH_RIGHT);
     end;
@@ -3379,6 +3627,8 @@ begin
       //s4_onsetTime:=timer2.query;
       t1 := SDL_GetTicks;
       s4_onsetTime := t1 - timeOfExperimentStart;
+      // Play a sound on the first frame
+      Mix_PlayChannel(1,  sounds_numbered[s4_sound], 0);
     end;
 
     checkKeypressAndButtonbox(state, eventTime) ;
@@ -3433,14 +3683,14 @@ begin
        gltranslatef((-ef.WidthCM/2) + 2,(ef.HeightCM/2) - 1,0);
        glcolor3f(1,1,1);
 
-       if (isTriggerstation) then   glCallList(DL_PHOTODIODE_PATCH_LEFT); // bar(0,0,-ef.distance+0.01, photodiodePatchSizeCM,photodiodePatchSizeCM, 0);
+       if ((isTriggerstation) or (isLufaUSBserial)) then   glCallList(DL_PHOTODIODE_PATCH_LEFT); // bar(0,0,-ef.distance+0.01, photodiodePatchSizeCM,photodiodePatchSizeCM, 0);
 
        doPhotodiode:=false;
     //   showmessage('blank triggerStationData = '+ inttostr(triggerStationData));
     end;
     if showTrialsRemaining then showCountdown(pfontGeneral,fontCol,inttostr(Ntrials-trialNo));
 
-    if ((frameNoTotal = TMS_frameNo) and (isTriggerStation)) then
+    if ((frameNoTotal = TMS_frameNo) and (isTriggerStation or isLufaUSBserial))  then
     begin
       glCallList(DL_PHOTODIODE_PATCH_RIGHT);
     end;
@@ -3448,6 +3698,11 @@ begin
      handledSuspended(isRuinedTrial); // suspend rendering the stimulus if IS_SUSPENDED
 
     ef.renderStereo;
+
+    {if (frameNo = 0) then begin
+       // Play a sound on the first frame
+       Mix_PlayChannel(1,  sounds_numbered[feedback_sound], 0);
+    end; }
 
     // get time of TMS onset
     if (frameNoTotal = TMS_frameNo) then
@@ -3505,11 +3760,8 @@ begin
 
         //response_onsetTime:=timer2.query; // record response time relative to experiment start
         response_onsetTime := responseEventTime - timeOfExperimentStart;  // record response time relative to experiment start
-        // Mix_PlayChannel(Ord(CORRECT_WAV),  sounds[Ord(CORRECT_WAV)], 0);
-        //  showmessage('responseEventTime : ' + inttostr(responseEventTime));
-       // showmessage('timeOfExperimentStart = ' + inttostr(timeOfExperimentStart) + '. RT = ' + inttostr(observedDataRTRecord[trialNo]) +  'diff = ' + inttostr(s4_onsetTime - t1));
 
-       // showmessage(inttostr(state));
+
         hasResponded := true;
 
         // showmessage(inttostr(state));
@@ -3593,6 +3845,10 @@ begin
         end;
         //showmessage('response ' + inttostr(observedDataResponseRecord[trialNo]));
 
+
+
+
+        //the following block of code may be redundant as the block after it also sends triggers (at the end of the feedback period)
         // send trigger to indicate correct vs incorrect response
         if (observedDataCorrectResponseRecord[trialNo]=1) then
         begin
@@ -3606,6 +3862,7 @@ begin
             TriggerStation.ParallelPort(triggerStationData);
             {$endif}
           end;
+
           {TimerPulse.start;
           Out32($378, 101);
           repeat until (TimerPulse.query>=parallelPortPulseDur);
@@ -3626,6 +3883,8 @@ begin
             TriggerStation.ParallelPort(triggerStationData);
             {$endif}
           end;
+
+
           {TimerPulse.start;
           Out32($378, 100);
           repeat until (TimerPulse.query>=parallelPortPulseDur);
@@ -3660,7 +3919,7 @@ begin
       begin
         if (isBaselineCondition=false) then
         begin
-          if (Feedback_shape=0) then Mix_PlayChannel(Ord(CORRECT_WAV),  sounds[Ord(CORRECT_WAV)], 0);
+          if (feedback_sound = 1) then Mix_PlayChannel(Ord(CORRECT_WAV),  sounds[Ord(CORRECT_WAV)], 0);
         end;
 
         feedback_onsetTime := SDL_GetTicks - timeOfExperimentStart;
@@ -3676,6 +3935,25 @@ begin
           {$endif}
           doPhotodiode := true;
         end;
+
+
+        if(isLufaUSBserial) then
+        begin
+             // set up one-shot IO mapping :photodiode  falling edge -> parallel triggerStationData
+             // lufaUSBserial.sendstring( 'M 1 I '+inttostr(lufaUSBserialPhotodiodeInput)+' 0 P 254' );
+            WriteStringToLog('');
+            WriteStringToLog('TrialNo = ' +  inttostr(TrialNo) + '. Feedback correct');
+            lufaUSBserial.flush;
+            lufaUSBserial.purge;
+            // one-shot mapping. Photodiode, falling edge -> Parallel port correct
+            lufaUSBwrite(lufaUSBserial,'M 1 I '+inttostr(lufaUSBserialPhotodiodeInput)+' 0 P 254', 5 );
+
+            // one-shot mapping. Photodiode, falling edge -> digital out 4, 5ms
+            lufaUSBwrite(lufaUSBserial,'M 1 I '+inttostr(lufaUSBserialPhotodiodeInput)+' 0 O 0 0 16 5', 5 );
+
+            doPhotodiode := true;
+        end;
+
         {TimerPulse.start;
         Out32($378, 201);
         repeat until (TimerPulse.query>=parallelPortPulseDur);
@@ -3688,7 +3966,7 @@ begin
       begin
         if (isBaselineCondition=false) then
         begin
-          if (Feedback_shape=0) then Mix_PlayChannel(Ord(INCORRECT_WAV),  sounds[Ord(INCORRECT_WAV)], 0);
+          if (feedback_sound = 1) then Mix_PlayChannel(Ord(INCORRECT_WAV),  sounds[Ord(INCORRECT_WAV)], 0);
          end;
 
         feedback_onsetTime := SDL_GetTicks - timeOfExperimentStart;
@@ -3704,6 +3982,26 @@ begin
           {$endif}
           doPhotodiode := true;
         end;
+
+        if (isLUFAusbserial) then
+        begin
+          // set up one-shot IO mapping :photodiode  falling edge -> parallel triggerStationData
+          //lufaUSBserial.sendstring( 'M 1 I '+inttostr(lufaUSBserialPhotodiodeInput)+' 0 P 255' );
+
+          WriteStringToLog('');
+          WriteStringToLog('TrialNo = ' +  inttostr(TrialNo) + '. Feedback incorrect');
+          lufaUSBserial.flush;
+          lufaUSBserial.purge;
+          // one-shot mapping. Photodiode, falling edge -> Parallel port incorrect
+          lufaUSBwrite(lufaUSBserial,'M 1 I '+inttostr(lufaUSBserialPhotodiodeInput)+' 0 P 255', 5  );
+
+          // one-shot mapping. Photodiode, falling edge -> digital out 5, 5ms
+          lufaUSBwrite(lufaUSBserial,'M 1 I '+inttostr(lufaUSBserialPhotodiodeInput)+' 0 O 0 0 32 5' , 5);
+
+          doPhotodiode := true;
+        end;
+
+
         {TimerPulse.start;
         Out32($378, 200);
         repeat until (TimerPulse.query>=parallelPortPulseDur);
@@ -3836,6 +4134,7 @@ begin
              inttostr(s4_marker) +#9+
              //inttostr(TMS_marker) +#9+
              inttostr(s1_shape) +#9+
+             inttostr(s1_sound) +#9+
              inttostr(s1_quad) +#9+
              floattostr(s1_duration) +#9+
              floattostr(s1_s2_isi) +#9+
@@ -3844,19 +4143,23 @@ begin
              inttostr(s2_shape_position_3) +#9+
              inttostr(s2_shape_position_4) +#9+
              inttostr(s2_shape_position_5) +#9+
+             inttostr(s2_sound) +#9+
              floattostr(s2_duration) +#9+
              floattostr(s2_s3_isi) +#9+
              inttostr(s3_shape) +#9+
              inttostr(s3_distractor_shape) +#9+
+             inttostr(s3_sound) +#9+
              inttostr(s3_quad) +#9+
              floattostr(s3_duration) +#9+
              floattostr(s3_s4_isi) +#9+
              inttostr(s4_shape) +#9+
              inttostr(s4_distractor_shape) +#9+
+             inttostr(s4_sound) +#9+
              inttostr(s4_quad) +#9+
              floattostr(s4_duration) +#9+
              floattostr(Response_Time_after_S4) +#9+
              inttostr(Feedback_shape) +#9+
+             inttostr(Feedback_sound) +#9+
              floattostr(Feedback_duration_after_response_time) +#9+
              floattostr(ITI_after_feedback) +#9+
              inttostr(s1_colour) +#9+
@@ -3898,7 +4201,7 @@ begin
 
   write(f,#9);
   for i:=low(extraInp.Factor) to High(extraInp.Factor) do
-    // trim() is used because sometimes input file might be entered with line breaks or tabs
+    // trim() is used because sometimes input file might be entered with line breaks or tabs             9
     write(f, trim(extraInp.Factor[i]), #9);
 
     writeln(f);
@@ -3928,6 +4231,8 @@ begin
       TrialResultsShow(actual_accuracy, Minimum_training_accuracy);
       SDL_maximizeWindow(ef.surface);
       SDL_ShowWindow(eF.surface);
+      ef.renderstereo;
+
     end
     else
     begin
@@ -3980,6 +4285,7 @@ begin
   RadioGroup4.Items.BeginUpdate;
   try
     RadioGroup4.Items.Clear;
+
     for i:=0 to monlist.Count-1 do begin
       m := TMonitor(monlist[i]);
       s := Format('%s (%dx%d) %dHz',
@@ -3990,6 +4296,7 @@ begin
     end;
   finally
     RadioGroup4.Items.EndUpdate;
+
   end;
 end;
 
@@ -4085,6 +4392,71 @@ var
   upUrl, qUrl: string;
 begin
 
+
+
+     // showmessage(GetSerialPortNamesExt);
+    // Initialise lufa usb serial device
+    // Close lufa usb serial device if open
+    if Assigned(lufaUSBserial) then begin
+      lufaUSBserial.Free;
+      lufaUSBserial := nil;
+    end;
+
+    if (combobox8.itemindex = 0) then
+    begin
+        isLufaUSBserial := false;
+
+    end
+    else
+    begin
+
+
+      // open lufa usb serial device
+      try
+        lufaUSBserial := TBlockSerial.Create;
+        lufaUSBserial.Connect('COM'+(combobox8.Items[combobox8.itemindex])); //ComPort <= 9  check portnumber on PC
+        Sleep(1000);         // /dev/ttyUSB0 \\\\.\\ did not work with W10
+        lufaUSBserial.config(115200, 8, 'N', SB1, False, False);
+        Sleep(1000);
+        Label16.caption := ('Device: '          + lufaUSBserial.Device +
+              ' Windows Status: ' + lufaUSBserial.LastErrorDesc +
+              ' Error Code '      + Inttostr(lufaUSBserial.LastError))   ;
+            //ReceiveData;
+            // SendData;
+
+      if (lufaUSBserial.LastError=0) then  //success
+            begin
+                 Label16.caption := ('LUFA USB serial device connected OK');
+                  Label16.font.Color:=clBlack;
+
+                  isLufaUSBserial := true;
+
+              //      Label16.caption := ('LUFA USB serial device prwesent. Device: '          + lufaUSBserial.Device +
+              //' Windows Status: ' + lufaUSBserial.LastErrorDesc +
+              //' Error Code '      + Inttostr(lufaUSBserial.LastError))   ;
+              //end
+              end
+            else begin       // failure
+                Label16.caption := ('LUFA USB serial device not present');
+                 Label16.font.Color:=clRed;
+
+                 isLufaUSBserial := false;
+
+              //   Label16.caption := ('LUFA USB serial device not present. Device: '          + lufaUSBserial.Device +
+              //' Windows Status: ' + lufaUSBserial.LastErrorDesc +
+              //' Error Code '      + Inttostr(lufaUSBserial.LastError))   ;
+            end;
+
+        Sleep(1000);
+
+      finally
+           //  ser.free;
+      end;
+
+  end;
+
+
+
   experiment_dir:=extractfilepath(Opendialog1.filename);
   inputFileDir :=     experiment_dir + 'Input data'+ PathDelim ;
 
@@ -4174,6 +4546,11 @@ begin
   for i:=0 to monlist.count-1 do begin
     TObject(monlist[i]).Free;
   end;
+end;
+
+procedure TForm1.Label16Click(Sender: TObject);
+begin
+
 end;
 
 //------------------------------------------------------------------------------

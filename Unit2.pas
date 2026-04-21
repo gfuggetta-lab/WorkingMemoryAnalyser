@@ -85,6 +85,7 @@ begin
   else
     Form2.label1.Caption:=format(GoodAccuracy, [accuracy*100]);
   Form2.ShowModal;
+  Form2.visible:=false;
 end;
 
 end.

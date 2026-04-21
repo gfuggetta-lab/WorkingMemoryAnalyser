@@ -218,14 +218,14 @@ begin
 end;
 
 //------------------------------------------------------------------------------
-// load BMP images with filenames 300.bmp up to 399.bmp
+// load BMP images with filenames 300.bmp up to 10300.bmp
 function loadBMPimages (experiment_dir: string; var BMPimages : array of TBMPimages): integer;
 var
   c   : integer;
   fn  : string;
 begin
   Result := 0;
-  for c:=0 to 99 do
+  for c:=0 to 10000 do
   begin
     fn := experiment_dir + 'Stimulus images' + PathDelim + {'Image_'+} inttostr(c+300);
     BMPimages[c].TextureImage := TryToLoadImage(fn);

@@ -11,7 +11,7 @@ object DisplayEnviroForm: TDisplayEnviroForm
   Font.Height = -11
   Font.Name = 'Tahoma'
   OnCreate = Initialise
-  LCLVersion = '1.2.4.0'
+  LCLVersion = '2.0.12.0'
   object Label1: TLabel
     Left = 32
     Height = 13
@@ -209,7 +209,7 @@ object DisplayEnviroForm: TDisplayEnviroForm
   end
   object OpenDialog1: TOpenDialog
     InitialDir = 'C:\Documents and Settings\Dr Phil Duke\My Documents\delphi_projects\spatial calibration\Spatial calibration files'
-    left = 392
-    top = 136
+    Left = 392
+    Top = 136
   end
 end
