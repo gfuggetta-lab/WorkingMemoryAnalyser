@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Text;
 using WMAData;
@@ -69,7 +70,7 @@ namespace WMAFiles
             dst.Feedback_sound = rdr.GetInt("Feedback_Sound", dst.Feedback_sound);
             dst.Feedback_duration_after_response_time = rdr.GetInt("Feedback_duration_after_response_time", dst.Feedback_duration_after_response_time);
             dst.ITI_after_feedback = rdr.GetInt("ITI_after_feedback", dst.ITI_after_feedback);
-            
+
             // colors
             dst.S1.Color = rdr.GetInt("s1_colour");
             dst.S2.ShapeClr_NW = rdr.GetInt("s2_colour_position_1(NW)");
@@ -97,12 +98,40 @@ namespace WMAFiles
                 if (cidx < 0) break;
 
                 if (rdr.TryGetVal(cidx, out var fav))
+                {
                     dst.Factors.Add(fav);
-                dst.FactorLk[colname] = fav;
+                    dst.FactorLk[colname] = fav;
+                }
                 f++;
             }
 
             return true;
+        }
+
+        public static TrialOrder FillTrialData(this InputDataReader rdr)
+        {
+            if (rdr == null)
+                return null;
+            TrialOrder result = new TrialOrder();
+            rdr.FillTrialData(result);
+            return result;
+        }
+
+        public static List<TrialOrder> LoadTrials(string sourceFn)
+        {
+            string[] lines = File.ReadAllLines(sourceFn);
+            InputDataReader rdr = new InputDataReader();
+            List<TrialOrder> result = new List<TrialOrder>();
+            foreach (var ln in lines)
+            {
+                var ltype = rdr.ConsumeLine(ln);
+                if (ltype == InputLine.TrialData)
+                {
+                    var d = rdr.FillTrialData();
+                    result.Add(d);
+                }
+            }
+            return result;
         }
     }
 }
