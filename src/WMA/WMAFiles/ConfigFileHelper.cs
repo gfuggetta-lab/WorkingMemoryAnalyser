@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Collections.Generic;
 using System.Text;
+using WMAData;
 
 namespace WMAFiles
 {
@@ -81,7 +82,6 @@ namespace WMAFiles
             return string.Empty;
         }
 
-
         public static double Float(this ConfigFile cfg, string paramName, double def = 0.0)
         {
             if (cfg == null) return def;
@@ -114,5 +114,35 @@ namespace WMAFiles
                 return s.Substring(j, i - j);
             return string.Empty;
         }
+
+        public static string Unq(string s)
+        {
+            if (s.Length < 2) return s;
+
+            if (s.StartsWith("\"") && s.EndsWith("\""))
+                return s.Substring(1, s.Length - 2);
+            return s;
+        }
+
+        public static ColorFloat Color(this ConfigFile cfg, string paramName)
+        {
+            ColorFloat n = new ColorFloat();
+            var ss = cfg.String(paramName, "");
+            if (string.IsNullOrEmpty(ss)) return n;
+            ss = Unq(ss);
+            string[] cmp = ss.Split(new char[] { ',' });
+            int r = 0;
+            int g = 0;
+            int b = 0;
+            if (cmp.Length > 0) int.TryParse(cmp[0], out r);
+            if (cmp.Length > 1) int.TryParse(cmp[1], out g);
+            if (cmp.Length > 2) int.TryParse(cmp[1], out b);
+            n.r = r / 255.0;
+            n.g = g / 255.0;
+            n.b = b / 255.0;
+            return n;
+
+        }
+
     }
 }

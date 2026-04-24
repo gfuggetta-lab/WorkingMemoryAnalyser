@@ -19,7 +19,7 @@ namespace testFiles
             Console.WriteLine($"{vi}");
             var vf = cfg.Float("S4_photodiode_patch_horz_distance_deg:", -1);
             Console.WriteLine($"{vf}");
-
+            
         }
     }
 }
