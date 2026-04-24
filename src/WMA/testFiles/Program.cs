@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using WMAFiles;
 
 namespace testFiles
@@ -12,14 +13,22 @@ namespace testFiles
                 Console.WriteLine("please provide the input file name");
                 return;
             }
-            ConfigFile cfg = ConfigFile.FromFile(args[0]);
-            string v = cfg.StringLine("Show_S4_placeholder_when_centre:");
-            Console.WriteLine($"{v}");
-            int vi = cfg.Integer("Show_S4_placeholder_when_centre:", -1);
-            Console.WriteLine($"{vi}");
-            var vf = cfg.Float("S4_photodiode_patch_horz_distance_deg:", -1);
-            Console.WriteLine($"{vf}");
-            
+            // ConfigFile cfg = ConfigFile.FromFile(args[0]);
+            // string v = cfg.StringLine("Show_S4_placeholder_when_centre:");
+            // Console.WriteLine($"{v}");
+            // int vi = cfg.Integer("Show_S4_placeholder_when_centre:", -1);
+            // Console.WriteLine($"{vi}");
+            // var vf = cfg.Float("S4_photodiode_patch_horz_distance_deg:", -1);
+            // Console.WriteLine($"{vf}");
+
+            InputDataReader rdr = new InputDataReader();
+            string[] lines = File.ReadAllLines(args[0]);
+            foreach(var s in lines)
+            {
+                var ln = rdr.ConsumeLine(s);
+                Console.WriteLine(ln);
+            }
+
         }
     }
 }
