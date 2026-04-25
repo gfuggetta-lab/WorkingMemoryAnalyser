@@ -8,5 +8,6 @@ namespace WMAData
     {
         // the duration time
         public double timeMs;
+        public int sameTimeOrder;
     }
 }

@@ -40,8 +40,8 @@ namespace WMAData
     public class TrialOrder
     {
         public int session_number;
-        public StageData S1 = new StageData();
-        public StageData S2 = new StageData();
+        public StageData S1 = new StageData(); // fixation
+        public StageData S2 = new StageData(); 
         public StageData S3 = new StageData();
         public StageData S4 = new StageData();
 

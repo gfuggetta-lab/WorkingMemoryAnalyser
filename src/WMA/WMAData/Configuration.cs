@@ -62,16 +62,24 @@ namespace WMAData
                 if (show_s1)
                 {
 
+                    double duration = tr.S1.Duration;
                     if (tr.S1.Position == POS_CENTER)
                     {
-
-                    } else if (tr.S1.Position != POS_ALL)
+                        dst.ShowImage(ofsTime, duration, 0);
+                    } 
+                    else if (tr.S1.Position != POS_ALL)
                     {
-
-                    } else
+                        dst.ShowImage(ofsTime, duration, 0);
+                    } 
+                    else
                     {
-
+                        dst.ShowImage(ofsTime, duration, 0);
+                        dst.ShowImage(ofsTime, duration, 0);
+                        dst.ShowImage(ofsTime, duration, 0);
+                        dst.ShowImage(ofsTime, duration, 0);
                     }
+                    dst.PlaySound(ofsTime, tr.S1.Sound);
+
 
                     ofsTime += tr.S1.Duration;
                 }
