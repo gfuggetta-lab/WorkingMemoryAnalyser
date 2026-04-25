@@ -6,12 +6,12 @@ namespace WMAData
 {
     public class PlayList
     {
-        List<PlayItem> items = new List<PlayItem>();
+        public List<PlayItem> items = new List<PlayItem>();
         int scheduleCounter;
 
         public PlayItem Add(double ofsMs)
         {
-            var result = new PlayItem { timeMs = ofsMs, sameTimeOrder = scheduleCounter};
+            var result = new PlayItem { startMs = ofsMs, sameTimeOrder = scheduleCounter};
             items.Add(result);
             scheduleCounter++;
             return result;

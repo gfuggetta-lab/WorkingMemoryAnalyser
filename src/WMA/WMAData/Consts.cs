@@ -56,5 +56,11 @@ namespace WMAData
         public const int TASK_BASELINE = 4; // no task
 
         public const int DEFAULT_REFRESH_RATE = 100;
+
+        public const double distance_DEFAULT = 57; // centimeters
+        public const double background_deg_DEFAULT = 18.3;
+        public const double Fixation_dot_deg_DEFAULT = 0.3; // seems to be too much. 0.07 seems to be better
+        public const double Image_size_deg_DEFAULT = 1.6; 
+
     }
 }

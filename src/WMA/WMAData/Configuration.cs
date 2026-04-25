@@ -7,14 +7,43 @@ namespace WMAData
 {
     public class Configuration
     {
+        // the expacted distance from the monitor
+        public double distanceCm;
+
+        // background circle
+        public double Background_diameter_deg;
+        public double backgroundRadiusCM;
+        public ColorFloat backgroundCircleColor;
+
+        // fixation point (the small in the center of background circle)
+        public double Fixation_dot_deg;
+        public double fixSpotSizeCM;
+        public ColorFloat Fixation_colour;
+
+        public double Image_size_deg;
+        public double Image_size_CM;
+
+ 
         // Monitor Refresh rate
         public int RefreshRate = 100;
+
+
+        private void ScheduleDefaults(PlayList dst)
+        {
+            dst.AddCircle(backgroundRadiusCM, backgroundCircleColor);
+            dst.AddCircle(fixSpotSizeCM, Fixation_colour);
+        }
+
         public void Schedule(List<TrialOrder> trials, PlayList dst)
         {
 
+            ScheduleDefaults(dst);
+            if (trials == null)
+                return;
+
             double ofsTime = 0;
 
-            for(int i = 0; i < trials.Count; i++)
+            for (int i = 0; i < trials.Count; i++)
             {
                 bool show_s1 = true;
                 bool show_s2 = true;
@@ -59,10 +88,12 @@ namespace WMAData
                 //=======================================================================================
                 // skip S1 if show_s1=false
                 int s1_onsetTime = -1;
+                double duration;
                 if (show_s1)
                 {
 
-                    double duration = tr.S1.Duration;
+                    duration = tr.S1.Duration;
+                    dst.AddCircle(Image_size_CM, Fixation_colour, ofsTime, duration);
                     if (tr.S1.Position == POS_CENTER)
                     {
                         dst.ShowImage(ofsTime, duration, 0);
@@ -82,8 +113,36 @@ namespace WMAData
 
 
                     ofsTime += tr.S1.Duration;
+
+                    ofsTime += tr.S1.Next_ISI;
                 }
+
+
                 //=======================================================================================
+                /*
+                if (show_s2)
+                {
+
+                    duration = tr.S2.Duration;
+                    dst.AddCircle(Image_size_CM, Fixation_colour, ofsTime, duration);
+                    ofsTime += tr.S2.Duration;
+                    ofsTime += tr.S2.Next_ISI;
+                }
+
+                if (show_s3)
+                {
+
+                    duration = tr.S3.Duration;
+                    dst.AddCircle(Image_size_CM, Fixation_colour, ofsTime, duration);
+                    ofsTime += tr.S3.Duration;
+                    ofsTime += tr.S3.Next_ISI;
+                }
+
+                duration = tr.S4.Duration;
+                dst.AddCircle(Image_size_CM, Fixation_colour, ofsTime, duration);
+                ofsTime += tr.S4.Duration;
+                ofsTime += tr.S4.Next_ISI;
+                */
             }
         }
     }

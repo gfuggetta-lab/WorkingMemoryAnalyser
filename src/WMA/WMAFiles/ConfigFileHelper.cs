@@ -104,7 +104,7 @@ namespace WMAFiles
             int j = i;
             while ((i < s.Length) && Char.IsDigit(s, i))
                 i++;
-            if ((i < s.Length) && (s[i] == '.'));
+            if ((i < s.Length) && (s[i] == '.'))
             {
                 i++;
                 while ((i < s.Length) && Char.IsDigit(s, i))
@@ -124,11 +124,17 @@ namespace WMAFiles
             return s;
         }
 
-        public static ColorFloat Color(this ConfigFile cfg, string paramName)
+        public static bool Color(this ConfigFile cfg, string paramName, out ColorFloat clr)
         {
-            ColorFloat n = new ColorFloat();
+            
             var ss = cfg.String(paramName, "");
-            if (string.IsNullOrEmpty(ss)) return n;
+            if (string.IsNullOrEmpty(ss))
+            {
+                clr.r = 0;
+                clr.g = 0;
+                clr.b = 0;
+                return false;
+            }
             ss = Unq(ss);
             string[] cmp = ss.Split(new char[] { ',' });
             int r = 0;
@@ -136,13 +142,46 @@ namespace WMAFiles
             int b = 0;
             if (cmp.Length > 0) int.TryParse(cmp[0], out r);
             if (cmp.Length > 1) int.TryParse(cmp[1], out g);
-            if (cmp.Length > 2) int.TryParse(cmp[1], out b);
-            n.r = r / 255.0;
-            n.g = g / 255.0;
-            n.b = b / 255.0;
+            if (cmp.Length > 2) int.TryParse(cmp[2], out b);
+            clr.r = r / 255.0;
+            clr.g = g / 255.0;
+            clr.b = b / 255.0;
+            return true;
+        }
+        public static ColorFloat Color(this ConfigFile cfg, string paramName)
+        {
+            ColorFloat n = new ColorFloat();
+            Color(cfg, paramName, out n);
             return n;
-
         }
 
+
+        public static void LoadConfig(this Configuration dst, ConfigFile src)
+        {
+            dst.distanceCm = src.Float("Monitor_distance_cm:");
+            if (dst.distanceCm <= 0) dst.distanceCm = Consts.distance_DEFAULT;
+
+            dst.Background_diameter_deg = src.Float("Background_diameter_deg:");
+            if (dst.Background_diameter_deg <= 0)
+                dst.Background_diameter_deg = Consts.background_deg_DEFAULT;
+
+            dst.backgroundRadiusCM = Math.Tan(dst.Background_diameter_deg / 2.0 * (Math.PI / 180.0)) * dst.distanceCm;
+            src.Color("Run_background_circle_colour:", out dst.backgroundCircleColor);
+
+            dst.Fixation_dot_deg= src.Float("Fixation_dot_deg:");
+            if (dst.Fixation_dot_deg <= 0) 
+                dst.Fixation_dot_deg = Consts.Fixation_dot_deg_DEFAULT;
+
+            src.Color("Fixation_&_placeholders_colour:", out var _Fix_Plc_colour);
+
+            dst.fixSpotSizeCM = dst.distanceCm * (dst.Fixation_dot_deg * (Math.PI / 180.0));
+            if (!src.Color("Fixation_colour:", out dst.Fixation_colour)) 
+                dst.Fixation_colour = _Fix_Plc_colour;
+
+            dst.Image_size_deg = src.Float("Image_size_deg:");
+            if (dst.Image_size_deg <= 0)
+                dst.Image_size_deg = Consts.Image_size_deg_DEFAULT;
+            dst.Image_size_CM = Math.Tan(dst.Image_size_deg * (Math.PI / 180)) * dst.distanceCm;
+        }
     }
 }

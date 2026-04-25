@@ -21,5 +21,16 @@ namespace WMAData
             if (sourceNo == 0) return;
             list.Add(ofsTimeMs);
         }
+
+        public static PlayItem AddCircle(this PlayList list, double radiusCm, ColorFloat color, double timeOfs = 0, double durationMs = -1)
+        {
+            if (list == null) return null;
+            var pt = list.Add(timeOfs);
+            pt.itemType = PlayItemType.Circle;
+            pt.radiusCm = radiusCm;
+            pt.color = color;
+            pt.durationMs = durationMs;
+            return pt;
+        }
     }
 }
