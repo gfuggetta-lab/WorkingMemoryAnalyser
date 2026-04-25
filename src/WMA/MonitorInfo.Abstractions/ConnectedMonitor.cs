@@ -44,13 +44,9 @@ namespace MonitorInfo
         /// </summary>
         //public MonitorDpi PhysicalDpi { get; internal set; }
 
-        public int PixelWidth { get; set; }
+        public int PixelWidth { get => Bounds.Width; }
 
-        public int PixelHeight { get; set; }
-
-        public double ScaleX { get; set; }
-
-        public double ScaleY { get; set; }
+        public int PixelHeight { get => Bounds.Height; }
 
         public double PhysWidthMM { get; set; }
         public double PhysHeightMM { get; set; }
