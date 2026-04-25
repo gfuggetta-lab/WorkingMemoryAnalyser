@@ -55,5 +55,6 @@ namespace WMAData
         public const int TASK_ID = 3;
         public const int TASK_BASELINE = 4; // no task
 
+        public const int DEFAULT_REFRESH_RATE = 100;
     }
 }

@@ -43,11 +43,11 @@ namespace WMAFiles
             dst.S1.Next_ISI = rdr.GetInt("S1_S2_ISI", dst.S1.Next_ISI);
 
             // S2 doesn't have "shape"
-            dst.S2.ShapePos_NW = rdr.GetInt("S2_Shape_position_1(NW)", dst.S2.ShapePos_NW);
-            dst.S2.ShapePos_NE = rdr.GetInt("S2_Shape_position_2(NE)", dst.S2.ShapePos_NE);
-            dst.S2.ShapePos_SE = rdr.GetInt("S2_Shape_position_3(SE)", dst.S2.ShapePos_SE);
-            dst.S2.ShapePos_SW = rdr.GetInt("S2_Shape_position_4(SW)", dst.S2.ShapePos_SW);
-            dst.S2.ShapePos_Center = rdr.GetInt("S2_Shape_position_4(centre)", dst.S2.ShapePos_Center);
+            dst.S2.ShapePos1_NW = rdr.GetInt("S2_Shape_position_1(NW)", dst.S2.ShapePos1_NW);
+            dst.S2.ShapePos2_NE = rdr.GetInt("S2_Shape_position_2(NE)", dst.S2.ShapePos2_NE);
+            dst.S2.ShapePos3_SE = rdr.GetInt("S2_Shape_position_3(SE)", dst.S2.ShapePos3_SE);
+            dst.S2.ShapePos4_SW = rdr.GetInt("S2_Shape_position_4(SW)", dst.S2.ShapePos4_SW);
+            dst.S2.ShapePos5_Center = rdr.GetInt("S2_Shape_position_4(centre)", dst.S2.ShapePos5_Center);
             dst.S2.Sound = rdr.GetInt("S2_Sound", dst.S2.Sound);
             dst.S2.Duration = rdr.GetInt("S2_Duration", dst.S2.Duration);
             dst.S2.Next_ISI = rdr.GetInt("S2_3_ISI", dst.S2.Next_ISI);
@@ -73,11 +73,11 @@ namespace WMAFiles
 
             // colors
             dst.S1.Color = rdr.GetInt("s1_colour");
-            dst.S2.ShapeClr_NW = rdr.GetInt("s2_colour_position_1(NW)");
-            dst.S2.ShapeClr_NE = rdr.GetInt("s2_colour_position_2(NE)");
-            dst.S2.ShapeClr_SE = rdr.GetInt("s2_colour_position_3(SE)");
-            dst.S2.ShapeClr_SW = rdr.GetInt("s2_colour_position_4(SW)");
-            dst.S2.ShapeClr_Center = rdr.GetInt("s2_colour_position_5(centre)");
+            dst.S2.ShapeClr1_NW = rdr.GetInt("s2_colour_position_1(NW)");
+            dst.S2.ShapeClr2_NE = rdr.GetInt("s2_colour_position_2(NE)");
+            dst.S2.ShapeClr3_SE = rdr.GetInt("s2_colour_position_3(SE)");
+            dst.S2.ShapeClr4_SW = rdr.GetInt("s2_colour_position_4(SW)");
+            dst.S2.ShapeClr5_Center = rdr.GetInt("s2_colour_position_5(centre)");
             dst.S3.Color = rdr.GetInt("s3_colour", dst.S3.Color);
             dst.S3.DistractColor = rdr.GetInt("S3_distractor_colour", dst.S3.DistractColor);
             dst.S4.Color = rdr.GetInt("s4_colour", dst.S4.Color);

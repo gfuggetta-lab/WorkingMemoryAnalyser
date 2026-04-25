@@ -24,16 +24,16 @@ namespace WMAData
         public int Next_ISI; // S1_S2_ISI, etc. Also "Response_Time_after_S4"
 
         // ShapePos is not used in S1
-        public int ShapePos_NW; // see SHAPE_ constants (only used for S2)
-        public int ShapePos_NE; // see SHAPE_ constants (only used for S2)
-        public int ShapePos_SE; // see SHAPE_ constants (only used for S2)
-        public int ShapePos_SW; // see SHAPE_ constants (only used for S2)
-        public int ShapePos_Center; // see SHAPE_ constants // S2_Shape_position_4(centre)
-        public int ShapeClr_NW; // see COLOR_ constants
-        public int ShapeClr_NE; // see COLOR_ constants
-        public int ShapeClr_SE; // see COLOR_ constants
-        public int ShapeClr_SW; // see COLOR_ constants
-        public int ShapeClr_Center; // see COLOR_ constants 
+        public int ShapePos1_NW; // see SHAPE_ constants (only used for S2)
+        public int ShapePos2_NE; // see SHAPE_ constants (only used for S2)
+        public int ShapePos3_SE; // see SHAPE_ constants (only used for S2)
+        public int ShapePos4_SW; // see SHAPE_ constants (only used for S2)
+        public int ShapePos5_Center; // see SHAPE_ constants // S2_Shape_position_4(centre)
+        public int ShapeClr1_NW; // see COLOR_ constants
+        public int ShapeClr2_NE; // see COLOR_ constants
+        public int ShapeClr3_SE; // see COLOR_ constants
+        public int ShapeClr4_SW; // see COLOR_ constants
+        public int ShapeClr5_Center; // see COLOR_ constants 
 
     }
 
