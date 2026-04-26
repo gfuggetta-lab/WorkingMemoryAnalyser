@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Collections.Generic;
 using System.Text;
 using WMAData;
+using static WMAData.Consts;
 
 namespace WMAFiles
 {
@@ -95,6 +96,12 @@ namespace WMAFiles
             }
             return def;
         }
+        public static double FloatNonZero(this ConfigFile cfg, string paramName, double def = 0.0)
+        {
+            var res = cfg.Float(paramName);
+            if (res <= 0) return def;
+            return res;
+        }
 
         public static string GetFirstDouble(string s)
         {
@@ -158,30 +165,85 @@ namespace WMAFiles
 
         public static void LoadConfig(this Configuration dst, ConfigFile src)
         {
-            dst.distanceCm = src.Float("Monitor_distance_cm:");
-            if (dst.distanceCm <= 0) dst.distanceCm = Consts.distance_DEFAULT;
+            dst.distanceCm = src.FloatNonZero("Monitor_distance_cm:", distance_DEFAULT);
 
-            dst.Background_diameter_deg = src.Float("Background_diameter_deg:");
-            if (dst.Background_diameter_deg <= 0)
-                dst.Background_diameter_deg = Consts.background_deg_DEFAULT;
+            dst.Placeholder_diameter_deg = src.Float("Placeholder_diameter_deg:");
+            dst.Shape_scale_factor = src.Float("Shape_scale_factor:");
 
-            dst.backgroundRadiusCM = Math.Tan(dst.Background_diameter_deg / 2.0 * (Math.PI / 180.0)) * dst.distanceCm;
+            dst.Minimum_training_accuracy = src.Float("Minimum_training_accuracy:");
+
+            dst.N_trials_before_pause_training = src.Integer("N_trials_before_pause_training:");
+            dst.N_trials_before_pause_main = src.Integer("N_trials_before_pause_main:");
+
+            
+            dst.Instructions_ODD_participants = src.String("Instructions_ODD_participants:");
+            dst.Instructions_EVEN_participants = src.String("Instructions_EVEN_participants:");
+
+            dst.font_1.name = src.String("Stimulus_font_1:");
+            dst.font_1.size = src.Float("Stimulus_font_1_size:");
+            dst.font_1.style = src.String("Stimulus_font_1_style:");
+
+            dst.font_2.name = src.String("Stimulus_font_2:");
+            dst.font_2.size = src.Float("Stimulus_font_2_size:");
+            dst.font_2.style = src.String("Stimulus_font_2_style:");
+
+            dst.Feedback_font.name = src.String("Feedback_font:");
+            dst.Feedback_font.size = src.Float("Feedback_font_size:");
+            dst.Feedback_font.style = src.String("Feedback_font_style:");
+
+            dst.Feedback_text_correct = src.StringLine("Feedback_text_correct:");
+            dst.Feedback_text_incorrect = src.StringLine("Feedback_text_incorrect:");
+            dst.RT_constant_error_ms = src.Integer("RT_constant_error_ms:");
+
+            if (string.Compare(dst.Feedback_font.name, "symbola.ttf", true) == 0)
+            {
+                dst.Feedback_text_correct = "\u263A"; // smiley
+                dst.Feedback_text_incorrect = "\u2639"; //sad
+            }
+            dst.Pause_background_circle_colour = src.Color("Pause_background_circle_colour:");
+
             src.Color("Run_background_circle_colour:", out dst.backgroundCircleColor);
-
-            dst.Fixation_dot_deg= src.Float("Fixation_dot_deg:");
-            if (dst.Fixation_dot_deg <= 0) 
-                dst.Fixation_dot_deg = Consts.Fixation_dot_deg_DEFAULT;
 
             src.Color("Fixation_&_placeholders_colour:", out var _Fix_Plc_colour);
 
-            dst.fixSpotSizeCM = dst.distanceCm * (dst.Fixation_dot_deg * (Math.PI / 180.0));
-            if (!src.Color("Fixation_colour:", out dst.Fixation_colour)) 
+            if (!src.Color("Fixation_colour:", out dst.Fixation_colour))
                 dst.Fixation_colour = _Fix_Plc_colour;
+            if (!src.Color("Placeholders_colour:", out dst.Placeholders_colour))
+                dst.Placeholders_colour = _Fix_Plc_colour;
 
-            dst.Image_size_deg = src.Float("Image_size_deg:");
-            if (dst.Image_size_deg <= 0)
-                dst.Image_size_deg = Consts.Image_size_deg_DEFAULT;
-            dst.Image_size_CM = Math.Tan(dst.Image_size_deg * (Math.PI / 180)) * dst.distanceCm;
+            dst.Incorrect_feedback_colour = src.Color("Incorrect_feedback_colour:");
+            dst.Correct_feedback_colour = src.Color("Correct_feedback_colour:");
+
+            // todo:
+            //  getShapeColours(configDataFilename,colours)  ;
+
+            // not used
+            // Monitor_name:= getStringForParameter(configDataFilename, 'Monitor_name:');
+
+            // todo:
+            // ReadPhotodiode( Photodiode_S3,     configDataFilename, 'S3_photodiode_patch');
+            // ReadPhotodiode( Photodiode_TMS_S3, configDataFilename, 'TMS_S3_photodiode_patch');
+            // ReadPhotodiode( Photodiode_S4,     configDataFilename, 'S4_photodiode_patch');
+
+            dst.Show_S3_peripheral_placeholders = src.Integer("Show_S3_peripheral_placeholders:") != 0;
+            dst.Show_S4_peripheral_placeholders = src.Integer("Show_S4_peripheral_placeholders:") != 0;
+            dst.Show_S3_placeholder_when_centre = src.Integer("Show_S3_placeholder_when_centre:") != 0;
+            dst.Show_S4_placeholder_when_centre = src.Integer("Show_S4_placeholder_when_centre:") != 0;
+
+            dst.Background_diameter_deg = src.FloatNonZero("Background_diameter_deg:", background_deg_DEFAULT);
+            dst.Placeholders_diameter_deg = src.FloatNonZero("Placeholders_diameter_deg:", Placeholders_diameter_deg_DEFAULT);
+
+            dst.S2_sample_diameter_deg = src.FloatNonZero("S2_Sample_diameter_deg:", Sample_diameter_deg_DEFAULT);
+            dst.Fixation_dot_deg = src.FloatNonZero("Fixation_dot_deg:", Fixation_dot_deg_DEFAULT);
+            dst.Shape_size_deg = src.FloatNonZero("Shape_size_deg:", Shape_size_deg_DEFAULT);
+            dst.Image_feedback_deg = src.FloatNonZero("Image_feedback_deg:", Image_feedback_deg_DEFAULT);
+
+            dst.Image_size_deg = src.FloatNonZero("Image_size_deg:", Image_size_deg_DEFAULT);
+
+            dst.keyboards = src.StringLine("Keyboard_keys_used_to_respond:");
+            //KeyboardSetupResponse(keyboards);                
+
+            dst.CalculateCmFromDeg();
         }
     }
 }
