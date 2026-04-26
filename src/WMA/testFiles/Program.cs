@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using WMAData;
 using WMAFiles;
@@ -27,11 +28,19 @@ namespace testFiles
             PlayListTracker trck = new PlayListTracker(playList);
             trck.Track(0, null, null, null, null);
 
+            List<PlayItem> pl = new List<PlayItem>();
+            List<PlayItem> nw = new List<PlayItem>();
+            List<PlayItem> fd = new List<PlayItem>();
             while (true)
             {
-                int c = trck.Track(tick, null, null, null, null);
+                pl.Clear();
+                nw.Clear();
+                fd.Clear();
+                int c = trck.Track(tick, pl, nw, fd, null);
                 if (c > 0)
-                    Console.WriteLine(c);
+                {
+                    Console.WriteLine($"{trck.lastMs}: triggered: {c}; eff: {pl.Count}; on: {nw.Count}; off: {fd.Count}");
+                }
             }
         }
     }
