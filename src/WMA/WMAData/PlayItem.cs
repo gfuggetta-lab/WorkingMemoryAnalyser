@@ -29,6 +29,10 @@ namespace WMAData
         public double sizeCm; // width and height for either image or other shapes... other than circles... why not circles?
 
         public ColorFloat color;
+
+        // used by PLayItemPos.Text
+        public string fontName;
+        public string text;
     }
 
     public enum PlayItemPos
@@ -46,6 +50,7 @@ namespace WMAData
         CircleFilled, // radiusCm
         CircleHollow, // radiusCm
         ImageById,
-        Sound
+        Sound,
+        Text // draw text, centered at the pos
     }
 }
