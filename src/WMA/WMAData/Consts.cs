@@ -60,6 +60,13 @@ namespace WMAData
         public const double distance_DEFAULT = 57; // centimeters
         public const double background_deg_DEFAULT = 18.3;
         public const double Fixation_dot_deg_DEFAULT = 0.3; // seems to be too much. 0.07 seems to be better
+
+        // radius of target position in degrees
+        public const double Placeholders_diameter_deg_DEFAULT = 14.2; // 10
+
+        public const double Sample_diameter_deg_DEFAULT = 4.1;
+        public const double Shape_size_deg_DEFAULT = 1.6;
+        public const double Image_feedback_deg_DEFAULT = 3.2;
         public const double Image_size_deg_DEFAULT = 1.6; 
 
     }

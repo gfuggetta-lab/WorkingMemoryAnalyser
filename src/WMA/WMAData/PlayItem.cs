@@ -12,16 +12,40 @@ namespace WMAData
         public double durationMs;
 
         public int sameTimeOrder;
+        
+        // the lower value is drawn first
+        public int drawOrder; // the time doesn't matter
+
+        public PlayItemPos pos = PlayItemPos.Undefined;
+        public double posDistanceCm;
+        public double lineWidthCm;
+        public int posOther;
+
+        public int imageId; // used only for ImageById
 
         public PlayItemType itemType = PlayItemType.None;
         public double radiusCm;
+        
+        public double sizeCm; // width and height for either image or other shapes... other than circles... why not circles?
+
         public ColorFloat color;
     }
+
+    public enum PlayItemPos
+    { 
+        Undefined,
+        Center,
+        NE, NW, SE, SW, 
+        Other
+    }
+
 
     public enum PlayItemType
     {
         None,
-        Circle, // radiusCm
+        CircleFilled, // radiusCm
+        CircleHollow, // radiusCm
+        ImageById,
         Sound
     }
 }

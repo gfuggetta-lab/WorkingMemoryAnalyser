@@ -16,5 +16,19 @@ namespace WMAData
             scheduleCounter++;
             return result;
         }
+
+        public void Sort()
+        {
+            items.Sort((a, b) =>
+            {
+                int c = a.drawOrder.CompareTo(b.drawOrder);
+                if (c != 0) return c;
+
+                c = a.startMs.CompareTo(b.startMs);
+                if (c != 0) return c;
+
+                return a.sameTimeOrder.CompareTo(b.sameTimeOrder);
+            });
+        }
     }
 }
