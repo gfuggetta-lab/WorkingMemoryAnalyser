@@ -39,7 +39,7 @@ namespace WMAData
                 bool hasExp = (itm.durationMs >= 0); // negative amount means it's eternal!
                 double endMs;
                 if (!hasExp) endMs = double.MaxValue;
-                else endMs = itm.durationMs + itm.durationMs;
+                else endMs = itm.startMs + itm.durationMs;
 
                 bool isTriggered = (itm.startMs > lastMs) && (itm.startMs <= curMs);
                 if ((isTriggered) && (trigList != null))
