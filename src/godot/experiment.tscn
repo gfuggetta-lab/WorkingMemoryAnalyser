@@ -1,0 +1,14 @@
+[gd_scene format=3 uid="uid://kfxkun5kasfk"]
+
+[ext_resource type="Script" uid="uid://copnukkbt081u" path="res://BootScript.cs" id="1_y6ufa"]
+
+[node name="Node2D" type="Node2D" unique_id=851726454 node_paths=PackedStringArray("screenRes")]
+script = ExtResource("1_y6ufa")
+screenRes = NodePath("Label")
+fileName = "C:\\FPC_Laz\\WorkingMemoryAnalyser_pas\\Experiments library\\TestExp\\Configuration.txt"
+
+[node name="Label" type="Label" parent="." unique_id=1280975078]
+offset_left = 32.0
+offset_top = 29.0
+offset_right = 756.0
+offset_bottom = 119.0
