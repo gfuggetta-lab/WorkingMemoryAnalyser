@@ -30,6 +30,177 @@ type
 
 implementation
 
+function GetMaskByteIndex(Mask: UInt32): Integer;
+var
+  Shift: Integer;
+begin
+  Result := -1;
+
+  if Mask = 0 then
+    Exit;
+
+  Shift := 0;
+
+  while ((Mask and 1) = 0) and (Shift < 32) do
+  begin
+    Mask := Mask shr 1;
+    Inc(Shift);
+  end;
+
+  if (Shift mod 8) <> 0 then
+    Exit;
+
+  Result := Shift div 8;
+end;
+
+function GetGLTexturePixelFormatFromSurface(
+  Surface: PSDL_Surface;
+  out gl_internalFormat: integer;
+  out gl_format: integer;
+  out gl_PixelType: integer
+): Boolean;
+var
+  Fmt: PSDL_PixelFormat;
+  Bpp: Integer;
+  RIndex: Integer;
+  GIndex: Integer;
+  BIndex: Integer;
+  AIndex: Integer;
+const
+  GL_RGB                       = $1907;
+  GL_RGBA                      = $1908;
+  GL_BGR                       = $80E0;
+  GL_BGRA                      = $80E1;
+  GL_UNSIGNED_BYTE             = $1401;
+  GL_UNSIGNED_SHORT_5_6_5      = $8363;
+  GL_UNSIGNED_SHORT_5_5_5_1    = $8034;
+  GL_UNSIGNED_SHORT_4_4_4_4    = $8033;
+begin
+  Result := False;
+
+  gl_internalFormat := 0;
+  gl_Format := 0;
+  gl_PixelType := 0;
+
+  if (Surface = nil) or (Surface^.format = nil) then
+    Exit;
+
+  Fmt := Surface^.format;
+  Bpp := Fmt^.BytesPerPixel;
+
+  case Bpp of
+    4:
+      begin
+        RIndex := GetMaskByteIndex(Fmt^.Rmask);
+        GIndex := GetMaskByteIndex(Fmt^.Gmask);
+        BIndex := GetMaskByteIndex(Fmt^.Bmask);
+        AIndex := GetMaskByteIndex(Fmt^.Amask);
+
+        if Fmt^.Amask <> 0 then
+          gl_InternalFormat := GL_RGBA
+        else
+          gl_InternalFormat := GL_RGB;
+
+        gl_PixelType := GL_UNSIGNED_BYTE;
+
+        // Memory layout: R, G, B, A
+        if (RIndex = 0) and (GIndex = 1) and (BIndex = 2) then
+        begin
+          if Fmt^.Amask <> 0 then
+          begin
+            if AIndex <> 3 then
+              Exit;
+          end;
+
+          gl_Format := GL_RGBA;
+          Result := True;
+          Exit;
+        end;
+
+        // Memory layout: B, G, R, A
+        if (BIndex = 0) and (GIndex = 1) and (RIndex = 2) then
+        begin
+          if Fmt^.Amask <> 0 then
+          begin
+            if AIndex <> 3 then
+              Exit;
+          end;
+
+          gl_Format := GL_BGRA;
+          Result := True;
+          Exit;
+        end;
+      end;
+
+    3:
+      begin
+        RIndex := GetMaskByteIndex(Fmt^.Rmask);
+        GIndex := GetMaskByteIndex(Fmt^.Gmask);
+        BIndex := GetMaskByteIndex(Fmt^.Bmask);
+
+        gl_InternalFormat := GL_RGB;
+        gl_PixelType := GL_UNSIGNED_BYTE;
+
+        // Memory layout: R, G, B
+        if (RIndex = 0) and (GIndex = 1) and (BIndex = 2) then
+        begin
+          gl_Format := GL_RGB;
+          Result := True;
+          Exit;
+        end
+        else if (RIndex = 2) and (GIndex = 1) and (BIndex = 0) then
+        begin
+          gl_Format := GL_BGR;
+          Result := True;
+          Exit;
+        end;
+      end;
+
+    2:
+      begin
+        gl_InternalFormat := GL_RGB;
+
+        // RGB565
+        if (Fmt^.Rmask = $F800) and
+           (Fmt^.Gmask = $07E0) and
+           (Fmt^.Bmask = $001F) and
+           (Fmt^.Amask = 0) then
+        begin
+          gl_Format := GL_RGB;
+          gl_PixelType := GL_UNSIGNED_SHORT_5_6_5;
+          Result := True;
+          Exit;
+        end;
+
+        // RGBA5551
+        if (Fmt^.Rmask = $F800) and
+           (Fmt^.Gmask = $07C0) and
+           (Fmt^.Bmask = $003E) and
+           (Fmt^.Amask = $0001) then
+        begin
+          gl_InternalFormat := GL_RGBA;
+          gl_Format := GL_RGBA;
+          gl_PixelType := GL_UNSIGNED_SHORT_5_5_5_1;
+          Result := True;
+          Exit;
+        end;
+
+        // RGBA4444
+        if (Fmt^.Rmask = $F000) and
+           (Fmt^.Gmask = $0F00) and
+           (Fmt^.Bmask = $00F0) and
+           (Fmt^.Amask = $000F) then
+        begin
+          gl_InternalFormat := GL_RGBA;
+          gl_Format := GL_RGBA;
+          gl_PixelType := GL_UNSIGNED_SHORT_4_4_4_4;
+          Result := True;
+          Exit;
+        end;
+      end;
+  end;
+end;
+
 //------------------------------------------------------------------------------
 function  LoadGLTextures():integer;
 
@@ -249,18 +420,22 @@ function displayBMPimage(var BMPimages: array of TBMPimages; imageNo:integer):in
 
 var
 
-  destSurface : PSDL_Surface;  // surface into which Texture image is blitted to give correct RGB order of bytes
-
+  isEnabled  : Boolean;
+  gl_intFmt  : integer;
+  gl_Fmt     : integer;
+  gl_PixType : integer;
 begin
+  isEnabled := glIsEnabled( GL_BLEND) <> GL_NONE;
+  if not isEnabled then begin
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  end;
+
   Result := 0;
   //* Load The Bitmap, Check For Errors, If Bitmap's Not Found Quit */
   if ( BMPimages[imageNo].TextureImage<> nil ) then
   begin
 
-    // create 24bit destination surface with little-endian byte order
-    destSurface  := SDL_createRGBsurface(0,BMPimages[imageNo].TextureImage.w, BMPimages[imageNo].TextureImage.h, 24, $000000ff,$0000ff00,$00ff0000,$ff000000);
-
-    SDL_blitsurface(BMPimages[imageNo].TextureImage,NIL, destSurface, NIL);
 
     //* Create storage space for the texture */
     glEnable(GL_TEXTURE_2D);
@@ -271,7 +446,14 @@ begin
     //* Typical Texture Generation Using Data From The Bitmap */
     glBindTexture( GL_TEXTURE_2D, BMPimages[imageNo].textureID );
 
-    glTexImage2D( GL_TEXTURE_2D, 0, 3, destSurface.w, destSurface.h, 0, GL_RGB, GL_UNSIGNED_BYTE, destSurface.pixels );
+    GetGLTexturePixelFormatFromSurface(BMPimages[imageNo].TextureImage, gl_intFmt, gl_Fmt, gl_PixType);
+
+    glTexImage2D( GL_TEXTURE_2D, 0,
+      gl_intFmt,
+      BMPimages[imageNo].TextureImage.w,
+      BMPimages[imageNo].TextureImage.h,
+      0, gl_Fmt, gl_PixType,
+      BMPimages[imageNo].TextureImage.pixels );
 
     //* Linear Filtering */
     glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
@@ -301,8 +483,10 @@ begin
     glDisable(GL_TEXTURE_2D);
     glDeleteTextures(1,@BMPimages[imageNo].textureID );
 
-    // clean up
-    SDL_freeSurface(destSurface);
+  end;
+
+  if not isEnabled then begin
+    glDisable(GL_BLEND);
   end;
 end;
 //------------------------------------------------------------------------------
@@ -334,10 +518,19 @@ end;
 function displayBMPimageXYSizecm(var BMPimages: TBMPimages; xcm, ycm :real; screenWidthCM, screenHeightCM: real;
   widthCm, HeightCm: real):integer;
 var
-  destSurface : PSDL_Surface;  // surface into which Texture image is blitted to give correct RGB order of bytes
+  isEnabled : Boolean;
+  gl_intFmt  : integer;
+  gl_Fmt     : integer;
+  gl_PixType : integer;
 begin
   Result := 0;
   if BMPimages.TextureImage = nil then Exit;
+
+  isEnabled := glIsEnabled( GL_BLEND) <> GL_NONE;
+  if not isEnabled then begin
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  end;
 
   //glviewport(0,0,screenWidthPix,screenHeightPix);
   glMatrixMode(GL_PROJECTION);
@@ -353,10 +546,6 @@ begin
   Result := 0;
   //* Load The Bitmap, Check For Errors, If Bitmap's Not Found Quit */
 
-  // create 24bit destination surface with little-endian byte order
-  destSurface  := SDL_createRGBsurface(0,BMPimages.TextureImage.w, BMPimages.TextureImage.h, 24, $000000ff,$0000ff00,$00ff0000,$ff000000);
-
-  SDL_blitsurface(BMPimages.TextureImage,NIL, destSurface, NIL);
 
   //* Create storage space for the texture */
   glEnable(GL_TEXTURE_2D);
@@ -367,7 +556,15 @@ begin
   //* Typical Texture Generation Using Data From The Bitmap */
   glBindTexture( GL_TEXTURE_2D, BMPimages.textureID );
 
-  glTexImage2D( GL_TEXTURE_2D, 0, 3, destSurface.w, destSurface.h, 0, GL_RGB, GL_UNSIGNED_BYTE, destSurface.pixels );
+  GetGLTexturePixelFormatFromSurface(BMPimages.TextureImage, gl_intFmt, gl_Fmt, gl_PixType);
+
+  glTexImage2D( GL_TEXTURE_2D, 0, 
+    gl_intFmt, 
+    BMPimages.TextureImage.w, 
+    BMPimages.TextureImage.h, 
+    0, 
+    gl_Fmt, gl_PixType, 
+    BMPimages.TextureImage.pixels );
 
   //* Linear Filtering */
   glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
@@ -397,13 +594,15 @@ begin
   glDisable(GL_TEXTURE_2D);
   glDeleteTextures(1, @BMPimages.textureID );
 
-  // clean up
-  SDL_freeSurface(destSurface);
 
 
   glpopmatrix();
   glMatrixMode(GL_PROJECTION);
   glpopmatrix();
+
+  if not isEnabled then begin
+    glDisable(GL_BLEND);
+  end;
 end;
 
 end.
