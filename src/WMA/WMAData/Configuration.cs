@@ -9,6 +9,12 @@ namespace WMAData
 {
     public class Configuration
     {
+        private int width_px;
+        private int height_px;
+        private double width_cm;
+        private double height_cm;
+
+
         // the expacted distance from the monitor
         public double distanceCm;
 
@@ -58,6 +64,8 @@ namespace WMAData
 
         public ColorFloat Incorrect_feedback_colour;
         public ColorFloat Correct_feedback_colour;
+
+        public ColorFloat[] ShapeColors = new ColorFloat[15];
 
         public bool Show_S3_peripheral_placeholders = true;
         public bool Show_S4_peripheral_placeholders = true;
@@ -184,24 +192,35 @@ namespace WMAData
                 {
 
                     duration = tr.S1.Duration;
-                    var c = dst.AddCircle(Image_size_CM, Fixation_colour, ofsTime, duration);
+                    var clr = GetShapeColor(tr.S1.Color);
+                    //var c = dst.AddCircle(Image_size_CM, Fixation_colour, ofsTime, duration);
+                    double fntsz = Math.Round(font_1.size * (width_px / width_cm) * (distanceCm / 57));
 
-                    if (tr.S1.Position == POS_CENTER)
+                    if (tr.S1.Position != POS_ALL)
                     {
-                        dst.ShowImage(ofsTime, duration, 0);
-                    }
-                    else if (tr.S1.Position != POS_ALL)
-                    {
-                        dst.ShowImage(ofsTime, duration, 0);
+                        dst.AddByShape(tr.S1.Shape, Image_size_CM, Shape_size_CM, clr, ofsTime, duration)
+                            .SetFont(font_1.name, fntsz)
+                            .SetPos(tr.S1.Position, cueRadiusCM)
+                            ;
+
                     }
                     else
                     {
-                        dst.ShowImage(ofsTime, duration, 0);
-                        dst.ShowImage(ofsTime, duration, 0);
-                        dst.ShowImage(ofsTime, duration, 0);
-                        dst.ShowImage(ofsTime, duration, 0);
+                        dst.AddByShape(tr.S1.Shape, Image_size_CM, Shape_size_CM, clr, ofsTime, duration)
+                            .SetFont(font_1.name, fntsz)
+                            .SetPos(PlayItemPos.NW, cueRadiusCM);
+                        dst.AddByShape(tr.S1.Shape, Image_size_CM, Shape_size_CM, clr, ofsTime, duration)
+                            .SetFont(font_1.name, fntsz)
+                            .SetPos(PlayItemPos.NE, cueRadiusCM);
+                        dst.AddByShape(tr.S1.Shape, Image_size_CM, Shape_size_CM, clr, ofsTime, duration)
+                            .SetFont(font_1.name, fntsz)
+                            .SetPos(PlayItemPos.SW, cueRadiusCM);
+                        dst.AddByShape(tr.S1.Shape, Image_size_CM, Shape_size_CM, clr, ofsTime, duration)
+                            .SetFont(font_1.name, fntsz)
+                            .SetPos(PlayItemPos.SE, cueRadiusCM);
+
                     }
-                    dst.PlaySound(ofsTime, tr.S1.Sound);
+                    dst.PlaySoundAt(tr.S1.Sound, ofsTime);
 
 
                     ofsTime += tr.S1.Duration;
@@ -274,11 +293,20 @@ namespace WMAData
             }
         }
 
-
-
-
-        public void Schedule(List<TrialOrder> trials, PlayList dst)
+        public ColorFloat GetShapeColor(int i )
         {
+            if (i < 0 || i >= ShapeColors.Length)
+                return new ColorFloat();
+            return ShapeColors[i];
+        }
+
+
+        public void Schedule(TrialMonitor tm, List<TrialOrder> trials, PlayList dst)
+        {
+            width_px = tm.widthPx;
+            height_px = tm.widthPx;
+            width_cm = tm.widthCm;
+            height_cm = tm.heightCm;
 
             ScheduleDefaults(dst);
             if (trials != null)

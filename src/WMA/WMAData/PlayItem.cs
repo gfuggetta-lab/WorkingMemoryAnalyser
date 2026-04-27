@@ -33,6 +33,9 @@ namespace WMAData
         // used by PLayItemPos.Text
         public string fontName;
         public string text;
+        public int fontSizePx; // font size in godot pixels
+
+        public string soundId; // extensions might not be needed
     }
 
     public enum PlayItemPos

@@ -49,7 +49,7 @@ namespace WMAData
                 if ((isFaded) && (fadeList != null))
                     fadeList.Add(itm);
 
-                bool inEff = curMs < endMs;
+                bool inEff = curMs <= endMs;
                 if ((inEff) && (effList != null)) 
                     effList.Add(itm);
                 

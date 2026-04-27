@@ -22,7 +22,7 @@ namespace testFiles
 
 
             PlayList playList = new PlayList();
-            exam.Schedule(trials, playList);
+            exam.Schedule(TrialMonitor.DefaultMonitor(), trials, playList);
 
             var tick = 1000.0 / 60.0;
             PlayListTracker trck = new PlayListTracker(playList);

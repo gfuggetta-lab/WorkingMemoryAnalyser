@@ -214,8 +214,11 @@ namespace WMAFiles
             dst.Incorrect_feedback_colour = src.Color("Incorrect_feedback_colour:");
             dst.Correct_feedback_colour = src.Color("Correct_feedback_colour:");
 
-            // todo:
             //  getShapeColours(configDataFilename,colours)  ;
+            for (int i = 0; i < dst.ShapeColors.Length; i++)
+            {
+                src.Color($"Shapes_colour_{i}:", out dst.ShapeColors[i]);
+            }
 
             // not used
             // Monitor_name:= getStringForParameter(configDataFilename, 'Monitor_name:');
