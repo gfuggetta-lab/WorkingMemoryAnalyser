@@ -2259,38 +2259,37 @@ begin
 
 
 
-  //selMonitor := TMonitor(radiogroup4.items.Objects[radiogroup4.itemindex]);
-  //if (selMonitor <> 0) then
-  //begin
-  //  REFRESH_RATE := ROUND(selMonitor.Frequency);
-  //  if REFRESH_RATE = 0 then REFRESH_RATE := Monitor_refresh_rate;
-  //  ef.displayWindowXpos:=selMonitor.Bounds.Left;
-  //  ef.displayWindowYpos:=selMonitor.Bounds.Top;
-  //  ef.Width := selMonitor.Resolution.cx;
-  //  ef.Height := selMonitor.Resolution.cy;
-  //  ef.ImageScaleHorz := selMonitor.Resolution.cx / Monitor_resolution_h;
-  //  ef.ImageScaleVert := selMonitor.Resolution.cy / Monitor_resolution_v;
-  //
-  //  if (selMonitor.PhysSizeMm.cx>0) and (selMonitor.PhysSizeMm.cy>0) then begin
-  //    ef.widthCM := selMonitor.PhysSizeMm.cx / 10;
-  //    ef.heightCM := selMonitor.PhysSizeMm.cy / 10;
-  //  end else begin
-  //    ef.widthCM := Monitor_width_cm;
-  //    ef.heightCM := Monitor_height_cm;
-  //  end;
-  //  ef.distance := Monitor_distance_cm;
-  //end else begin
+  selMonitor := TMonitor(radiogroup4.items.Objects[radiogroup4.itemindex]);
+  if (selMonitor <> nil) then
+  begin
+    REFRESH_RATE := ROUND(selMonitor.Frequency);
+    if REFRESH_RATE = 0 then REFRESH_RATE := Monitor_refresh_rate;
+    ef.displayWindowXpos:=selMonitor.Bounds.Left;
+    ef.displayWindowYpos:=selMonitor.Bounds.Top;
+    ef.Width := selMonitor.Resolution.cx;
+    ef.Height := selMonitor.Resolution.cy;
+    ef.ImageScaleHorz := selMonitor.Resolution.cx / Monitor_resolution_h;
+    ef.ImageScaleVert := selMonitor.Resolution.cy / Monitor_resolution_v;
+
+    if (selMonitor.PhysSizeMm.cx>0) and (selMonitor.PhysSizeMm.cy>0) then begin
+      ef.widthCM := selMonitor.PhysSizeMm.cx / 10;
+      ef.heightCM := selMonitor.PhysSizeMm.cy / 10;
+    end else begin
+      ef.widthCM := Monitor_width_cm;
+      ef.heightCM := Monitor_height_cm;
+    end;
+    ef.distance := Monitor_distance_cm;
+  end else begin
+    REFRESH_RATE := Monitor_refresh_rate;
+    ef.Width := Monitor_resolution_h;
+    ef.Height := Monitor_resolution_v;
+    ef.widthCM := Monitor_width_cm;
+    ef.heightCM := Monitor_height_cm;
+    ef.distance := Monitor_distance_cm;
+  end;
 
 
-  REFRESH_RATE := Monitor_refresh_rate;
-  ef.Width := Monitor_resolution_h;
-  ef.Height := Monitor_resolution_v;
-  ef.widthCM := Monitor_width_cm;
-  ef.heightCM := Monitor_height_cm;
-  ef.distance := Monitor_distance_cm;
 
-
- // end;
 
 
 
@@ -4577,6 +4576,12 @@ begin
   TForm1Handle:=GetForegroundWindow;
   Combobox1.itemindex:=0;
   Combobox2.itemindex:=0;
+  {$ifdef quickstart}
+  ComboBox3.ItemIndex:=0;
+  ComboBox13.ItemIndex:=0;
+  ComboBox14.ItemIndex:=0;
+  ComboBox8.ItemIndex:=0;
+  {$endif}
 
   ConnectTriggerStation;
   label12.visible:=true;
