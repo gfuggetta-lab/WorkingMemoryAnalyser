@@ -891,7 +891,7 @@ end;
 // NOTE : the call to  Mix_OpenAudio MUST happen before the call to
  //       SDL_SetVideoMode, otherwise you will get a ( sometimes load )
 //        audible pop.
-if (Mix_OpenAudio(22050, AUDIO_U8, 1, 1024) < 0) then
+if (Mix_OpenAudio(44100, AUDIO_S16SYS, 2, 2048) < 0) then
 begin
  // Log.LogWarning(Format('Couldn''t set 11025 Hz 8-bit audio - Reason : %s',
    // [Mix_GetError]), 'Main');
