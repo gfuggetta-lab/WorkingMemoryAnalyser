@@ -205,7 +205,7 @@ begin
   end else begin
     SetLength(buf, sz);
     Result := RegQueryValueEx(hk, PChar(relativePath), nil, nil, @buf[0], @sz) = ERROR_SUCCESS;
-    Move(buf, ed, sizeof(ed));
+    Move(buf[0], ed, sizeof(ed));
   end;
 end;
 
