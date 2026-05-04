@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://kfxkun5kasfk"]
 
-[ext_resource type="Script" uid="uid://copnukkbt081u" path="res://BootScript.cs" id="1_y6ufa"]
+[ext_resource type="Script" uid="uid://copnukkbt081u" path="res://Scripts/BootScript.cs" id="1_y6ufa"]
 
 [node name="Node2D" type="Node2D" unique_id=851726454 node_paths=PackedStringArray("screenRes", "soundPlayer")]
 script = ExtResource("1_y6ufa")

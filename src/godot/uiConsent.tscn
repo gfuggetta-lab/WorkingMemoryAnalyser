@@ -1,0 +1,133 @@
+[gd_scene format=3 uid="uid://tskq6f1usuqp"]
+
+[ext_resource type="Script" uid="uid://dij20dhvixikk" path="res://Scripts/ConsentCheck.cs" id="1_me1bm"]
+[ext_resource type="Script" uid="uid://cuucqman7g4fq" path="res://Scripts/SceneLoad.cs" id="2_aug0a"]
+[ext_resource type="PackedScene" uid="uid://f6cd2mjrj6ul" path="res://uiParticipant.tscn" id="3_22opg"]
+
+[node name="Root" type="Control" unique_id=1325272697]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ParticipantConsentForm" type="Panel" parent="." unique_id=1374282692]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ConsentCheck" type="Node" parent="ParticipantConsentForm" unique_id=1623414593 node_paths=PackedStringArray("mustBeChecked")]
+script = ExtResource("1_me1bm")
+mustBeChecked = [NodePath("../VBoxContainer/chkIRead"), NodePath("../VBoxContainer/chkEscAware"), NodePath("../VBoxContainer/chkDataRemoval")]
+
+[node name="SwitchNext" type="Node" parent="ParticipantConsentForm" unique_id=1396160189 node_paths=PackedStringArray("target")]
+script = ExtResource("2_aug0a")
+sceneAsTscn = ExtResource("3_22opg")
+replaceScene = true
+target = NodePath("../..")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ParticipantConsentForm" unique_id=1936460166]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 69.0
+offset_top = 34.0
+offset_right = -66.0
+offset_bottom = -97.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 2
+
+[node name="ConsentMargin" type="MarginContainer" parent="ParticipantConsentForm/VBoxContainer" unique_id=964267533]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_bottom = 20
+
+[node name="Consent" type="RichTextLabel" parent="ParticipantConsentForm/VBoxContainer/ConsentMargin" unique_id=1713830790]
+layout_mode = 2
+size_flags_vertical = 3
+bbcode_enabled = true
+text = "[b]PARTICIPANT CONSENT FORM[/b]
+
+Empirical data collection of research project to assess individual differences in working memory capacity and visual distractibility with working memory load.
+
+[b]Brief description of research project:[/b]
+
+This project is being conducted both in the laboratory and remotely online to collect a wide range of participants. A typical experiment will take around 60 minutes to complete and will require the completion of a cognitive task and a few questionnaires to explore individual variation in the effects. The cognitive task will be performed using Working Memory Analyser, an open source free Psychology software to examine both individual differences in working memory capacity and the effect of working memory load on visual distractibility. Your voluntary participation will provide valuable insight into how our cognitive system works and that can inform cognitive theories of working memory and attention.
+
+For this study, information will initially be saved to a secure online server which is hosted by Cognito forms and Qualtrics. These are well trusted and secure sites which are widely used and can only be access by the research team who have passcodes for these secure servers. For more information: https://www.cognitoforms.com/support/74/entries/data-security and https://www.qualtrics.com/security-statement/.
+
+Personal data will be kept completely anonymised, and you will create your 7-digit “Participant ID code” to be assigned to your data. You will need this code if you wish to withdraw your data after participating. You may withdraw your data up to 4 months after your completion of the study. Withdrawal can be completed by contacting the lead researcher on the study by email with your unique participant ID code (email: giorgio.fuggetta@kcl.ac.uk), you do not need to provide a reason for withdrawal. If you withdraw your data, then all data linked to your submission will be permanently deleted. After this point, your data will be used, but will always be stored in an anonymous format that cannot be trace back. The data will be retained for a minimum of 10 years in an anonymised form. If these projects are carried out in partnership with other organisations/institutions, your anonymised data will be shared with them.
+
+The data will be written up as academic articles for publication in peer reviewed journals and presentation at academic conferences. Additionally, the anonymised data will be stored online on the Open Science Framework ([url=https://osf.io]https://osf.io/[/url]) which will facilitate sharing of scientific findings with other academics.
+
+[b]People aged 16 or over are entitled to consent to their own data collection. This can only be overruled in exceptional circumstances.[/b] Like adults, young people (aged 16 or 17) are presumed to have sufficient capacity to decide on their own data collection, unless there is significant evidence to suggest otherwise.
+
+Children under the age of 16 must have a person with parental responsibility to give consent for them. This is even if the children are believed to have enough intelligence, competence and understanding to fully appreciate what is involved in their data collection.
+
+This could be:
+• the child's mother or father
+• the child's legally appointed guardian
+• a person with a residence order concerning the child
+• a local authority designated to care for the child
+• a local authority or person with an emergency protection order for the child
+ 
+A person with parental responsibility must have the capacity to give consent.
+
+If you would like more information about how your data will be processed under the terms of UK data protection laws, please visit the link below: 
+[url]https://www.kcl.ac.uk/research/support/research-ethics/kings-college-london-statement-on-use-of-personal-data-in-research[/url]. 
+
+
+[b]Investigator contact details:[/b]
+
+Giorgio Fuggetta, PhD, FHEA
+Senior Lecturer in Neuroscience and Psychology (Education)
+Department of Neuroimaging
+Institute of Psychiatry, Psychology and Neuroscience (IoPPN)
+[u]King's College London[/u]
+Email: [url]giorgio.fuggetta@kcl.ac.uk[/url]
+ 
+[b]Consent statement:[/b]
+
+I agree to take part in this research and am aware that I am free to withdraw at any point without giving a reason by contacting Dr Giorgio Fuggetta (giorgio.fuggetta@kcl.ac.uk) with my Participant ID code. I understand that if I do withdraw, my data may not be erased automatically but will only be used in an anonymised form as part of an aggregated dataset. I understand that the personal data collected from me during the course of the projects will be used for the purposes outlined above in public interest.
+
+The information you have provided will be treated in confidence by the researcher and your identity will be protected in the publication of any findings. The purpose of the research may change over time, and your data may be re-used for research projects by the University in the future. If this is the case, you will normally be provided with additional information about the new project.
+"
+
+[node name="chkIRead" type="CheckBox" parent="ParticipantConsentForm/VBoxContainer" unique_id=1703786111]
+layout_mode = 2
+text = "I have read this form (or a person with parental responsibility have read the information for children under the age of 16), and consent to participate, and understand what is required."
+autowrap_mode = 2
+
+[node name="chkEscAware" type="CheckBox" parent="ParticipantConsentForm/VBoxContainer" unique_id=1954429786]
+layout_mode = 2
+text = "I am aware that I can withdraw at any time by pressing “Esc” while the computer task is running."
+autowrap_mode = 2
+
+[node name="chkDataRemoval" type="CheckBox" parent="ParticipantConsentForm/VBoxContainer" unique_id=725035923]
+layout_mode = 2
+text = "I understand I can withdraw my data after the experiment has finished, up to 4 months from my participation by emailing the researcher with my unique Participant ID code."
+autowrap_mode = 2
+
+[node name="btnProceed" type="Button" parent="ParticipantConsentForm" unique_id=1790424452]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -249.0
+offset_top = -82.0
+offset_right = -62.0
+offset_bottom = -41.0
+grow_horizontal = 0
+grow_vertical = 0
+text = "Proceed"
+
+[connection signal="consent_received" from="ParticipantConsentForm/ConsentCheck" to="ParticipantConsentForm/SwitchNext" method="LoadScene"]
+[connection signal="pressed" from="ParticipantConsentForm/btnProceed" to="ParticipantConsentForm/ConsentCheck" method="CheckConsent"]

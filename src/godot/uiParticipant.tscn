@@ -1,0 +1,368 @@
+[gd_scene format=3 uid="uid://f6cd2mjrj6ul"]
+
+[ext_resource type="Script" uid="uid://dafvkvrkrohp" path="res://Scripts/ParticipantIDCheck.cs" id="1_piovy"]
+
+[node name="Control" type="Control" unique_id=1479967369]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=421801307]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -311.0
+offset_top = -120.0
+offset_right = 332.0
+offset_bottom = 136.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ParticipantIdCheck" type="Node" parent="VBoxContainer" unique_id=763786022 node_paths=PackedStringArray("combos", "dstText")]
+script = ExtResource("1_piovy")
+combos = [NodePath("../FirstInitBox/FirstInit"), NodePath("../MomInitBox/MomInit"), NodePath("../DadInitBox/DadInit"), NodePath("../BDay/BDayNum"), NodePath("../BMonth/BMonthNum")]
+dstText = NodePath("../MarginContainer/PartName")
+
+[node name="MarginContainer2" type="MarginContainer" parent="VBoxContainer" unique_id=679225590]
+layout_mode = 2
+theme_override_constants/margin_bottom = 30
+
+[node name="Label" type="Label" parent="VBoxContainer/MarginContainer2" unique_id=800483701]
+layout_mode = 2
+text = "Please create your 7-digit \"Participant ID code\" from the menus below.
+You will need this if you wish to withdraw at a later stage."
+horizontal_alignment = 1
+
+[node name="FirstInitBox" type="HBoxContainer" parent="VBoxContainer" unique_id=79697433]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/FirstInitBox" unique_id=1136409809]
+custom_minimum_size = Vector2(450, 0)
+layout_mode = 2
+text = "Your 1st initial (for example, Laura is \"L\")"
+horizontal_alignment = 2
+
+[node name="FirstInit" type="OptionButton" parent="VBoxContainer/FirstInitBox" unique_id=1583167927]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+item_count = 26
+popup/item_0/text = "A"
+popup/item_0/id = 0
+popup/item_1/text = "B"
+popup/item_1/id = 1
+popup/item_2/text = "C"
+popup/item_2/id = 2
+popup/item_3/text = "D"
+popup/item_3/id = 3
+popup/item_4/text = "E"
+popup/item_4/id = 4
+popup/item_5/text = "F"
+popup/item_5/id = 5
+popup/item_6/text = "G"
+popup/item_6/id = 6
+popup/item_7/text = "H"
+popup/item_7/id = 7
+popup/item_8/text = "I"
+popup/item_8/id = 8
+popup/item_9/text = "J"
+popup/item_9/id = 9
+popup/item_10/text = "K"
+popup/item_10/id = 10
+popup/item_11/text = "L"
+popup/item_11/id = 11
+popup/item_12/text = "M"
+popup/item_12/id = 12
+popup/item_13/text = "N"
+popup/item_13/id = 13
+popup/item_14/text = "O"
+popup/item_14/id = 14
+popup/item_15/text = "P"
+popup/item_15/id = 15
+popup/item_16/text = "Q"
+popup/item_16/id = 16
+popup/item_17/text = "R"
+popup/item_17/id = 17
+popup/item_18/text = "S"
+popup/item_18/id = 18
+popup/item_19/text = "T"
+popup/item_19/id = 19
+popup/item_20/text = "U"
+popup/item_20/id = 20
+popup/item_21/text = "V"
+popup/item_21/id = 21
+popup/item_22/text = "W"
+popup/item_22/id = 22
+popup/item_23/text = "X"
+popup/item_23/id = 23
+popup/item_24/text = "Y"
+popup/item_24/id = 24
+popup/item_25/text = "Z"
+popup/item_25/id = 25
+
+[node name="MomInitBox" type="HBoxContainer" parent="VBoxContainer" unique_id=1853252482]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/MomInitBox" unique_id=561583010]
+custom_minimum_size = Vector2(450, 0)
+layout_mode = 2
+text = "Your mother's 1st initial (for example, Mary is \"M\")"
+horizontal_alignment = 2
+
+[node name="MomInit" type="OptionButton" parent="VBoxContainer/MomInitBox" unique_id=1465477998]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+item_count = 26
+popup/item_0/text = "A"
+popup/item_0/id = 0
+popup/item_1/text = "B"
+popup/item_1/id = 1
+popup/item_2/text = "C"
+popup/item_2/id = 2
+popup/item_3/text = "D"
+popup/item_3/id = 3
+popup/item_4/text = "E"
+popup/item_4/id = 4
+popup/item_5/text = "F"
+popup/item_5/id = 5
+popup/item_6/text = "G"
+popup/item_6/id = 6
+popup/item_7/text = "H"
+popup/item_7/id = 7
+popup/item_8/text = "I"
+popup/item_8/id = 8
+popup/item_9/text = "J"
+popup/item_9/id = 9
+popup/item_10/text = "K"
+popup/item_10/id = 10
+popup/item_11/text = "L"
+popup/item_11/id = 11
+popup/item_12/text = "M"
+popup/item_12/id = 12
+popup/item_13/text = "N"
+popup/item_13/id = 13
+popup/item_14/text = "O"
+popup/item_14/id = 14
+popup/item_15/text = "P"
+popup/item_15/id = 15
+popup/item_16/text = "Q"
+popup/item_16/id = 16
+popup/item_17/text = "R"
+popup/item_17/id = 17
+popup/item_18/text = "S"
+popup/item_18/id = 18
+popup/item_19/text = "T"
+popup/item_19/id = 19
+popup/item_20/text = "U"
+popup/item_20/id = 20
+popup/item_21/text = "V"
+popup/item_21/id = 21
+popup/item_22/text = "W"
+popup/item_22/id = 22
+popup/item_23/text = "X"
+popup/item_23/id = 23
+popup/item_24/text = "Y"
+popup/item_24/id = 24
+popup/item_25/text = "Z"
+popup/item_25/id = 25
+
+[node name="DadInitBox" type="HBoxContainer" parent="VBoxContainer" unique_id=122742692]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/DadInitBox" unique_id=2032224338]
+custom_minimum_size = Vector2(450, 0)
+layout_mode = 2
+text = "Your father's 1st initial (for example, Adam is \"A\")"
+horizontal_alignment = 2
+
+[node name="DadInit" type="OptionButton" parent="VBoxContainer/DadInitBox" unique_id=109716123]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+item_count = 26
+popup/item_0/text = "A"
+popup/item_0/id = 0
+popup/item_1/text = "B"
+popup/item_1/id = 1
+popup/item_2/text = "C"
+popup/item_2/id = 2
+popup/item_3/text = "D"
+popup/item_3/id = 3
+popup/item_4/text = "E"
+popup/item_4/id = 4
+popup/item_5/text = "F"
+popup/item_5/id = 5
+popup/item_6/text = "G"
+popup/item_6/id = 6
+popup/item_7/text = "H"
+popup/item_7/id = 7
+popup/item_8/text = "I"
+popup/item_8/id = 8
+popup/item_9/text = "J"
+popup/item_9/id = 9
+popup/item_10/text = "K"
+popup/item_10/id = 10
+popup/item_11/text = "L"
+popup/item_11/id = 11
+popup/item_12/text = "M"
+popup/item_12/id = 12
+popup/item_13/text = "N"
+popup/item_13/id = 13
+popup/item_14/text = "O"
+popup/item_14/id = 14
+popup/item_15/text = "P"
+popup/item_15/id = 15
+popup/item_16/text = "Q"
+popup/item_16/id = 16
+popup/item_17/text = "R"
+popup/item_17/id = 17
+popup/item_18/text = "S"
+popup/item_18/id = 18
+popup/item_19/text = "T"
+popup/item_19/id = 19
+popup/item_20/text = "U"
+popup/item_20/id = 20
+popup/item_21/text = "V"
+popup/item_21/id = 21
+popup/item_22/text = "W"
+popup/item_22/id = 22
+popup/item_23/text = "X"
+popup/item_23/id = 23
+popup/item_24/text = "Y"
+popup/item_24/id = 24
+popup/item_25/text = "Z"
+popup/item_25/id = 25
+
+[node name="BDay" type="HBoxContainer" parent="VBoxContainer" unique_id=1699960899]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/BDay" unique_id=1712709338]
+custom_minimum_size = Vector2(450, 0)
+layout_mode = 2
+text = "Your 2-digit day of birth (for example \"17\")"
+horizontal_alignment = 2
+
+[node name="BDayNum" type="OptionButton" parent="VBoxContainer/BDay" unique_id=1922570450]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+item_count = 31
+popup/item_0/text = "01"
+popup/item_0/id = 0
+popup/item_1/text = "02"
+popup/item_1/id = 1
+popup/item_2/text = "03"
+popup/item_2/id = 2
+popup/item_3/text = "04"
+popup/item_3/id = 3
+popup/item_4/text = "05"
+popup/item_4/id = 4
+popup/item_5/text = "06"
+popup/item_5/id = 5
+popup/item_6/text = "07"
+popup/item_6/id = 6
+popup/item_7/text = "08"
+popup/item_7/id = 7
+popup/item_8/text = "09"
+popup/item_8/id = 8
+popup/item_9/text = "10"
+popup/item_9/id = 9
+popup/item_10/text = "11"
+popup/item_10/id = 10
+popup/item_11/text = "12"
+popup/item_11/id = 11
+popup/item_12/text = "13"
+popup/item_12/id = 12
+popup/item_13/text = "14"
+popup/item_13/id = 13
+popup/item_14/text = "15"
+popup/item_14/id = 14
+popup/item_15/text = "16"
+popup/item_15/id = 15
+popup/item_16/text = "17"
+popup/item_16/id = 16
+popup/item_17/text = "18"
+popup/item_17/id = 17
+popup/item_18/text = "19"
+popup/item_18/id = 18
+popup/item_19/text = "20"
+popup/item_19/id = 19
+popup/item_20/text = "21"
+popup/item_20/id = 20
+popup/item_21/text = "22"
+popup/item_21/id = 21
+popup/item_22/text = "23"
+popup/item_22/id = 22
+popup/item_23/text = "24"
+popup/item_23/id = 23
+popup/item_24/text = "25"
+popup/item_24/id = 24
+popup/item_25/text = "26"
+popup/item_25/id = 25
+popup/item_26/text = "27"
+popup/item_26/id = 27
+popup/item_27/text = "28"
+popup/item_27/id = 28
+popup/item_28/text = "29"
+popup/item_28/id = 29
+popup/item_29/text = "30"
+popup/item_29/id = 30
+popup/item_30/text = "31"
+popup/item_30/id = 31
+
+[node name="BMonth" type="HBoxContainer" parent="VBoxContainer" unique_id=1457448830]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/BMonth" unique_id=1466900355]
+custom_minimum_size = Vector2(450, 0)
+layout_mode = 2
+text = "Your 2-digit month of birth (for example \"09\")"
+horizontal_alignment = 2
+
+[node name="BMonthNum" type="OptionButton" parent="VBoxContainer/BMonth" unique_id=1639281374]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+item_count = 12
+popup/item_0/text = "01"
+popup/item_0/id = 0
+popup/item_1/text = "02"
+popup/item_1/id = 1
+popup/item_2/text = "03"
+popup/item_2/id = 2
+popup/item_3/text = "04"
+popup/item_3/id = 3
+popup/item_4/text = "05"
+popup/item_4/id = 4
+popup/item_5/text = "06"
+popup/item_5/id = 5
+popup/item_6/text = "07"
+popup/item_6/id = 6
+popup/item_7/text = "08"
+popup/item_7/id = 7
+popup/item_8/text = "09"
+popup/item_8/id = 8
+popup/item_9/text = "10"
+popup/item_9/id = 9
+popup/item_10/text = "11"
+popup/item_10/id = 10
+popup/item_11/text = "12"
+popup/item_11/id = 11
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer" unique_id=210599982]
+layout_mode = 2
+theme_override_constants/margin_top = 50
+
+[node name="PartName" type="Label" parent="VBoxContainer/MarginContainer" unique_id=462860064]
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[connection signal="item_selected" from="VBoxContainer/FirstInitBox/FirstInit" to="VBoxContainer/ParticipantIdCheck" method="RefreshIdTextFromIdx"]
+[connection signal="item_selected" from="VBoxContainer/MomInitBox/MomInit" to="VBoxContainer/ParticipantIdCheck" method="RefreshIdTextFromIdx"]
+[connection signal="item_selected" from="VBoxContainer/DadInitBox/DadInit" to="VBoxContainer/ParticipantIdCheck" method="RefreshIdTextFromIdx"]
+[connection signal="item_selected" from="VBoxContainer/BDay/BDayNum" to="VBoxContainer/ParticipantIdCheck" method="RefreshIdTextFromIdx"]
+[connection signal="item_selected" from="VBoxContainer/BMonth/BMonthNum" to="VBoxContainer/ParticipantIdCheck" method="RefreshIdTextFromIdx"]
