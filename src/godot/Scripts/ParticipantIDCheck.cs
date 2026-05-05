@@ -8,6 +8,9 @@ public partial class ParticipantIDCheck : Node
 	public OptionButton[] combos;
 	[Export]
 	public Label dstText;
+	
+	[Signal]
+	public delegate void text_refreshEventHandler();
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -21,9 +24,12 @@ public partial class ParticipantIDCheck : Node
 
 	public void RefreshIdText()
 	{
-		if (dstText == null) return;
-		BuildID(out var res);
-		dstText.Text = res; 
+		if (dstText != null)
+		{
+			BuildID(out var res);
+			dstText.Text = res;
+		}
+		EmitSignal(SignalName.text_refresh);
 	}
 	public void RefreshIdTextFromIdx(int ignoredIndex)
 	{

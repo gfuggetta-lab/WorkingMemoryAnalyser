@@ -1,6 +1,8 @@
 [gd_scene format=3 uid="uid://f6cd2mjrj6ul"]
 
 [ext_resource type="Script" uid="uid://dafvkvrkrohp" path="res://Scripts/ParticipantIDCheck.cs" id="1_piovy"]
+[ext_resource type="Script" uid="uid://ri8ujbhpth3d" path="res://Scripts/QuitApp.cs" id="1_q0dcj"]
+[ext_resource type="Script" uid="uid://cf26l0sax4o7o" path="res://Scripts/ParticipantIDStoreAndPermit.cs" id="2_86hwc"]
 
 [node name="Control" type="Control" unique_id=1479967369]
 layout_mode = 3
@@ -9,6 +11,14 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="QuitApp" type="Node" parent="." unique_id=755025789]
+script = ExtResource("1_q0dcj")
+
+[node name="CheckID" type="Node" parent="." unique_id=1671714794 node_paths=PackedStringArray("check", "enableButton")]
+script = ExtResource("2_86hwc")
+check = NodePath("../VBoxContainer/ParticipantIdCheck")
+enableButton = NodePath("../btnOk")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=421801307]
 layout_mode = 1
@@ -361,8 +371,37 @@ theme_override_font_sizes/font_size = 38
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="btnQuit" type="Button" parent="." unique_id=1068623918]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 71.0
+offset_top = -88.0
+offset_right = 207.0
+offset_bottom = -48.5
+grow_vertical = 0
+text = "Quit"
+
+[node name="btnOk" type="Button" parent="." unique_id=1332535195]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -215.0
+offset_top = -100.0
+offset_right = -69.0
+offset_bottom = -51.5
+grow_horizontal = 0
+grow_vertical = 0
+text = "OK"
+
+[connection signal="text_refresh" from="VBoxContainer/ParticipantIdCheck" to="CheckID" method="RecheckButton"]
 [connection signal="item_selected" from="VBoxContainer/FirstInitBox/FirstInit" to="VBoxContainer/ParticipantIdCheck" method="RefreshIdTextFromIdx"]
 [connection signal="item_selected" from="VBoxContainer/MomInitBox/MomInit" to="VBoxContainer/ParticipantIdCheck" method="RefreshIdTextFromIdx"]
 [connection signal="item_selected" from="VBoxContainer/DadInitBox/DadInit" to="VBoxContainer/ParticipantIdCheck" method="RefreshIdTextFromIdx"]
 [connection signal="item_selected" from="VBoxContainer/BDay/BDayNum" to="VBoxContainer/ParticipantIdCheck" method="RefreshIdTextFromIdx"]
 [connection signal="item_selected" from="VBoxContainer/BMonth/BMonthNum" to="VBoxContainer/ParticipantIdCheck" method="RefreshIdTextFromIdx"]
+[connection signal="pressed" from="btnQuit" to="QuitApp" method="DoQuit"]

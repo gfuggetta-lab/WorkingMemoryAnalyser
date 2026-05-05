@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://dij20dhvixikk" path="res://Scripts/ConsentCheck.cs" id="1_me1bm"]
 [ext_resource type="Script" uid="uid://cuucqman7g4fq" path="res://Scripts/SceneLoad.cs" id="2_aug0a"]
 [ext_resource type="PackedScene" uid="uid://f6cd2mjrj6ul" path="res://uiParticipant.tscn" id="3_22opg"]
+[ext_resource type="Script" uid="uid://ri8ujbhpth3d" path="res://Scripts/QuitApp.cs" id="4_aug0a"]
 
 [node name="Root" type="Control" unique_id=1325272697]
 layout_mode = 3
@@ -29,6 +30,9 @@ script = ExtResource("2_aug0a")
 sceneAsTscn = ExtResource("3_22opg")
 replaceScene = true
 target = NodePath("../..")
+
+[node name="QuitApp" type="Node" parent="ParticipantConsentForm" unique_id=1288719842]
+script = ExtResource("4_aug0a")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="ParticipantConsentForm" unique_id=1936460166]
 layout_mode = 1
@@ -129,5 +133,6 @@ grow_horizontal = 0
 grow_vertical = 0
 text = "Proceed"
 
+[connection signal="consent_incomplete" from="ParticipantConsentForm/ConsentCheck" to="ParticipantConsentForm/QuitApp" method="DoQuit"]
 [connection signal="consent_received" from="ParticipantConsentForm/ConsentCheck" to="ParticipantConsentForm/SwitchNext" method="LoadScene"]
 [connection signal="pressed" from="ParticipantConsentForm/btnProceed" to="ParticipantConsentForm/ConsentCheck" method="CheckConsent"]
