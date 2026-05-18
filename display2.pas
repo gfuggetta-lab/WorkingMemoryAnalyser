@@ -20,7 +20,7 @@ uses
   LCLType, LCLIntf,
   SysUtils, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, Useful, ExtCtrls, Menus,SDL2,gl,glu,
-  GLTextureDistortion, Buttons,{logger,}SDL2_Mixer, sdl2_image;
+  GLTextureDistortion, Buttons,{logger,}SDL2_Mixer, sdl2_image, sdlshared;
 
 
 const
@@ -868,6 +868,7 @@ procedure TDisplayEnviroForm.SDLsetup;
 
 var
   present : integer;
+  isSdl : boolean;
 
 const
   // Video parameters
@@ -876,36 +877,9 @@ const
 
 
 begin
-
-
-//// Initialise audio
-if (SDL_Init(SDL_INIT_AUDIO) < 0) then
-begin
-//  Log.LogError(Format('Couldn''t initialize SDL : %s',
- //  [SDL_GetError]), 'Main');
- //TerminateApplication;
-  exit;
-end;
-
- //Open the audio device
-// NOTE : the call to  Mix_OpenAudio MUST happen before the call to
- //       SDL_SetVideoMode, otherwise you will get a ( sometimes load )
-//        audible pop.
-if (Mix_OpenAudio(44100, AUDIO_S16SYS, 2, 2048) < 0) then
-begin
- // Log.LogWarning(Format('Couldn''t set 11025 Hz 8-bit audio - Reason : %s',
-   // [Mix_GetError]), 'Main');
-end;
-
-  // Initialise SDL
-  if ( SDL_Init( SDL_INIT_VIDEO or SDL_INIT_JOYSTICK ) < 0 ) then
-  begin
-  //  Log.LogError( Format( 'Could not initialize SDL : %s', [SDL_GetError] ),
-    //  'Main' );
+  isSdl := InitSDL;
+  if not isSdl then
     TerminateApplication;
-  end;
-
-  IMG_Init(IMG_INIT_PNG);
 
   surface:= SDL_CreateWindow(
     'My window',

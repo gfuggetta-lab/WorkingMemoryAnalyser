@@ -7,7 +7,7 @@ interface
 uses
   LCLType,
   SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, ExtCtrls,gl, main, display2, SDL2;
+  StdCtrls, ExtCtrls,gl, main, display2, SDL2, sdlshared;
 
 type
 
