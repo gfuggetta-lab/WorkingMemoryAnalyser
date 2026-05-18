@@ -1878,12 +1878,15 @@ var
 
   s2_shape_position_1, s2_shape_position_2, s2_shape_position_3, s2_shape_position_4, s2_shape_position_5, s2_sound : integer;
   s2_duration, s2_s3_isi: integer;
+  s2_set_size: integer;
 
   s3_shape, s3_distractor_shape, s3_sound, s3_quad: integer;
   s3_duration, s3_s4_isi: integer;
+  s3_set_size: integer;
 
   s4_shape, s4_distractor_shape, s4_sound, s4_quad:integer;
   s4_duration: integer;
+  s4_set_size: integer;
 
   Feedback_shape, Feedback_sound: integer;
 
@@ -2204,6 +2207,10 @@ begin
   Show_S4_peripheral_placeholders := getIntegerForParameter(configDataFilename, 'Show_S4_peripheral_placeholders:') <> 0;
   Show_S3_placeholder_when_centre := getIntegerForParameter(configDataFilename, 'Show_S3_placeholder_when_centre:') <> 0;
   Show_S4_placeholder_when_centre := getIntegerForParameter(configDataFilename, 'Show_S4_placeholder_when_centre:') <> 0;
+
+  s2_set_size := getIntegerForParameterDef(configDataFilename, 's2_set_size:', 4);
+  s3_set_size := getIntegerForParameterDef(configDataFilename, 's3_set_size:', 4);
+  s4_set_size := getIntegerForParameterDef(configDataFilename, 's4_set_size:', 4);
 
   Background_diameter_deg := getRealForParameter(configDataFilename, 'Background_diameter_deg:');
   if Background_diameter_deg <= 0 then Background_diameter_deg := background_deg_DEFAULT;

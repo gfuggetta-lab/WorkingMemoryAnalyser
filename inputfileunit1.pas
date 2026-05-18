@@ -54,6 +54,8 @@ type
  function  getColoursForParameter(filename:string; parameterString:string; var colour: TcolourReal): Boolean;
  //procedure getIntegerForParameter(filename:string; parameterstring:string; var data:integer);
  function getIntegerForParameter(filename:string; parameterstring:string):integer;
+ function getIntegerForParameterDef(filename:string; parameterstring:string; def: integer):integer;
+ function tryGetIntegerForParameter(filename:string; parameterstring:string; out res: integer):Boolean;
  function getRealForParameter(filename:string; parameterstring:string):real;
  function getStringForParameter(filename:string; parameterstring:string):string;
  function getStringLineForParameter(filename:string; parameterstring:string):string;
@@ -68,7 +70,7 @@ implementation
 
 
 //------------------------------------------------------------------------------
-function stripFirstIntegerFromString(str:string):integer;
+function stripFirstIntegerFromString(str:string; out res:integer): Boolean;
 var
   c:integer;
   numstr:string;
@@ -85,7 +87,8 @@ begin
     //showmessage('numstr=' +numstr);
     c:=c+1;
   until not(str[c] in ['0'..'9']) ;
-  result:=strtoint(trim(numstr));
+
+  result := TryStrToInt(trim(numstr), res);
 
   //showmessage('r='+ inttostr(r));
 
@@ -352,7 +355,8 @@ begin
         str1:=trim(copy(str0,i+length(parameterString),length(str0) - i+length(parameterString) ));
         //showmessage (str1 );
         //colour:= colourIntegerToColourReal(getRGBtripletFromString(str1));
-        data:=stripFirstIntegerFromString(str1);
+        if not stripFirstIntegerFromString(str1, data) then
+          raise Exception.Create('failed to parse the value '''+str1+''' to integer');
         break;
       end;
     end;
@@ -365,6 +369,51 @@ begin
 
   result:= data;
 end;
+
+function getIntegerForParameterDef(filename:string; parameterstring:string; def: integer):integer;
+var
+  succ : Boolean;
+  r : integer;
+begin
+  succ := tryGetIntegerForParameter(filename, parameterstring, r);
+  if not succ then result := def
+  else result := r;
+end;
+
+function tryGetIntegerForParameter(filename:string; parameterstring:string; out res: integer):Boolean;
+var
+  f:textfile;
+  i:integer;
+  str0,str1: string;
+begin
+  res := 0;
+  result := false;
+  AssignFile(f, filename);
+  try
+    reset(f);
+
+    // read each line of the text file to parse
+    while not eof(f) do
+    begin
+      readln(f,str0);
+      i := pos(parameterString,str0);
+      if isParamFound(str0, i) then
+      begin // text found
+        //showmessage (str0 );
+        // get the text following the colon, with any white spaces at the beginning and end trimmed
+        str1:=trim(copy(str0,i+length(parameterString),length(str0) - i+length(parameterString) ));
+        //showmessage (str1 );
+        //colour:= colourIntegerToColourReal(getRGBtripletFromString(str1));
+        Result := stripFirstIntegerFromString(str1, res);
+        Exit;
+      end;
+    end;
+  finally
+    closeFile(f);
+  end;
+end;
+
+
 //------------------------------------------------------------------------------
 
 
