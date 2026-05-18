@@ -15,6 +15,9 @@ object Form2: TForm2
   LCLVersion = '2.0.12.0'
   Scaled = False
   WindowState = wsMaximized
+  OnClose = FormClose
+  OnDestroy = FormDestroy
+  OnResize = FormResize
   object Button1: TButton
     Left = 717
     Height = 25
@@ -89,7 +92,7 @@ object Form2: TForm2
     Anchors = [akLeft, akBottom]
     Caption = 'Play'
     TabOrder = 3
-    OnClick = Button2Click
+    OnClick = btnPlayClick
   end
   object btnStop: TButton
     Left = 184
@@ -97,8 +100,8 @@ object Form2: TForm2
     Top = 491
     Width = 75
     Anchors = [akLeft, akBottom]
-    Caption = 'Quit'
+    Caption = 'Stop'
     TabOrder = 4
-    OnClick = Button2Click
+    OnClick = btnStopClick
   end
 end
