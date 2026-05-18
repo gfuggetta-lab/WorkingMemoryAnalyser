@@ -4512,12 +4512,12 @@ begin
    if (trialOrderFileNo mod 2)=1 then
  begin
   form2.image1.picture.Loadfromfile(experiment_dir + Instructions_ODD_participants);
-  form2.instructionAudio := Audit_ODD_participants;
+  form2.instructionAudio := experiment_dir + Audit_ODD_participants;
  end
  else
  begin
   form2.image1.picture.Loadfromfile(experiment_dir+ Instructions_EVEN_participants);
-  form2.instructionAudio := Audit_EVEN_participants;
+  form2.instructionAudio := experiment_dir + Audit_EVEN_participants;
  end;
 
  if (RadioGroup4.ItemIndex >= 0) then begin
