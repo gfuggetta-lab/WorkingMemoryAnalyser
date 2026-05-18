@@ -66,12 +66,15 @@ begin
 end;
 
 function IntroShowModal: Boolean;
+var
+  hasAudio: boolean;
 begin
   Form2.Button1.visible:=true;
   Form2.Button2.visible:=true;
   Form2.Button3.visible:=false;
-  Form2.btnPlay.visible:=false;
-  Form2.btnStop.visible:=false;
+  hasAudio := (Form2.instructionAudio<>'') and FileExists(Form2.instructionAudio);
+  Form2.btnPlay.visible:=hasAudio;
+  Form2.btnStop.visible:=hasAudio;
   Form2.label1.visible:=false;
   Result := Form2.ShowModal = mrOK;
 end;
