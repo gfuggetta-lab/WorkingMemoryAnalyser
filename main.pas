@@ -4380,6 +4380,7 @@ var
   inputDataFilename: string;
 
   Instructions_ODD_participants,Instructions_EVEN_participants:string;
+  Audit_ODD_participants,Audit_EVEN_participants:string;
 
 
   fl: Tstringlist;
@@ -4504,6 +4505,8 @@ begin
 
   Instructions_ODD_participants:= getStringForParameter(configDataFilename, 'Instructions_ODD_participants:');
   Instructions_EVEN_participants:= getStringForParameter(configDataFilename, 'Instructions_EVEN_participants:');
+  Audit_ODD_participants:= getStringForParameter(configDataFilename, 'Audio_Instructions_ODD_participants:');
+  Audit_EVEN_participants:= getStringForParameter(configDataFilename, 'Audio_Instructions_EVEN_participant:');
 
   //observerNo:= strtoint(Combobox1.items[Combobox1.Itemindex]);
    if (trialOrderFileNo mod 2)=1 then
