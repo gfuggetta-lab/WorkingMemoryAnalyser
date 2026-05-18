@@ -29,6 +29,7 @@ type
     { Private declarations }
   public
     { Public declarations }
+    instructionAudio: string;
   end;
 
 var
