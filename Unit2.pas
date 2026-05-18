@@ -113,9 +113,7 @@ begin
     Exit;
   end;
   ReleaseAudio;
-  writeln('audio file: ',wavFile);
   audio := Mix_LoadWAV(PAnsiChar(wavFile));
-  writeln('audio:=',integer(audio<>nil));
   if audio <> nil then begin
     loadedAudio := wavFile;
   end;
