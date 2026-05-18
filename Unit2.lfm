@@ -81,4 +81,24 @@ object Form2: TForm2
     ParentFont = False
     Visible = False
   end
+  object btnPlay: TButton
+    Left = 96
+    Height = 25
+    Top = 491
+    Width = 75
+    Anchors = [akLeft, akBottom]
+    Caption = 'Play'
+    TabOrder = 3
+    OnClick = Button2Click
+  end
+  object btnStop: TButton
+    Left = 184
+    Height = 25
+    Top = 491
+    Width = 75
+    Anchors = [akLeft, akBottom]
+    Caption = 'Quit'
+    TabOrder = 4
+    OnClick = Button2Click
+  end
 end

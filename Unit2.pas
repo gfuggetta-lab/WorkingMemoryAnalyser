@@ -15,6 +15,8 @@ type
 
   TForm2 = class(TForm)
     Button3: TButton;
+    btnPlay: TButton;
+    btnStop: TButton;
     Image1: TImage;
     Button1: TButton;
     Button2: TButton;
@@ -68,6 +70,8 @@ begin
   Form2.Button1.visible:=true;
   Form2.Button2.visible:=true;
   Form2.Button3.visible:=false;
+  Form2.btnPlay.visible:=false;
+  Form2.btnStop.visible:=false;
   Form2.label1.visible:=false;
   Result := Form2.ShowModal = mrOK;
 end;
