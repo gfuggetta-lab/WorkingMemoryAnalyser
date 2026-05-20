@@ -19,7 +19,7 @@ uses
   Forms, Dialogs, StdCtrls, ExtCtrls, ActnList, SDL2, SDL2_Mixer, SDL2_ttf, gl,
   Useful, GLTextureDistortion, Display2, Timing, math, IOR_Shapes, FileUtil, inputfileunit1, ParticipantID, loadImages
   ,Menus
-  ,edidMonitorUtils, aboutFormUnit
+  ,edidMonitorUtils, aboutFormUnit, drawutils
   ,successResultForm , SynaSer   , usbserialunit
   {$ifdef triggerstation}
   ,TriggerStationDevice_DLL_1_0_TLB
@@ -151,9 +151,6 @@ var
   sounds: array[0..2] of PMix_Chunk;
   sounds_numbered: array[0..10000] of PMix_Chunk;
 
-  //display lists
-  DL_CIRCLE, DL_HEX, DL_DIAMOND, DL_CIRCLE_BACKGROUND, DL_CIRCLE_OUTLINE,DL_TRIANGLE, DL_BOX, DL_RING, DL_CROSS,
-  DL_BAR_HORIZ, DL_BAR_VERT, DL_SQUARE_EA, DL_CIRCLE_EA, DL_STAR, DL_PHOTODIODE_PATCH_LEFT, DL_PHOTODIODE_PATCH_RIGHT, DL_PHOTODIODE_PATCH_CENTRE: GLUint;
   rr: float = 0;
   gg: float = 0;
   bb: float = 0;
@@ -1158,45 +1155,11 @@ const
 end;
 //------------------------------------------------------------------------------
 
-//------------------------------------------------------------------------------
-// work out the x and y location of the trajectory object on a given quadrant
-procedure objectLocation(var x: real; var y:real ; cueRadiusCM: real; cueQuadrant: integer);
-begin
-  case cueQuadrant of
 
-    1: // 45degrees "North West"
-    begin
-      x :=  -cueRadiusCM*cos(pi/4);
-      y :=  cueRadiusCM*sin(pi/4);
-    end;
 
-    2:
-    begin
-      x :=  cueRadiusCM*cos(pi/4);
-      y :=  cueRadiusCM*sin(pi/4);
-    end;
 
-    3:
-    begin
-      x :=  cueRadiusCM*cos(pi/4);
-      y :=  -cueRadiusCM*sin(pi/4);
-    end;
 
-    4:
-    begin
-      x :=  -cueRadiusCM*cos(pi/4);
-      y :=  -cueRadiusCM*sin(pi/4);
-    end;
 
-    5:    //special case of all quadrants
-    begin
-      x :=  0;
-      y :=  0;
-    end;
-
-  end;
-
-end;
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -1266,11 +1229,15 @@ end;
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
+
+
+
 procedure drawBackgroundFixationWithPlaceholders(fixSpotSizeCM:real;
   targetRadiusCM       : real;
   contextColour        : TcolourReal;
   AFixation_colour     : TcolourReal;
-  APlaceholders_colour : TcolourReal);
+  APlaceholders_colour : TcolourReal;
+  count: integer = 4);
 
 var x,y:real;
   begin
@@ -1283,30 +1250,7 @@ var x,y:real;
 
       glcolor3f(Aplaceholders_colour.r, Aplaceholders_colour.g, Aplaceholders_colour.b);
 
-      glMatrixMode(GL_MODELVIEW);
-      glLoadIdentity;
-      objectLocation(x,y,targetRadiusCM,1);
-      gltranslatef(x,y,0);
-      glCallList(DL_CIRCLE_OUTLINE);
-
-      glMatrixMode(GL_MODELVIEW);
-      glLoadIdentity;
-      objectLocation(x,y,targetRadiusCM,2);
-      gltranslatef(x,y,0);
-      glCallList(DL_CIRCLE_OUTLINE);
-
-      glMatrixMode(GL_MODELVIEW);
-      glLoadIdentity;
-      objectLocation(x,y,targetRadiusCM,3);
-      gltranslatef(x,y,0);
-      glCallList(DL_CIRCLE_OUTLINE);
-
-      glMatrixMode(GL_MODELVIEW);
-      glLoadIdentity;
-      objectLocation(x,y,targetRadiusCM,4);
-      gltranslatef(x,y,0);
-      glCallList(DL_CIRCLE_OUTLINE);
-
+      drawPlaceholders(targetRadiusCM, count);
 end;
 //------------------------------------------------------------------------------
 
@@ -1315,7 +1259,9 @@ end;
 procedure drawFixationWithPlaceholders(fixSpotSizeCM:real; targetRadiusCM: real;
   AFixation_colour     : TcolourReal;
   APlaceholders_colour : TcolourReal;
-  doDrawFixationSpot   : Boolean = true);
+  doDrawFixationSpot   : Boolean = true;
+  count : Integer = 4
+  );
 
 var x,y:real;
   begin
@@ -1327,31 +1273,9 @@ var x,y:real;
 
       glcolor3f(APlaceholders_colour.r, APlaceholders_colour.g, APlaceholders_colour.b);
 
-      glMatrixMode(GL_MODELVIEW);
-      glLoadIdentity;
-      objectLocation(x,y,targetRadiusCM,1);
-      gltranslatef(x,y,0);
-      glCallList(DL_CIRCLE_OUTLINE);
-
-      glMatrixMode(GL_MODELVIEW);
-      glLoadIdentity;
-      objectLocation(x,y,targetRadiusCM,2);
-      gltranslatef(x,y,0);
-      glCallList(DL_CIRCLE_OUTLINE);
-
-      glMatrixMode(GL_MODELVIEW);
-      glLoadIdentity;
-      objectLocation(x,y,targetRadiusCM,3);
-      gltranslatef(x,y,0);
-      glCallList(DL_CIRCLE_OUTLINE);
-
-      glMatrixMode(GL_MODELVIEW);
-      glLoadIdentity;
-      objectLocation(x,y,targetRadiusCM,4);
-      gltranslatef(x,y,0);
-      glCallList(DL_CIRCLE_OUTLINE);
-
+      drawPlaceholders(targetRadiusCM, count);
 end;
+
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -2209,8 +2133,11 @@ begin
   Show_S4_placeholder_when_centre := getIntegerForParameter(configDataFilename, 'Show_S4_placeholder_when_centre:') <> 0;
 
   s2_set_size := getIntegerForParameterDef(configDataFilename, 's2_set_size:', 4);
+  s2_set_size := Min(Max(s2_set_size, 4),100);
   s3_set_size := getIntegerForParameterDef(configDataFilename, 's3_set_size:', 4);
+  s3_set_size := Min(Max(s3_set_size, 4),100);
   s4_set_size := getIntegerForParameterDef(configDataFilename, 's4_set_size:', 4);
+  s4_set_size := Min(Max(s4_set_size, 4),100);
 
   Background_diameter_deg := getRealForParameter(configDataFilename, 'Background_diameter_deg:');
   if Background_diameter_deg <= 0 then Background_diameter_deg := background_deg_DEFAULT;
@@ -3218,7 +3145,7 @@ begin
       glClear(GL_DEPTH_BUFFER_BIT);
 
       drawFixationWithPlaceholders(fixSpotSizeCM, targetRadiusCM,
-        Fixation_colour, Placeholders_colour);
+        Fixation_colour, Placeholders_colour, true, s2_set_size);
 
       pollevent(state, eventTime) ;
       if showTrialsRemaining then showCountdown(pfontGeneral,fontCol,inttostr(Ntrials-trialNo));
@@ -3308,7 +3235,11 @@ begin
     begin
       ef.ProjectionTrans;
       drawBackgroundFixationWithPlaceholders(fixSpotSizeCM, targetRadiusCM,
-        Run_background_circle_colour, Fixation_colour, Placeholders_colour);
+        Run_background_circle_colour, Fixation_colour, Placeholders_colour
+
+        ,s2_set_size
+
+        );
       pollevent(state, eventTime) ;
       if showTrialsRemaining then showCountdown(pfontGeneral,fontCol,inttostr(Ntrials-trialNo));
 
@@ -3376,7 +3307,7 @@ begin
         , Show_S3_peripheral_placeholders, Show_S3_placeholder_when_centre, Image_size_CM, -1);
 
       glClear(GL_DEPTH_BUFFER_BIT);
-      drawFixationWithPlaceholders(fixSpotSizeCM, targetRadiusCM, Fixation_colour, Placeholders_colour, s3_quad <> 5);
+      drawFixationWithPlaceholders(fixSpotSizeCM, targetRadiusCM, Fixation_colour, Placeholders_colour, s3_quad <> 5, s3_set_size);
 
 
       // s3 onset photodiode patch: left. trigger station will send s3_marker on detecting the patch
@@ -3510,7 +3441,8 @@ begin
     begin
       ef.ProjectionTrans;
       drawBackgroundFixationWithPlaceholders(fixSpotSizeCM, targetRadiusCM,
-        Run_background_circle_colour, Fixation_colour, Placeholders_colour);
+        Run_background_circle_colour, Fixation_colour, Placeholders_colour
+        ,s3_set_size);
 
       pollevent(state, eventTime) ;
       if showTrialsRemaining then showCountdown(pfontGeneral,fontCol,inttostr(Ntrials-trialNo));
@@ -3587,7 +3519,7 @@ begin
 
      glclear(GL_DEPTH_BUFFER_BIT);
         drawFixationWithPlaceholders(fixSpotSizeCM, targetRadiusCM,
-          Fixation_colour, Placeholders_colour);
+          Fixation_colour, Placeholders_colour, true, s4_set_size);
 
 
     // photodiode patch left trigger station will send s4_marker on detecting the patch
@@ -3679,7 +3611,8 @@ begin
   repeat;
     ef.projectionTrans;
     drawBackgroundFixationWithPlaceholders(fixSpotSizeCM, targetRadiusCM, Run_background_circle_colour,
-      Fixation_colour, Placeholders_colour);
+      Fixation_colour, Placeholders_colour
+      ,s4_set_size);
 
     //do photodiode so send response data via triggerstation
     if doPhotodiode then
