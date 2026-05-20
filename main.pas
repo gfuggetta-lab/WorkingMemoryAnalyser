@@ -1348,6 +1348,46 @@ begin
 
   end;
 end;
+
+
+// Draws a distraction circle (if distractorShape is zero) and drawPeripheral is true
+// The number of distraction is specified by distractCount
+// Draws the target at the specified Quadrant.
+procedure drawDistractions(targetRadiusCM: real;
+  distractorShape, distractor_colour: integer;
+  ImageSizeCm: real; periperRadiusCM : real;
+  count: integer = 16 );
+
+
+var
+  x,y, theta:real;
+  c:integer;
+
+begin
+  if count = 0 then Exit;
+
+  if periperRadiusCM < 0 then periperRadiusCM := targetRadiusCM;
+
+  for c := 0 to count-1 do
+  begin
+
+    // draw distractors
+    objectLocationNofCount(x, y, periperRadiusCM, c, count);
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity;
+    gltranslatef(x,y,0);
+
+    //glcolor3f(colours[distractor_colour].r,colours[distractor_colour].g,colours[distractor_colour].b);
+
+    DrawShapeOrChar(distractorShape,colours[distractor_colour], Run_background_circle_colour,x,y, ImageSizeCm);
+
+    // draw outline of circle
+    glcolor3f(Placeholders_colour.r,Placeholders_colour.g,Placeholders_colour.b);
+    glCallList(DL_CIRCLE_OUTLINE);
+  end;
+end;
+
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -3300,8 +3340,12 @@ begin
 
       drawBackgroundFixation(fixSpotSizeCM, Run_background_circle_colour, Fixation_colour);
 
-      if (s3_shape<>12) then targetImage(targetRadiusCM, s3_shape, s3_quad,s3_distractor_shape, s3_colour, s3_distractor_colour
-        , Show_S3_peripheral_placeholders, Show_S3_placeholder_when_centre, Image_size_CM, -1);
+      if (s3_shape<>12) then begin
+        targetImage(targetRadiusCM, s3_shape, s3_quad, 0, s3_colour, s3_distractor_colour
+          , false, Show_S3_placeholder_when_centre, Image_size_CM, -1);
+        if (Show_S3_peripheral_placeholders) then
+          drawDistractions(targetRadiusCM, s3_distractor_shape, s3_distractor_colour, Image_size_CM, -1, s3_set_size);
+      end;
 
       glClear(GL_DEPTH_BUFFER_BIT);
       drawFixationWithPlaceholders(fixSpotSizeCM, targetRadiusCM, Fixation_colour, Placeholders_colour, s3_quad <> 5, s3_set_size);

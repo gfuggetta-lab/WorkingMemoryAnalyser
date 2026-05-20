@@ -17,6 +17,7 @@ procedure drawPlaceholders(targetRadiusCM: real; count: integer);
 // drawing 4 placeholders at NE, NW, SE, SW placeholder
 procedure drawPlaceholders4(targetRadiusCM: real);
 
+// N must be 0 to count-1.
 procedure objectLocationNofCount(out x, y: real; cueRadiusCM: real; N, Count: integer);
 
 procedure objectLocation(var x, y:real ; cueRadiusCM: real; cueQuadrant: integer);
