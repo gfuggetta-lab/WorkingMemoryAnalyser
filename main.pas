@@ -3236,9 +3236,6 @@ begin
       ef.ProjectionTrans;
       drawBackgroundFixationWithPlaceholders(fixSpotSizeCM, targetRadiusCM,
         Run_background_circle_colour, Fixation_colour, Placeholders_colour
-
-        ,s2_set_size
-
         );
       pollevent(state, eventTime) ;
       if showTrialsRemaining then showCountdown(pfontGeneral,fontCol,inttostr(Ntrials-trialNo));
@@ -3441,8 +3438,7 @@ begin
     begin
       ef.ProjectionTrans;
       drawBackgroundFixationWithPlaceholders(fixSpotSizeCM, targetRadiusCM,
-        Run_background_circle_colour, Fixation_colour, Placeholders_colour
-        ,s3_set_size);
+        Run_background_circle_colour, Fixation_colour, Placeholders_colour);
 
       pollevent(state, eventTime) ;
       if showTrialsRemaining then showCountdown(pfontGeneral,fontCol,inttostr(Ntrials-trialNo));
@@ -3612,7 +3608,7 @@ begin
     ef.projectionTrans;
     drawBackgroundFixationWithPlaceholders(fixSpotSizeCM, targetRadiusCM, Run_background_circle_colour,
       Fixation_colour, Placeholders_colour
-      ,s4_set_size);
+      );
 
     //do photodiode so send response data via triggerstation
     if doPhotodiode then
