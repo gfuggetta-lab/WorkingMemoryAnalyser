@@ -1162,26 +1162,7 @@ end;
 
 //------------------------------------------------------------------------------
 
-//------------------------------------------------------------------------------
-procedure drawShape(shapeNo:integer);
-begin
 
-  case shapeNo of
-   1: glCallList(DL_DIAMOND);
-   2: glCallList(DL_HEX);
-   3: glCallList(DL_TRIANGLE);
-   4: glCallList(DL_BOX);
-   5: glCallList(DL_RING);
-   6: glCallList(DL_CROSS);
-   7: glCallList(DL_BAR_HORIZ);
-   8: glCallList(DL_BAR_VERT);
-   9: glCallList(DL_SQUARE_EA);
-   10: glCallList(DL_CIRCLE_EA);
-   11: glCallList(DL_STAR);
-
- end;
-end;
-//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 procedure DrawShapeOrChar(shapeNo:integer; shapeCol, bgrCol:TcolourReal;x,y:real; ImageSizeCm: real);
@@ -2174,7 +2155,7 @@ begin
 
   s2_set_size := getIntegerForParameterDef(configDataFilename, 's2_set_size:', 4);
   s2_set_size := Min(Max(s2_set_size, 4),100);
-  s3_set_size := getIntegerForParameterDef(configDataFilename, 's3_set_size:', 4);
+  s3_set_size := getIntegerForParameterDef(configDataFilename, 's3_set_size:', 16); // backwards compatibility of s3 being 16
   s3_set_size := Min(Max(s3_set_size, 4),100);
   s4_set_size := getIntegerForParameterDef(configDataFilename, 's4_set_size:', 4);
   s4_set_size := Min(Max(s4_set_size, 4),100);
@@ -3341,10 +3322,10 @@ begin
       drawBackgroundFixation(fixSpotSizeCM, Run_background_circle_colour, Fixation_colour);
 
       if (s3_shape<>12) then begin
-        targetImage(targetRadiusCM, s3_shape, s3_quad, 0, s3_colour, s3_distractor_colour
-          , false, Show_S3_placeholder_when_centre, Image_size_CM, -1);
         if (Show_S3_peripheral_placeholders) then
           drawDistractions(targetRadiusCM, s3_distractor_shape, s3_distractor_colour, Image_size_CM, -1, s3_set_size);
+        targetImage(targetRadiusCM, s3_shape, s3_quad, 0, s3_colour, s3_distractor_colour
+          , false, Show_S3_placeholder_when_centre, Image_size_CM, -1);
       end;
 
       glClear(GL_DEPTH_BUFFER_BIT);
@@ -3553,8 +3534,15 @@ begin
 
      drawBackgroundFixation(fixSpotSizeCM, Run_background_circle_colour, Fixation_colour);
 
-    if (s4_shape<>12) then targetImage(targetRadiusCM, s4_shape, s4_quad,s4_distractor_shape, s4_colour, s4_distractor_colour
-      , Show_S4_peripheral_placeholders, Show_S4_placeholder_when_centre, Image_size_CM, -1);
+    if (s4_shape<>12) then begin
+      if Show_S4_peripheral_placeholders then begin
+        drawDistractions(targetRadiusCM, s4_distractor_shape, s4_distractor_colour
+         , Image_size_CM, -1, s4_set_size);
+      end;
+
+      targetImage(targetRadiusCM, s4_shape, s4_quad,0, s4_colour, s4_distractor_colour
+        , false, Show_S4_placeholder_when_centre, Image_size_CM, -1);
+    end;
 
 
      glclear(GL_DEPTH_BUFFER_BIT);

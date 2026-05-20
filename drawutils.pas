@@ -22,6 +22,8 @@ procedure objectLocationNofCount(out x, y: real; cueRadiusCM: real; N, Count: in
 
 procedure objectLocation(var x, y:real ; cueRadiusCM: real; cueQuadrant: integer);
 
+procedure drawShape(shapeNo:integer);
+
 implementation
 
 procedure drawPlaceholders4(targetRadiusCM: real);
@@ -125,5 +127,25 @@ begin
 
 end;
 
+//------------------------------------------------------------------------------
+procedure drawShape(shapeNo:integer);
+begin
+
+  case shapeNo of
+   1: glCallList(DL_DIAMOND);
+   2: glCallList(DL_HEX);
+   3: glCallList(DL_TRIANGLE);
+   4: glCallList(DL_BOX);
+   5: glCallList(DL_RING);
+   6: glCallList(DL_CROSS);
+   7: glCallList(DL_BAR_HORIZ);
+   8: glCallList(DL_BAR_VERT);
+   9: glCallList(DL_SQUARE_EA);
+   10: glCallList(DL_CIRCLE_EA);
+   11: glCallList(DL_STAR);
+
+ end;
+end;
+//------------------------------------------------------------------------------
 
 end.
