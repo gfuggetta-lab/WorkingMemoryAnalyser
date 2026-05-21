@@ -68,6 +68,11 @@ type
   procedure setUpPauseTrials(InputDataFileName, ConfigDataFileName : string; var ptd: Tptd);
 implementation
 
+function Pos(const needle, hay: string): Integer;
+begin
+  Result := System.Pos(UpperCase(needle), UpperCase(hay));
+end;
+
 
 //------------------------------------------------------------------------------
 function stripFirstIntegerFromString(str:string; out res:integer): Boolean;
