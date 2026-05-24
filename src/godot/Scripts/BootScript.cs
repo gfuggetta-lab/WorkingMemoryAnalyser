@@ -27,6 +27,8 @@ public partial class BootScript : Node2D
 	PlayList playList = new PlayList();
 	PlayListTracker plrTrack;
 	List<PlayItem> drawItems = new List<PlayItem>();
+	Node2D drawRoot;
+	readonly List<Node> drawNodes = new List<Node>();
 	Dictionary<string, Texture2D> texs = new Dictionary<string, Texture2D>(StringComparer.OrdinalIgnoreCase);
 	Dictionary<string, Font> fonts = new Dictionary<string, Font>(StringComparer.OrdinalIgnoreCase);
 	Dictionary<string, AudioStream> sounds = new Dictionary<string, AudioStream>(StringComparer.OrdinalIgnoreCase);
@@ -39,6 +41,12 @@ public partial class BootScript : Node2D
 		Configuration exam = new Configuration();
 		// there's no configuration for the clear color
 		RenderingServer.SetDefaultClearColor(new Color(0f, 0f, 0f));
+		drawRoot = new Node2D
+		{
+			Name = "StimulusNodes"
+		};
+		AddChild(drawRoot);
+
 		if (File.Exists(fileName))
 		{
 			var cfg = ConfigFile.FromFile(fileName);
@@ -84,6 +92,7 @@ public partial class BootScript : Node2D
 		imgDir = Path.GetDirectoryName(imgDir);
 		Preload(exam, imgDir, list);
 
+		RebuildDrawNodes();
 		PlaySoundIfAny(drawItems);
 	}
 
@@ -160,12 +169,12 @@ public partial class BootScript : Node2D
 		{
 			drawItems = eff;
 			GD.Print($"cnt: {cnt}; {plrTrack.lastMs}; drawItems: {eff.Count}");
-			QueueRedraw();
+			RebuildDrawNodes();
 		}
 		PlaySoundIfAny(fadeTrig);
 	}
 
-	public static Vector2 GetPos(PlayItemPos pos, Vector2 center, double distance)
+	public static Vector2 GetPos(PlayItemPos pos, Vector2 center, double distance, int posVal, int posCount)
 	{
 		Vector2 res = center;
 		if ((pos == PlayItemPos.Center) || (pos == PlayItemPos.Other))
@@ -175,6 +184,11 @@ public partial class BootScript : Node2D
 		float sinpi = (float)((double)distance * Math.Sin(Math.PI / 4.0));
 		switch (pos)
 		{
+			case PlayItemPos.OneOfCount:
+				double diff = (double)posVal * (Math.PI * 2 / (double)posCount);
+				res.X += (float)((double)distance * Math.Cos(Math.PI / 4.0 + diff));
+				res.Y += (float)((double)distance * Math.Sin(Math.PI / 4.0 + diff));
+				break;
 			case PlayItemPos.NW:
 				res.X -= cospi;
 				res.Y += sinpi;
@@ -196,7 +210,7 @@ public partial class BootScript : Node2D
 
 	}
 
-	protected virtual void DrawText(
+	protected virtual Node2D CreateTextNode(
 		// the item of text
 		PlayItem itm, 
 		// the central position
@@ -205,22 +219,24 @@ public partial class BootScript : Node2D
 		if (!fonts.TryGetValue(itm.fontName, out var fnt))
 		{
 			GD.Print($"Font not found: {itm.fontName}");
-			return;
+			return null;
 		}
 		int fontSize = itm.fontSizePx;
-		Vector2 size = fnt.GetStringSize(
-			itm.text, HorizontalAlignment.Left, -1, fontSize);
+		Vector2 size = fnt.GetStringSize(itm.text, HorizontalAlignment.Left, -1, fontSize);
 		float ascent = fnt.GetAscent(fontSize);
 		float descent = fnt.GetDescent(fontSize);
-		pos.X -= size.X / 2.0f;
-		pos.Y += (ascent - descent) / 2.0f;
+		Vector2 textPos = new Vector2(-size.X / 2.0f, (ascent - descent) / 2.0f);
 
-		DrawString(
-			fnt, pos, itm.text,
-			HorizontalAlignment.Left,
-			modulate: GDColor(itm.color),
-			fontSize: fontSize
-		);
+		return new TextStimulusNode
+		{
+			Name = "TextStimulus",
+			Position = pos,
+			Font = fnt,
+			Text = itm.text,
+			TextPosition = textPos,
+			TextColor = GDColor(itm.color),
+			FontSize = fontSize
+		};
 	}
 
 	protected void PlaySound(PlayItem itm)
@@ -257,16 +273,42 @@ public partial class BootScript : Node2D
 		}
 	}
 
-	public override void _Draw()
+	private void ClearDrawNodes()
 	{
+		foreach (var node in drawNodes)
+		{
+			if (!GodotObject.IsInstanceValid(node))
+				continue;
+			if (node.GetParent() == drawRoot)
+				drawRoot.RemoveChild(node);
+			node.QueueFree();
+		}
+		drawNodes.Clear();
+	}
+
+	private void TrackDrawNode(Node node)
+	{
+		if (node == null)
+			return;
+		drawRoot.AddChild(node);
+		drawNodes.Add(node);
+	}
+
+	private void RebuildDrawNodes()
+	{
+		if (drawRoot == null)
+			return;
+
+		ClearDrawNodes();
 		var cpos = GetViewportRect().Size / 2.0f;
 		foreach (var itm in drawItems)
 		{
-			var pos = GetPos(itm.pos, cpos, itm.posDistanceCm * cmToPix);
+			var pos = GetPos(itm.pos, cpos, itm.posDistanceCm * cmToPix, itm.posOther, itm.posCount);
+			Node2D node = null;
 			switch (itm.itemType)
 			{
 				case PlayItemType.Text:
-					DrawText(itm, pos);
+					node = CreateTextNode(itm, pos);
 					break;
 
 				case PlayItemType.ImageById:
@@ -275,8 +317,7 @@ public partial class BootScript : Node2D
 					if (texs.TryGetValue(n, out var tt))
 					{
 						float w = (float)(itm.sizeCm * cmToPix);
-						Rect2 rr = new Rect2(pos.X - w / 2.0f, pos.Y - w / 2.0f, w, w);
-						DrawTextureRect(tt, rr, false);
+						node = CreateImageNode(tt, pos, w);
 					}
 					else
 						GD.Print($"image not found: {n}; {itm.imageId}");
@@ -286,14 +327,98 @@ public partial class BootScript : Node2D
 				case PlayItemType.CircleHollow:
 					float r = (float)(itm.radiusCm * cmToPix);
 					if (itm.itemType == PlayItemType.CircleFilled)
-						DrawCircle(pos, r, GDColor(itm.color), true, -1, true);
+						node = CreateFilledCircleNode(pos, r, GDColor(itm.color));
 					else
 					{
 						var lw = (float)(itm.lineWidthCm * cmToPix);
-						DrawCircle(pos, r, GDColor(itm.color), false, lw, true);
+						node = CreateHollowCircleNode(pos, r, lw, GDColor(itm.color));
 					}
 					break;
 			}
+			if (node != null)
+			{
+				node.ZIndex = itm.drawOrder;
+				TrackDrawNode(node);
+			}
+		}
+	}
+
+	private static Sprite2D CreateImageNode(Texture2D texture, Vector2 pos, float sizePx)
+	{
+		var sprite = new Sprite2D
+		{
+			Name = "ImageStimulus",
+			Texture = texture,
+			Centered = true,
+			Position = pos
+		};
+		Vector2 texSize = texture.GetSize();
+		if ((texSize.X > 0.0f) && (texSize.Y > 0.0f))
+			sprite.Scale = new Vector2(sizePx / texSize.X, sizePx / texSize.Y);
+		return sprite;
+	}
+
+	private static Polygon2D CreateFilledCircleNode(Vector2 pos, float radius, Color color)
+	{
+		return new Polygon2D
+		{
+			Name = "CircleFilledStimulus",
+			Position = pos,
+			Color = color,
+			Polygon = CreateCirclePoints(radius)
+		};
+	}
+
+	private static Line2D CreateHollowCircleNode(Vector2 pos, float radius, float lineWidth, Color color)
+	{
+		return new Line2D
+		{
+			Name = "CircleHollowStimulus",
+			Position = pos,
+			Closed = true,
+			DefaultColor = color,
+			Width = lineWidth,
+			Antialiased = true,
+			Points = CreateCirclePoints(radius)
+		};
+	}
+
+	private static Vector2[] CreateCirclePoints(float radius)
+	{
+		const int MinSegments = 48;
+		const float PixelsPerSegment = 4.0f;
+		int segments = Math.Max(MinSegments, (int)Math.Ceiling((2.0f * Math.PI * radius) / PixelsPerSegment));
+		var points = new Vector2[segments];
+		for (int i = 0; i < segments; i++)
+		{
+			double angle = 2.0 * Math.PI * i / segments;
+			points[i] = new Vector2(
+				(float)(Math.Cos(angle) * radius),
+				(float)(Math.Sin(angle) * radius));
+		}
+		return points;
+	}
+
+	private partial class TextStimulusNode : Node2D
+	{
+		public Font Font { get; set; }
+		public string Text { get; set; }
+		public Vector2 TextPosition { get; set; }
+		public Color TextColor { get; set; }
+		public int FontSize { get; set; }
+
+		public override void _Draw()
+		{
+			if ((Font == null) || string.IsNullOrEmpty(Text))
+				return;
+
+			DrawString(
+				Font,
+				TextPosition,
+				Text,
+				HorizontalAlignment.Left,
+				modulate: TextColor,
+				fontSize: FontSize);
 		}
 	}
 }
