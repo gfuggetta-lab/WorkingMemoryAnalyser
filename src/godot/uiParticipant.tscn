@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://dafvkvrkrohp" path="res://Scripts/ParticipantIDCheck.cs" id="1_piovy"]
 [ext_resource type="Script" uid="uid://ri8ujbhpth3d" path="res://Scripts/QuitApp.cs" id="1_q0dcj"]
 [ext_resource type="Script" uid="uid://cf26l0sax4o7o" path="res://Scripts/ParticipantIDStoreAndPermit.cs" id="2_86hwc"]
+[ext_resource type="Script" uid="uid://cuucqman7g4fq" path="res://Scripts/SceneLoad.cs" id="4_70xtq"]
 
 [node name="Control" type="Control" unique_id=1479967369]
 layout_mode = 3
@@ -397,6 +398,9 @@ offset_bottom = -51.5
 grow_horizontal = 0
 grow_vertical = 0
 text = "OK"
+
+[node name="NextScreen" type="Node" parent="." unique_id=1181247721]
+script = ExtResource("4_70xtq")
 
 [connection signal="text_refresh" from="VBoxContainer/ParticipantIdCheck" to="CheckID" method="RecheckButton"]
 [connection signal="item_selected" from="VBoxContainer/FirstInitBox/FirstInit" to="VBoxContainer/ParticipantIdCheck" method="RefreshIdTextFromIdx"]
