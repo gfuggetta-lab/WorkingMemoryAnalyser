@@ -307,6 +307,16 @@ public partial class BootScript : Node2D
 			Node2D node = null;
 			switch (itm.itemType)
 			{
+				case PlayItemType.TrialStart:
+					GD.Print($"Trial start: {itm.text}");
+					break;
+				case PlayItemType.TrialEnd:
+					GD.Print($"Trial end: {itm.text}");
+					break;
+				case PlayItemType.SectionStart:
+					GD.Print($"start: {itm.text}");
+					break;
+
 				case PlayItemType.Text:
 					node = CreateTextNode(itm, pos);
 					break;
@@ -369,35 +379,9 @@ public partial class BootScript : Node2D
 		};
 	}
 
-	private static Line2D CreateHollowCircleNode(Vector2 pos, float radius, float lineWidth, Color color)
-	{
-		return new Line2D
-		{
-			Name = "CircleHollowStimulus",
-			Position = pos,
-			Closed = true,
-			DefaultColor = color,
-			Width = lineWidth,
-			Antialiased = true,
-			Points = CreateCirclePoints(radius)
-		};
-	}
 
-	private static Vector2[] CreateCirclePoints(float radius)
-	{
-		const int MinSegments = 48;
-		const float PixelsPerSegment = 4.0f;
-		int segments = Math.Max(MinSegments, (int)Math.Ceiling((2.0f * Math.PI * radius) / PixelsPerSegment));
-		var points = new Vector2[segments];
-		for (int i = 0; i < segments; i++)
-		{
-			double angle = 2.0 * Math.PI * i / segments;
-			points[i] = new Vector2(
-				(float)(Math.Cos(angle) * radius),
-				(float)(Math.Sin(angle) * radius));
-		}
-		return points;
-	}
+
+
 
 	
 }
