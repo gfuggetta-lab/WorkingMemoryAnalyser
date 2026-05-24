@@ -139,5 +139,31 @@ namespace WMAData
                     return PlayItemPos.Undefined;
             }
         }
+
+        public static PlayItem StartTrial(this PlayList list, string name, double ofsMs)
+        {
+            var itm = list.Add(ofsMs);
+            itm.itemType = PlayItemType.TrialStart;
+            itm.text = name;
+            itm.startMs = ofsMs;
+            return itm;
+        }
+        public static PlayItem EndTrial(this PlayList list, string name, double ofsMs)
+        {
+            var itm = list.Add(ofsMs);
+            itm.itemType = PlayItemType.TrialEnd;
+            itm.text = name;
+            itm.startMs = ofsMs;
+            return itm;
+        }
+        public static PlayItem StartSection(this PlayList list, string name, double ofsMs, double duration)
+        {
+            var itm = list.Add(ofsMs);
+            itm.itemType = PlayItemType.SectionStart;
+            itm.text = name;
+            itm.startMs = ofsMs;
+            itm.durationMs = duration;
+            return itm;
+        }
     }
 }

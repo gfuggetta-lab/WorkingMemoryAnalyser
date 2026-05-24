@@ -20,6 +20,7 @@ namespace WMAData
         public double posDistanceCm;
         public double lineWidthCm;
         public int posOther;
+        public int posCount;
 
         public int imageId; // used only for ImageById
 
@@ -43,7 +44,8 @@ namespace WMAData
         Undefined,
         Center,
         NE, NW, SE, SW, 
-        Other
+        OneOfCount, // the position is defined by N out of Count. Where N=0 is NE position.
+        Other,
     }
 
 
@@ -54,6 +56,9 @@ namespace WMAData
         CircleHollow, // radiusCm
         ImageById,
         Sound,
-        Text // draw text, centered at the pos
+        Text, // draw text, centered at the pos
+        TrialStart, // does nothing, only debugging
+        TrialEnd, // does nothing, only debugging
+        SectionStart, // does nothing, only debugging
     }
 }

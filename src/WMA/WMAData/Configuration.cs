@@ -75,6 +75,10 @@ namespace WMAData
         public double S2_sample_diameter_deg;
         public double s2_sample_diameter_cm;
 
+        public int s2_set_size = 4;
+        public int s3_set_size = 16;
+        public int s4_set_size = 4;
+
         public double Shape_size_deg;
         public double Shape_size_CM;
 
@@ -97,17 +101,23 @@ namespace WMAData
             return (((deg / 2) * (PI / 180)) * distanceCm) * 2;
         }
 
-        private void ScheduleDefaults(PlayList dst)
+        private void ScheduleFixationDot(PlayList dst, double ofs, double duration)
         {
-            dst.AddCircle(backgroundRadiusCM, backgroundCircleColor);
+            var fx = dst.AddCircle(fixSpotSizeCM, Fixation_colour);
+            fx.drawOrder = FIXATION_ORDER;
+            fx.startMs = ofs;
+            fx.durationMs = duration;
+        }
 
-            var placeHolderRad = DegToCm(Placeholder_diameter_deg/2);
+        private void SchedulePlaceholders4(PlayList dst, double ofs, double duration)
+        {
+            var placeHolderRad = DegToCm(Placeholder_diameter_deg / 2);
             var lineWidthCm = DegToCm(0.05);
-            PlayItemPos[] placeHolders = new PlayItemPos[] 
+            PlayItemPos[] placeHolders = new PlayItemPos[]
             {
-                PlayItemPos.NW, 
-                PlayItemPos.NE, 
-                PlayItemPos.SW, 
+                PlayItemPos.NW,
+                PlayItemPos.NE,
+                PlayItemPos.SW,
                 PlayItemPos.SE
             };
             foreach (var p in placeHolders)
@@ -117,10 +127,32 @@ namespace WMAData
                 ph.posDistanceCm = targetRadiusCM;
                 ph.drawOrder = FIXATION_ORDER;
                 ph.lineWidthCm = lineWidthCm;
+                ph.startMs = ofs;
+                ph.durationMs = duration;
             }
+        }
 
-            var fx = dst.AddCircle(fixSpotSizeCM, Fixation_colour);
-            fx.drawOrder = FIXATION_ORDER;
+        private void SchedulePlaceholdersN(PlayList dst, double ofs, double duration, int count)
+        {
+            var placeHolderRad = DegToCm(Placeholder_diameter_deg / 2);
+            var lineWidthCm = DegToCm(0.05);
+            for(int i = 0; i < count; i++)
+            {
+                var ph = dst.AddCircleHollow(placeHolderRad, Placeholders_colour);
+                ph.pos = PlayItemPos.OneOfCount;
+                ph.posOther = i;
+                ph.posCount = count;
+                ph.posDistanceCm = targetRadiusCM;
+                ph.drawOrder = FIXATION_ORDER;
+                ph.lineWidthCm = lineWidthCm;
+                ph.startMs = ofs;
+                ph.durationMs = duration;
+            }
+        }
+
+        private void ScheduleBackground(PlayList dst)
+        {
+            dst.AddCircle(backgroundRadiusCM, backgroundCircleColor);
         }
 
         public void CalculateCmFromDeg()
@@ -138,158 +170,235 @@ namespace WMAData
 
         }
 
+        private void ScheduleS1_Focus(TrialOrder tr, PlayList dst, ref double ofsTime)
+        {
+            double duration = tr.S1.Duration;
+            var clr = GetShapeColor(tr.S1.Color);
+            //var c = dst.AddCircle(Image_size_CM, Fixation_colour, ofsTime, duration);
+            double fntsz = Math.Round(font_1.size * (width_px / width_cm) * (distanceCm / 57));
+
+            if (tr.S1.Position != POS_ALL)
+            {
+                dst.AddByShape(tr.S1.Shape, Image_size_CM, Shape_size_CM, clr, ofsTime, duration)
+                    .SetFont(font_1.name, fntsz)
+                    .SetPos(tr.S1.Position, cueRadiusCM)
+                    ;
+
+            }
+            else
+            {
+                dst.AddByShape(tr.S1.Shape, Image_size_CM, Shape_size_CM, clr, ofsTime, duration)
+                    .SetFont(font_1.name, fntsz)
+                    .SetPos(PlayItemPos.NW, cueRadiusCM);
+                dst.AddByShape(tr.S1.Shape, Image_size_CM, Shape_size_CM, clr, ofsTime, duration)
+                    .SetFont(font_1.name, fntsz)
+                    .SetPos(PlayItemPos.NE, cueRadiusCM);
+                dst.AddByShape(tr.S1.Shape, Image_size_CM, Shape_size_CM, clr, ofsTime, duration)
+                    .SetFont(font_1.name, fntsz)
+                    .SetPos(PlayItemPos.SW, cueRadiusCM);
+                dst.AddByShape(tr.S1.Shape, Image_size_CM, Shape_size_CM, clr, ofsTime, duration)
+                    .SetFont(font_1.name, fntsz)
+                    .SetPos(PlayItemPos.SE, cueRadiusCM);
+
+            }
+            dst.PlaySoundAt(tr.S1.Sound, ofsTime);
+
+
+            ScheduleFixationDot(dst, ofsTime, duration);
+            SchedulePlaceholders4(dst, ofsTime, duration);
+
+            ofsTime += duration;
+        }
+
+        private void ScheduleS1_S2(TrialOrder tr, PlayList dst, ref double ofsTime)
+        {
+            double duration = tr.S1.Next_ISI;
+            ScheduleFixationDot(dst, ofsTime, duration);
+            SchedulePlaceholders4(dst, ofsTime, duration);
+            ofsTime += duration;
+        }
+
+        private void ScheduleS2_Info(TrialOrder tr, PlayList dst, ref double ofsTime)
+        {
+            double duration = tr.S2.Duration;
+            var half = s2_sample_diameter_cm / 2;
+
+            var v1 = dst.AddByShape(tr.S2.ShapePos1_NW, Image_size_CM, Shape_size_CM, Fixation_colour, ofsTime, duration);
+            v1.pos = PlayItemPos.NW;
+            v1.posDistanceCm = half;
+
+            var v2 = dst.AddByShape(tr.S2.ShapePos2_NE, Image_size_CM, Shape_size_CM, Fixation_colour, ofsTime, duration);
+            v2.pos = PlayItemPos.NE;
+            v2.posDistanceCm = half;
+
+            var v3 = dst.AddByShape(tr.S2.ShapePos4_SW, Image_size_CM, Shape_size_CM, Fixation_colour, ofsTime, duration);
+            v3.pos = PlayItemPos.SW;
+            v3.posDistanceCm = half;
+
+            var v4 = dst.AddByShape(tr.S2.ShapePos3_SE, Image_size_CM, Shape_size_CM, Fixation_colour, ofsTime, duration);
+            v4.pos = PlayItemPos.SE;
+            v4.posDistanceCm = half;
+
+            ScheduleFixationDot(dst, ofsTime, duration);
+            SchedulePlaceholders4(dst, ofsTime, duration);
+
+            ofsTime += duration;
+        }
+
+        private void ScheduleS2_S3(TrialOrder tr, PlayList dst, ref double ofsTime)
+        {
+            double duration = tr.S2.Next_ISI;
+
+            ScheduleFixationDot(dst, ofsTime, duration);
+            SchedulePlaceholders4(dst, ofsTime, duration);
+
+            ofsTime += duration;
+        }
+
+        private void ScheduleS3_Distract(TrialOrder tr, PlayList dst, ref double ofsTime)
+        {
+            double duration = tr.S3.Duration;
+
+            if (tr.S3.Shape != SHAPE_SKIP_TO_S2)
+            {
+                if (Show_S3_peripheral_placeholders)
+                    SchedulePlaceholdersN(dst, ofsTime, duration, s3_set_size);
+            }
+
+            // todo: target Image at S3? 
+            var c3 = dst.AddCircle(Image_size_CM, Fixation_colour, ofsTime, duration);
+            c3.pos = PlayListHelper.ToPlayPos(tr.S3.Position);
+            c3.posDistanceCm = targetRadiusCM;
+
+
+            ScheduleFixationDot(dst, ofsTime, duration);
+
+            ofsTime += duration;
+        }
+        private void ScheduleS3_S4(TrialOrder tr, PlayList dst, ref double ofsTime)
+        {
+            double duration = tr.S3.Next_ISI;
+
+            ScheduleFixationDot(dst, ofsTime, duration);
+            SchedulePlaceholders4(dst, ofsTime, duration);
+            ofsTime += duration;
+        }
+
+        private void ScheduleS4_Target(TrialOrder tr, PlayList dst, ref double ofsTime)
+        {
+            double duration = tr.S4.Duration;
+            var c4 = dst.AddCircle(Image_size_CM, Fixation_colour, ofsTime, duration);
+            c4.pos = PlayListHelper.ToPlayPos(tr.S4.Position);
+            c4.posDistanceCm = targetRadiusCM;
+
+            ScheduleFixationDot(dst, ofsTime, duration);
+            SchedulePlaceholdersN(dst, ofsTime, duration, s4_set_size);
+
+            ofsTime += duration;
+        }
+
+        private void Schedule_Response(TrialOrder tr, PlayList dst, ref double ofsTime)
+        {
+            double duration = tr.S4.Next_ISI; // Response_Time_after_S4
+            ofsTime += duration;
+        }
+
+        private void Schedule_AfterResponse(TrialOrder tr, PlayList dst, ref double ofsTime)
+        {
+            double duration = tr.ITI_after_feedback; // Response_Time_after_S4
+            ofsTime += duration;
+        }
+
+        private void ScheduleTrial(TrialOrder tr, PlayList dst, ref double ofsTime)
+        {
+            bool show_s1 = true;
+            bool show_s2 = true;
+            bool show_s3 = true;
+            dst.StartTrial($"trial {tr.task}", ofsTime);
+
+            switch (tr.S1.Shape)
+            {
+                case SHAPE_SKIP_TO_S2:
+                    show_s1 = false;
+                    break;
+                case SHAPE_SKIP_TO_S3:
+                    show_s1 = false;
+                    show_s2 = false;
+                    break;
+                case SHAPE_SKIP_TO_S4:
+                    show_s1 = false;
+                    show_s2 = false;
+                    show_s3 = false;
+                    break;
+            }
+
+            // Determine the frame numbers of s3 . The TMS onset frame is specified relative to this
+            // If s3 is not shown then there is no TMS photodiode patch.
+            // int s3_onset_frameNo = 0;
+            // if (show_s1) 
+            //     s3_onset_frameNo = s3_onset_frameNo + round(s1_duration / 1000 / (1 / REFRESH_RATE)) + round(s1_s2_isi / 1000 / (1 / REFRESH_RATE));
+            // if (show_s2)
+            //     s3_onset_frameNo:= s3_onset_frameNo + round(s2_duration / 1000 / (1 / REFRESH_RATE)) + round(s2_s3_isi / 1000 / (1 / REFRESH_RATE));
+
+            bool isBaselineCondition = (tr.S2.ShapePos1_NW == SHAPE_STAR)
+                && (tr.S3.Shape == SHAPE_STAR)
+                && (tr.S4.Shape == SHAPE_STAR);
+
+            // check if the current trial is a pause trial.
+            // NB pause trials start at 1, but the trialNo counter starts at 0.
+
+            // -- PAUSE processing --
+
+            //=======================================================================================
+            //     S1
+            //=======================================================================================
+            // skip S1 if show_s1=false
+            int s1_onsetTime = -1;
+            double duration;
+            if (show_s1)
+            {
+                ScheduleS1_Focus(tr, dst, ref ofsTime);
+                ScheduleS1_S2(tr, dst, ref ofsTime);
+            }
+
+
+            //=======================================================================================
+            //     S2 informative cue ---------------------------------------------------
+            //=======================================================================================
+            // skip S2 if show_s2=false
+            if (show_s2)
+            {
+                ScheduleS2_Info(tr, dst, ref ofsTime);
+                ScheduleS2_S3(tr, dst, ref ofsTime);
+            }
+
+
+            //=======================================================================================
+            //=======================================================================================
+            //=======================================================================================
+            //     S3 spatial cue onset with optional TMS photodiode patch
+            //=======================================================================================
+            // skip S3 if show_s3=false   
+            if (show_s3)
+            {
+                ScheduleS3_Distract(tr, dst, ref ofsTime);
+                ScheduleS3_S4(tr, dst, ref ofsTime);
+            }
+
+            ScheduleS4_Target(tr, dst, ref ofsTime);
+            Schedule_Response(tr, dst, ref ofsTime);
+            Schedule_AfterResponse(tr, dst, ref ofsTime);
+
+            dst.EndTrial($"trial {tr.task}", ofsTime);
+        }
         private void ScheduleTrials(List<TrialOrder> trials, PlayList dst)
         {
             double ofsTime = 0;
 
             for (int i = 0; i < trials.Count; i++)
             {
-                bool show_s1 = true;
-                bool show_s2 = true;
-                bool show_s3 = true;
                 var tr = trials[i];
-
-                switch (tr.S1.Shape)
-                {
-                    case SHAPE_SKIP_TO_S2:
-                        show_s1 = false;
-                        break;
-                    case SHAPE_SKIP_TO_S3:
-                        show_s1 = false;
-                        show_s2 = false;
-                        break;
-                    case SHAPE_SKIP_TO_S4:
-                        show_s1 = false;
-                        show_s2 = false;
-                        show_s3 = false;
-                        break;
-                }
-
-                // Determine the frame numbers of s3 . The TMS onset frame is specified relative to this
-                // If s3 is not shown then there is no TMS photodiode patch.
-                // int s3_onset_frameNo = 0;
-                // if (show_s1) 
-                //     s3_onset_frameNo = s3_onset_frameNo + round(s1_duration / 1000 / (1 / REFRESH_RATE)) + round(s1_s2_isi / 1000 / (1 / REFRESH_RATE));
-                // if (show_s2)
-                //     s3_onset_frameNo:= s3_onset_frameNo + round(s2_duration / 1000 / (1 / REFRESH_RATE)) + round(s2_s3_isi / 1000 / (1 / REFRESH_RATE));
-
-                bool isBaselineCondition = (tr.S2.ShapePos1_NW == SHAPE_STAR)
-                    && (tr.S3.Shape == SHAPE_STAR)
-                    && (tr.S4.Shape == SHAPE_STAR);
-
-                // check if the current trial is a pause trial.
-                // NB pause trials start at 1, but the trialNo counter starts at 0.
-
-                // -- PAUSE processing --
-
-                //=======================================================================================
-                //     S1
-                //=======================================================================================
-                // skip S1 if show_s1=false
-                int s1_onsetTime = -1;
-                double duration;
-                if (show_s1)
-                {
-
-                    duration = tr.S1.Duration;
-                    var clr = GetShapeColor(tr.S1.Color);
-                    //var c = dst.AddCircle(Image_size_CM, Fixation_colour, ofsTime, duration);
-                    double fntsz = Math.Round(font_1.size * (width_px / width_cm) * (distanceCm / 57));
-
-                    if (tr.S1.Position != POS_ALL)
-                    {
-                        dst.AddByShape(tr.S1.Shape, Image_size_CM, Shape_size_CM, clr, ofsTime, duration)
-                            .SetFont(font_1.name, fntsz)
-                            .SetPos(tr.S1.Position, cueRadiusCM)
-                            ;
-
-                    }
-                    else
-                    {
-                        dst.AddByShape(tr.S1.Shape, Image_size_CM, Shape_size_CM, clr, ofsTime, duration)
-                            .SetFont(font_1.name, fntsz)
-                            .SetPos(PlayItemPos.NW, cueRadiusCM);
-                        dst.AddByShape(tr.S1.Shape, Image_size_CM, Shape_size_CM, clr, ofsTime, duration)
-                            .SetFont(font_1.name, fntsz)
-                            .SetPos(PlayItemPos.NE, cueRadiusCM);
-                        dst.AddByShape(tr.S1.Shape, Image_size_CM, Shape_size_CM, clr, ofsTime, duration)
-                            .SetFont(font_1.name, fntsz)
-                            .SetPos(PlayItemPos.SW, cueRadiusCM);
-                        dst.AddByShape(tr.S1.Shape, Image_size_CM, Shape_size_CM, clr, ofsTime, duration)
-                            .SetFont(font_1.name, fntsz)
-                            .SetPos(PlayItemPos.SE, cueRadiusCM);
-
-                    }
-                    dst.PlaySoundAt(tr.S1.Sound, ofsTime);
-
-
-                    ofsTime += tr.S1.Duration;
-
-                    ofsTime += tr.S1.Next_ISI;
-                }
-
-
-                //=======================================================================================
-                //     S2 informative cue ---------------------------------------------------
-                //=======================================================================================
-                // skip S2 if show_s2=false
-                if (show_s2)
-                {
-
-                    var half = s2_sample_diameter_cm / 2;
-
-                    duration = tr.S2.Duration;
-                    var v1 = dst.AddByShape(tr.S2.ShapePos1_NW, Image_size_CM, Shape_size_CM, Fixation_colour, ofsTime, duration);
-                    v1.pos = PlayItemPos.NW;
-                    v1.posDistanceCm = half;
-
-                    var v2 = dst.AddByShape(tr.S2.ShapePos2_NE, Image_size_CM, Shape_size_CM, Fixation_colour, ofsTime, duration);
-                    v2.pos = PlayItemPos.NE;
-                    v2.posDistanceCm = half;
-
-                    var v3 = dst.AddByShape(tr.S2.ShapePos4_SW, Image_size_CM, Shape_size_CM, Fixation_colour, ofsTime, duration);
-                    v3.pos = PlayItemPos.SW;
-                    v3.posDistanceCm = half;
-
-                    var v4 = dst.AddByShape(tr.S2.ShapePos3_SE, Image_size_CM, Shape_size_CM, Fixation_colour, ofsTime, duration);
-                    v4.pos = PlayItemPos.SE;
-                    v4.posDistanceCm = half;
-
-                    ofsTime += tr.S2.Duration;
-                    ofsTime += tr.S2.Next_ISI;
-                }
-
-
-                //=======================================================================================
-                //=======================================================================================
-                //=======================================================================================
-                //     S3 spatial cue onset with optional TMS photodiode patch
-                //=======================================================================================
-                // skip S3 if show_s3=false   
-                if (show_s3)
-                {
-                    duration = tr.S3.Duration;
-
-                    if (tr.S3.Shape != SHAPE_SKIP_TO_S2)
-                    {
-
-                    }
-
-                    var c3 = dst.AddCircle(Image_size_CM, Fixation_colour, ofsTime, duration);
-                    c3.pos = PlayListHelper.ToPlayPos(tr.S3.Position);
-                    c3.posDistanceCm = targetRadiusCM;
-
-                    ofsTime += tr.S3.Duration;
-                    ofsTime += tr.S3.Next_ISI;
-                }
-
-                duration = tr.S4.Duration;
-                var c4 = dst.AddCircle(Image_size_CM, Fixation_colour, ofsTime, duration);
-                c4.pos = PlayListHelper.ToPlayPos(tr.S4.Position);
-                c4.posDistanceCm = targetRadiusCM;
-
-                ofsTime += tr.S4.Duration;
-                ofsTime += tr.S4.Next_ISI;
+                ScheduleTrial(tr, dst, ref ofsTime);
             }
         }
 
@@ -308,7 +417,7 @@ namespace WMAData
             width_cm = tm.widthCm;
             height_cm = tm.heightCm;
 
-            ScheduleDefaults(dst);
+            ScheduleBackground(dst);
             if (trials != null)
                 ScheduleTrials(trials, dst);
             dst.Sort();
