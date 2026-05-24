@@ -83,6 +83,8 @@ namespace WMAData
             double ImageSzCm, 
             double shapeSzCm, ColorFloat color, double timeOfs = 0, double durationMs = -1)
         {
+            if (Shape == SHAPE_NONE)
+                return null;
             if ((Shape >= SHAPE_BMP_MIN) && (Shape <= SHAPE_BMP_MAX))
                 return AddImageById(list, Shape, ImageSzCm, color, timeOfs, durationMs);
             if ((Shape >= SHAPE_CHAR_MIN) && (Shape <= SHAPE_CHAR_MAX))
