@@ -68,9 +68,26 @@ namespace WMAData
 
         public ColorFloat[] ShapeColors = new ColorFloat[15];
 
+        // should S3 show additional placeholder (not just default 4)
+        // the placeholders would be filled with the distractionShape (unless it's zero)
+        // The default S3 is actually 16
+        // When drawing a distraction, drawing the shape inside of the target is discouraged
         public bool Show_S3_peripheral_placeholders = true;
+
+        // The default S4 is actually 16, but it's rarely used?
+        // When drawing a distraction, drawing the shape inside of the target is discouraged
         public bool Show_S4_peripheral_placeholders = true;
+        
+        // should S3 show the placeholder AROUND the target image
+        // however, it's enforced to be drawn anyway, when the position is other than ALL
+        // it might be a deprecated option.
+        // this is redundant because placeholders are forced to be drawn anyway
         public bool Show_S3_placeholder_when_centre = true;
+
+        // should S4 show the placeholder AROUND the target image 
+        // however, it's enforced to be drawn anyway, when the position is other than ALL
+        // it might be a deprecated option
+        // this is redundant because placeholders are forced to be drawn anyway
         public bool Show_S4_placeholder_when_centre = true;
 
         public double S2_sample_diameter_deg;
@@ -110,6 +127,16 @@ namespace WMAData
             fx.durationMs = duration;
         }
 
+        private PlayItem StartPlaceholder(PlayList dst, double ofsTime, double duration)
+        {
+            var placeHolderRad = DegToCm(Placeholder_diameter_deg / 2);
+            var lineWidthCm = DegToCm(0.05);
+            var ph = dst.AddCircleHollow(placeHolderRad, Placeholders_colour, ofsTime, duration);
+            ph.drawOrder = FIXATION_ORDER;
+            ph.lineWidthCm = lineWidthCm;
+            return ph;
+        }
+
         private void SchedulePlaceholders4(PlayList dst, double ofs, double duration)
         {
             var placeHolderRad = DegToCm(Placeholder_diameter_deg / 2);
@@ -123,23 +150,34 @@ namespace WMAData
             };
             foreach (var p in placeHolders)
             {
-                var ph = dst.AddCircleHollow(placeHolderRad, Placeholders_colour);
-                ph.pos = p;
-                ph.posDistanceCm = targetRadiusCM;
-                ph.drawOrder = FIXATION_ORDER;
-                ph.lineWidthCm = lineWidthCm;
-                ph.startMs = ofs;
-                ph.durationMs = duration;
+                var ph = StartPlaceholder(dst, ofs, duration);
+                ph.SetPos(p, targetRadiusCM);
             }
         }
 
-        private void ScheduleShapesN(PlayList dst, double ofs, double duration, int count, int shape, int color)
+        private void ScheduleShapesN(PlayList dst, double ofs, double duration, int count, int shape, int color, int skipPos)
         {
             var placeHolderRad = DegToCm(Placeholder_diameter_deg / 2);
             var lineWidthCm = DegToCm(0.05);
+
+            if ((skipPos >= POS_TOP_LEFT) && (skipPos <= POS_BOT_RIGHT))
+            {
+                if (count % 4 == 0)
+                {
+                    // only if count if a mulitply of 4
+                    skipPos = (skipPos - 1) * count / 4;
+                }
+                else
+                    skipPos = -1;
+            }
+            else
+                skipPos = -1;
+
             for (int i = 0; i < count; i++)
             {
-                var ph = dst.AddByShape(shape, Image_size_CM, Shape_size_CM,  GetShapeColor(color), ofs, duration);
+                if (skipPos == i)
+                    continue;
+                var ph = dst.AddByShape(shape, Image_size_CM, Shape_size_CM, GetShapeColor(color), ofs, duration);
                 ph.pos = PlayItemPos.OneOfCount;
                 ph.posOther = i;
                 ph.posCount = count;
@@ -155,15 +193,11 @@ namespace WMAData
             var lineWidthCm = DegToCm(0.05);
             for(int i = 0; i < count; i++)
             {
-                var ph = dst.AddCircleHollow(placeHolderRad, Placeholders_colour);
+                var ph = StartPlaceholder(dst, ofs, duration);
                 ph.pos = PlayItemPos.OneOfCount;
                 ph.posOther = i;
                 ph.posCount = count;
                 ph.posDistanceCm = targetRadiusCM;
-                ph.drawOrder = FIXATION_ORDER;
-                ph.lineWidthCm = lineWidthCm;
-                ph.startMs = ofs;
-                ph.durationMs = duration;
             }
         }
 
@@ -288,13 +322,21 @@ namespace WMAData
             {
                 if (Show_S3_peripheral_placeholders)
                 {
-                    ScheduleShapesN(dst, ofsTime, duration, s3_set_size, tr.S3.DistractShape, tr.S3.DistractColor);
+                    ScheduleShapesN(dst, ofsTime, duration, s3_set_size, tr.S3.DistractShape, tr.S3.DistractColor, tr.S3.Position);
+                }
+
+                // target Image
+                dst.AddByShape(tr.S3.Shape, Image_size_CM, Shape_size_CM, GetShapeColor(tr.S3.Color), ofsTime, duration)
+                    .SetPos(tr.S3.Position, targetRadiusCM);
+                if ((Show_S3_placeholder_when_centre) || (tr.S3.Position != POS_ALL))
+                {
+                    StartPlaceholder(dst, ofsTime, duration)
+                        .SetPos(tr.S3.Position, targetRadiusCM);
                 }
             }
 
-            // target Image
-            dst.AddByShape(tr.S3.Shape, Image_size_CM, Shape_size_CM, GetShapeColor(tr.S3.Color), ofsTime, duration)
-                .SetPos(tr.S3.Position, targetRadiusCM);
+
+
 
             dst.PlaySoundAt(tr.S3.Sound, ofsTime);
 
@@ -320,8 +362,23 @@ namespace WMAData
             double duration = tr.S4.Duration;
             dst.StartSection("S4", ofsTime, duration);
 
-            dst.AddByShape(tr.S4.Shape, Image_size_CM, Shape_size_CM, GetShapeColor(tr.S4.Color), ofsTime, duration)
-                .SetPos(tr.S4.Position, targetRadiusCM);
+            if (tr.S4.Shape != SHAPE_SKIP_TO_S2)
+            {
+                if ((Show_S4_peripheral_placeholders)&&(tr.S4.DistractShape != 0))
+                {
+                    ScheduleShapesN(dst, ofsTime, duration, s4_set_size, 
+                        tr.S4.DistractShape, tr.S4.DistractColor, tr.S4.Position);
+                }
+
+                // set target image
+                dst.AddByShape(tr.S4.Shape, Image_size_CM, Shape_size_CM, GetShapeColor(tr.S4.Color), ofsTime, duration)
+                    .SetPos(tr.S4.Position, targetRadiusCM);
+                if ((Show_S4_placeholder_when_centre) || (tr.S4.Position != POS_ALL))
+                {
+                    StartPlaceholder(dst, ofsTime, duration)
+                        .SetPos(tr.S4.Position, targetRadiusCM);
+                }
+            }
 
             //if (Show_S4_peripheral_placeholders)
             //    SchedulePlaceholdersN(dst, ofsTime, duration, s4_set_size);
@@ -334,6 +391,7 @@ namespace WMAData
             ScheduleFixationDot(dst, ofsTime, duration);
 
             SchedulePlaceholdersN(dst, ofsTime, duration, s4_set_size);
+
 
             ofsTime += duration;
         }
