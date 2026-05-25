@@ -12,6 +12,10 @@ using ConfigFile = WMAFiles.ConfigFile;
 
 public partial class BootScript : Node2D
 {
+	public const string CloseTrial = "CloseTrial";
+	public const string LeftResponse = "LeftResponse";
+	public const string RightResponse = "RightResponse";
+
 	[Export]
 	public Label screenRes;
 
@@ -40,6 +44,7 @@ public partial class BootScript : Node2D
 
 
 	public bool isWaitingResponse = false;
+	public ResponseButton trialResponse = ResponseButton.NotGiven;
 
 
 	// Called when the node enters the scene tree for the first time.
@@ -61,6 +66,7 @@ public partial class BootScript : Node2D
 			var cfg = ConfigFile.FromFile(fileName);
 			exam.LoadConfig(cfg);
 		}
+		AssignKeyboardEvents(exam.keyboards);
 
 		TrialMonitor tm = new TrialMonitor();
 		if (screenRes != null)
@@ -397,6 +403,7 @@ public partial class BootScript : Node2D
 					if (!isWaitingResponse)
 						log("waiting for response");
 					isWaitingResponse = true;
+					trialResponse = ResponseButton.NotGiven;
 					break;
 
 				case PlayItemType.Text:
@@ -477,9 +484,38 @@ public partial class BootScript : Node2D
 		GetTree().Quit();
 	}
 
+	private void AssignKeyboardEvents(string keysCsv)
+	{
+		GD.Print($"keys: '{keysCsv}'");
+		string[] parts = keysCsv.Split(',');
+		for (int i = 0; i < parts.Length; i++)
+			parts[i] = parts[i].Trim();
+
+		if (parts.Length > 0)
+		{
+			if (!AddPhysicalKeyToAction(LeftResponse, parts[0]))
+				GD.Print($"failed to map: '{parts[0]}'");
+		}
+
+		if (parts.Length > 1)
+		{
+			if (!AddPhysicalKeyToAction(RightResponse, parts[1]))
+				GD.Print($"failed to map: '{parts[1]}'");
+		}
+	}
+
+
+	private void SetResponse(ResponseButton resp)
+	{
+		log($"response: {resp}");
+		trialResponse = resp;
+		isWaitingResponse = false;
+	}
+
+
 	public override void _Input(InputEvent ev)
 	{
-		if (ev.IsActionPressed("CloseTrial"))
+		if (ev.IsActionPressed(CloseTrial))
 		{
 			CancelTrial();
 			return;
@@ -487,17 +523,14 @@ public partial class BootScript : Node2D
 
 		if (!isWaitingResponse)
 			return;
-		if (ev is InputEventKey evKey)
+
+		if (ev.IsActionPressed(RightResponse))
 		{
-			log($"keycode={evKey.Keycode}");
-		} 
-		else if (ev is InputEventMouse evMouse)
-		{
-			log($"mouse={evMouse.ButtonMask}");
+			SetResponse(ResponseButton.RightButton);
 		}
-		//if (ev.IsActionPressed("jump"))
-		//{
-		//    Jump();
-		//}
+		else if (ev.IsActionPressed(LeftResponse))
+		{
+			SetResponse(ResponseButton.LeftButton);
+		}
 	}
 }

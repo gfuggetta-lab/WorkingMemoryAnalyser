@@ -128,5 +128,53 @@ namespace godot
 			var stamp = DateTime.Now.ToString("HH:mm:ss.fff");
 			GD.Print($"{stamp}: {message}");
 		}
+
+		public static bool AddPhysicalKeyToAction(string actionName, string keyText)
+		{
+			if (string.IsNullOrWhiteSpace(keyText))
+				return false;
+
+			char ch = keyText.Trim()[0];
+
+			if (!TryCharToGodotKey(ch, out Key key))
+			{
+				GD.Print($"failed to map char '{ch}' to godot");
+				return false;
+			}
+
+			StringName action = new StringName(actionName);
+
+			if (!InputMap.HasAction(action))
+			{
+				GD.Print($"there's no action: '{actionName}'");
+				return false;
+			}
+
+			var ev = new InputEventKey
+			{
+				PhysicalKeycode = key
+			};
+
+			// Do not add duplicate binding.
+			if (!InputMap.ActionHasEvent(action, ev))
+				InputMap.ActionAddEvent(action, ev);
+
+			return true;
+		}
+
+		public static bool TryCharToGodotKey(char ch, out Key key)
+		{
+			ch = char.ToUpperInvariant(ch);
+
+			// For letters: 'A' -> Key.A, 'D' -> Key.D, etc.
+			if (ch >= 'A' && ch <= 'Z')
+			{
+				key = (Key)Enum.Parse(typeof(Key), ch.ToString());
+				return true;
+			}
+
+			key = Key.None;
+			return false;
+		}
 	}
 }
