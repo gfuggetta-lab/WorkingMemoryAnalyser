@@ -67,8 +67,10 @@ namespace WMAData
         ImageById,
         Sound,
         Text, // draw text, centered at the pos
+
         TrialStart, // does nothing, only debugging
         TrialEnd, // does nothing, only debugging
         SectionStart, // does nothing, only debugging
+        ReadResponse, // the time when the response is expected
     }
 }

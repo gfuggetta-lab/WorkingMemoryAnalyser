@@ -276,6 +276,15 @@ namespace WMAData
             return itm;
         }
 
+        public static PlayItem ReadResponse(this PlayList list, double ofsMs, double duration)
+        {
+            var itm = list.Add(ofsMs);
+            itm.itemType = PlayItemType.ReadResponse;
+            itm.startMs = ofsMs;
+            itm.durationMs = duration;
+            return itm;
+        }
+
         public static double DegToRad(double degrees)
         {
             return degrees * (Math.PI / 180.0);

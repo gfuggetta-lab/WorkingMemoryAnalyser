@@ -361,6 +361,9 @@ namespace WMAData
         {
             double duration = tr.S4.Duration;
             dst.StartSection("S4", ofsTime, duration);
+            
+            // the response can be given as soon as S4 is shown
+            dst.ReadResponse(ofsTime, duration + tr.S4.Next_ISI);
 
             if (tr.S4.Shape != SHAPE_SKIP_TO_S2)
             {
