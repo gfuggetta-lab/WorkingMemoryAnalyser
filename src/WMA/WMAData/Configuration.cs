@@ -61,6 +61,9 @@ namespace WMAData
 
         public string Feedback_text_correct;
         public string Feedback_text_incorrect;
+
+        // the constant error time, which is subtracted for the response time
+        // used in the reporting only
         public int RT_constant_error_ms;
 
         public ColorFloat Incorrect_feedback_colour;
