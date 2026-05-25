@@ -53,7 +53,11 @@ public partial class BootScript : Node2D
 	public List<TrialOrder> trials = new List<TrialOrder>();
 	private int curTrialIdx = -1;
 	public TrialOrder curTrial = null;
-
+	public TrialResults result = new TrialResults();
+	public ResultReport report = new ResultReport();
+	
+	private ulong timeOfExperimentStart;
+	private ulong s4start;
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -106,6 +110,8 @@ public partial class BootScript : Node2D
 		curTrial = trials[0];
 		curTrialIdx = -1; // needed to handle TrialStart properly
 
+		timeOfExperimentStart = Time.GetTicksMsec();
+		report.SetConfig(exam);
 
 		drawItems.Clear();
 		plrTrack = new PlayListTracker(playList);
@@ -373,10 +379,18 @@ public partial class BootScript : Node2D
 					curTrialIdx++;
 					if ((curTrialIdx>= 0) && (curTrialIdx < trials.Count))
 						curTrial = trials[curTrialIdx];
+
+					// resetting the measurement time
+					result.Reset();
+
 					break;
 
 				case PlayItemType.TrialEnd:
 					log($"Trial end: {itm.text}; {(curTrialIdx + 1)}/{trials.Count}");
+					result.blank_onsetTime = (int)(Time.GetTicksMsec() - timeOfExperimentStart);
+
+					report.WriteTrial(curTrial, result);
+					
 					if ((curTrialIdx+1) >= trials.Count)
 					{
 						log("ending trials");
@@ -392,17 +406,19 @@ public partial class BootScript : Node2D
 				case PlayItemType.CheckResponse:
 					log("checking response");
 					currentCond = PlayItemCond.Incorrect;
-					int isSameDiff = -2;
 					bool isCorr = false;
+					
+					result.observedDataResponseRecord = -1;
+					result.observedDataCorrectResponseRecord = -1;
+
 					if (trialResponse != ResponseButton.NotGiven)
 					{
-						exam.ProcessResponse(trialResponse, curTrial, out isSameDiff, out isCorr);
+						exam.ProcessResponse(trialResponse, curTrial, out result.observedDataResponseRecord, out isCorr);
+						result.observedDataCorrectResponseRecord = isCorr ? 1 : 0;
 						if (isCorr)
 							currentCond = PlayItemCond.Correct;
 					}
 					log($"is correct response: {currentCond}");
-					log($"corr: {isCorr}");
-					log($"diff reported: {isSameDiff}");
 					break;
 			}
 		}
@@ -410,6 +426,30 @@ public partial class BootScript : Node2D
 
 	private void SetCurrentSection(PlayItem itm)
 	{
+
+		if (string.Compare(itm.text, "S1", true) == 0)
+		{
+			result.s1_onsetTime = (int)(Time.GetTicksMsec() - timeOfExperimentStart);
+		}
+		else if (string.Compare(itm.text, "S2", true) == 0)
+		{
+			result.s2_onsetTime = (int)(Time.GetTicksMsec() - timeOfExperimentStart);
+		}
+		else if (string.Compare(itm.text, "S3", true) == 0)
+		{
+			result.s3_onsetTime = (int)(Time.GetTicksMsec() - timeOfExperimentStart);
+		}
+		else if (string.Compare(itm.text, "S4", true)==0)
+		{
+			s4start = Time.GetTicksMsec();
+			result.s4_onsetTime = (int)(s4start - timeOfExperimentStart);
+		}
+		else if (string.Compare(itm.text, "Aft", true) == 0)
+		{
+			result.feedback_onsetTime = (int)(Time.GetTicksMsec() - timeOfExperimentStart);
+		}
+
+
 		currentSection = itm;
 		currentSectionEndMs = itm.durationMs < 0.0
 			? double.MaxValue
@@ -574,6 +614,10 @@ public partial class BootScript : Node2D
 
 	private void EndTrial()
 	{
+		var rr = report.text.ToString();
+		File.WriteAllText(@"C:\FPC_Laz\WorkingMemoryAnalyser_pas\Experiments library\TestExp\Input data\InputData_1.report", rr);
+
+
 		// we're done with al all the trials
 		GetTree().Quit();
 	}
@@ -608,9 +652,16 @@ public partial class BootScript : Node2D
 
 	private void SetResponse(ResponseButton resp)
 	{
+		if (!isWaitingResponse) return;
+
 		log($"response: {resp}");
 		trialResponse = resp;
 		isWaitingResponse = false;
+
+
+		// record Reaction Time  between response event and time t1 taken immediately after s4 render command is sent;
+		result.responseTimeMs = (int)(Time.GetTicksMsec() - s4start); // Time.curr
+		result.response_onsetTime = (int)(Time.GetTicksMsec() - timeOfExperimentStart);
 	}
 
 
