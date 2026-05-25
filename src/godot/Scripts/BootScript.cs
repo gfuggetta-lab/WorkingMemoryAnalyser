@@ -112,9 +112,30 @@ public partial class BootScript : Node2D
 		
 		exam.GetPreloadImages(list, resNames);
 		GD.Print($"images: {resNames.Count}");
+		
+		List<string> tryExt = new List<string>();
+		tryExt.Add(".png");
+		tryExt.Add(".bmp");
 		foreach (var nm in resNames)
 		{
+			string ext = Path.GetExtension(nm);
+			bool doTryExt = string.IsNullOrEmpty(ext);
+
 			string bmpFn = Path.Combine(imgDir, nm);
+			if (!File.Exists(bmpFn)&&doTryExt)
+			{
+				foreach (var x in tryExt)
+				{
+					string newfn = Path.ChangeExtension(bmpFn, x);
+					if (File.Exists(newfn))
+					{
+						bmpFn = newfn;
+						break;
+					}
+				}
+			}
+
+
 			Image img = new Image();
 			GD.Print($"loading: {bmpFn}");
 			var err = img.Load(bmpFn);
@@ -368,7 +389,7 @@ public partial class BootScript : Node2D
 
 				case PlayItemType.ImageById:
 					string n;
-					n = $"{itm.imageId}.bmp";
+					n = itm.imageId.ToString();
 					if (texs.TryGetValue(n, out var tt))
 					{
 						float w = (float)(itm.sizeCm * cmToPix);
