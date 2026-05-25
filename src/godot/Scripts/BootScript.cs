@@ -45,13 +45,17 @@ public partial class BootScript : Node2D
 
 	public bool isWaitingResponse = false;
 	public ResponseButton trialResponse = ResponseButton.NotGiven;
+	// the condition evaluated based on the response.
+	// it's populated at CheckResponse, based on the actual response given
+	public PlayItemCond currentCond = PlayItemCond.None;
 
 	public Configuration exam;
 	public List<TrialOrder> trials = new List<TrialOrder>();
+	public TrialOrder curTrial = null;
 
 
-    // Called when the node enters the scene tree for the first time.
-    public override void _Ready()
+	// Called when the node enters the scene tree for the first time.
+	public override void _Ready()
 	{
 		exam = new Configuration();
 		// there's no configuration for the clear color
@@ -98,6 +102,7 @@ public partial class BootScript : Node2D
 
 		exam.Schedule(tm, trials, playList);
 		log($"trials:  {trials.Count}");
+		curTrial = trials[0];
 
 		drawItems.Clear();
 		plrTrack = new PlayListTracker(playList);
@@ -119,7 +124,9 @@ public partial class BootScript : Node2D
 		List<string> resNames = new List<string>();
 		
 		exam.GetPreloadImages(list, resNames);
-		
+		resNames.Add("correct");
+		resNames.Add("incorrect");
+
 		List<string> tryExt = new List<string>();
 		tryExt.Add(".png");
 		tryExt.Add(".bmp");
@@ -153,6 +160,17 @@ public partial class BootScript : Node2D
 			var _tex = ImageTexture.CreateFromImage(img);
 			//GD.Print($"loaded: {nm} {_tex != null}");
 			texs[nm] = _tex;
+		}
+		// for compatibility with the "integer" based images
+		// the response images are reported as "int" with 100 for correct 
+		// and 101 for incorrect image
+		if (texs.TryGetValue("incorrect", out var inci))
+		{
+			texs[Consts.IMAGEID_INCORRECT.ToString()] = inci;
+		}
+		if (texs.TryGetValue("correct", out var ci))
+		{
+			texs[Consts.IMAGEID_CORRECT.ToString()] = ci;
 		}
 
 		// loading fonts
@@ -198,7 +216,14 @@ public partial class BootScript : Node2D
 		List<PlayItem> eff = new List<PlayItem>();
 		List<PlayItem> trigAndOff = new List<PlayItem>();
 		List<PlayItem> offList = new List<PlayItem>();
-		int cnt = plrTrack.Track(delta*1000.0, eff, null, offList, trigAndOff);
+		List<PlayItem> trig = new List<PlayItem>();
+		int cnt = plrTrack.Track(delta*1000.0, eff, trig, offList, trigAndOff);
+		
+		// this must run before RebuildDrawNodes
+		// because BuildDraw nodes would verify the condition
+		// controlevents actually update the currentCondition
+		ControlEvents(trig);
+
 		if (cnt != 0)
 		{
 			drawItems = eff;
@@ -316,9 +341,43 @@ public partial class BootScript : Node2D
 		if (items == null) return;
 		foreach(var itm in items)
 		{
+			if (!IsCondMet(itm))
+				continue;
+
 			if (itm.itemType == PlayItemType.Sound)
 			{
 				PlaySound(itm);
+			}
+		}
+	}
+
+	private void ControlEvents(List<PlayItem> items)
+	{
+		if (items == null) return;
+
+		foreach (var itm in items)
+		{
+			if (itm == null) continue;
+			if (!IsCondMet(itm)) continue;
+
+			switch (itm.itemType)
+			{
+
+				case PlayItemType.CheckResponse:
+					log("checking response");
+					currentCond = PlayItemCond.Incorrect;
+					int isSameDiff = -2;
+					bool isCorr = false;
+					if (trialResponse != ResponseButton.NotGiven)
+					{
+						exam.ProcessResponse(trialResponse, curTrial, out isSameDiff, out isCorr);
+						if (isCorr)
+							currentCond = PlayItemCond.Correct;
+					}
+					log($"is correct response: {currentCond}");
+					log($"corr: {isCorr}");
+					log($"diff reported: {isSameDiff}");
+					break;
 			}
 		}
 	}
@@ -379,6 +438,12 @@ public partial class BootScript : Node2D
 		drawNodes.Add(node);
 	}
 
+	public bool IsCondMet(PlayItem itm)
+	{
+		return (itm != null) 
+			&& ((itm.cond == PlayItemCond.None) || (itm.cond == currentCond));
+	}
+
 	private void RebuildDrawNodes()
 	{
 		if (drawRoot == null)
@@ -388,12 +453,24 @@ public partial class BootScript : Node2D
 		var cpos = GetViewportRect().Size / 2.0f;
 		foreach (var itm in drawItems)
 		{
+			if (itm == null) continue;
+			if (itm.cond != PlayItemCond.None)
+			{
+				log($"condition check: {itm.cond}; needed {currentCond}");
+				if (!IsCondMet(itm))
+				{
+					log("failed");
+					continue;
+				}
+			}
+
 			var pos = GetPos(itm.pos, cpos, itm.posDistanceCm * cmToPix, itm.posOther, itm.posCount);
 			Node2D node = null;
 			switch (itm.itemType)
 			{
 				case PlayItemType.TrialStart:
 					log($"Trial start: {itm.text}");
+					currentCond = PlayItemCond.None;
 					break;
 				case PlayItemType.TrialEnd:
 					log($"Trial end: {itm.text}");
@@ -402,6 +479,7 @@ public partial class BootScript : Node2D
 					log($"start: {itm.text}");
 					SetCurrentSection(itm);
 					break;
+
 				case PlayItemType.ReadResponse:
 					if (!isWaitingResponse)
 						log("waiting for response");
