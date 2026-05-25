@@ -52,6 +52,61 @@ namespace WMAData
             return pt;
         }
 
+        public static PlayItem AddBar(this PlayList list, double lengthCm, double widthCm, double theta, ColorFloat color, double timeOfs = 0, double durationMs = -1)
+        {
+            if (list == null) return null;
+            var pt = list.Add(timeOfs);
+            pt.itemType = PlayItemType.Bar;
+            pt.barLengthCm = lengthCm;
+            pt.barWidthCm = widthCm;
+            pt.barTheta = theta;
+            pt.color = color;
+            pt.durationMs = durationMs;
+            pt.pos = PlayItemPos.Center;
+            return pt;
+        }
+
+        public static PlayItem AddPlus(this PlayList list, double lengthCm, double widthCm, ColorFloat color, double timeOfs = 0, double durationMs = -1)
+        {
+            if (list == null) return null;
+            var pt = list.Add(timeOfs);
+            pt.itemType = PlayItemType.Plus;
+            pt.barLengthCm = lengthCm;
+            pt.barWidthCm = widthCm;
+            pt.color = color;
+            pt.durationMs = durationMs;
+            pt.pos = PlayItemPos.Center;
+            return pt;
+        }
+
+        public static PlayItem AddStar(this PlayList list, double outerRadiusCm, ColorFloat color, double timeOfs = 0, double durationMs = -1)
+        {
+            if (list == null) return null;
+            var pt = list.Add(timeOfs);
+            pt.itemType = PlayItemType.Star;
+            pt.radiusCm = outerRadiusCm;
+            pt.color = color;
+            pt.durationMs = durationMs;
+            pt.pos = PlayItemPos.Center;
+            return pt;
+        }
+
+        public static PlayItem AddRegularShape(this PlayList list, double outerRadiusCm, double lineWidthCm, int pointCount, bool filled, double rotation, ColorFloat color, double timeOfs = 0, double durationMs = -1)
+        {
+            if (list == null) return null;
+            var pt = list.Add(timeOfs);
+            pt.itemType = PlayItemType.RegularShape;
+            pt.radiusCm = outerRadiusCm;
+            pt.lineWidthCm = lineWidthCm;
+            pt.regularPoints = pointCount;
+            pt.regularFilled = filled;
+            pt.regularRotation = rotation;
+            pt.color = color;
+            pt.durationMs = durationMs;
+            pt.pos = PlayItemPos.Center;
+            return pt;
+        }
+
 
         public static PlayItem AddImageById(this PlayList list, int imageId, double ImageSize, ColorFloat color, double timeOfs = 0, double durationMs = -1)
         {
@@ -79,8 +134,8 @@ namespace WMAData
             return pt;
         }
 
-        public static PlayItem AddByShape(this PlayList list, int Shape, 
-            double ImageSzCm, 
+        public static PlayItem AddByShape(this PlayList list, int Shape,
+            double ImageSzCm,
             double shapeSzCm, ColorFloat color, double timeOfs = 0, double durationMs = -1)
         {
             if (Shape == SHAPE_NONE)
@@ -92,7 +147,38 @@ namespace WMAData
                 var text = new string((char)((UInt16)Shape), 1);
                 return AddText(list, text, "", color, timeOfs, durationMs);
             }
-            return AddCircle(list, shapeSzCm / 2, color, timeOfs, durationMs);
+
+            switch (Shape)
+            {
+                case SHAPE_DIAMOND:
+                    return AddBar(list, shapeSzCm, shapeSzCm, Math.PI / 4.0, color, timeOfs, durationMs);
+                case SHAPE_HEX:
+                    double rH = shapeSzCm / 2.0;
+                    return AddRegularShape(list, rH, rH * 0.01, 6, true, 0.0, color, timeOfs, durationMs);
+                case SHAPE_TRIANGLE:
+                    double rT = shapeSzCm / 2.0;
+                    return AddRegularShape(list, rT, rT * 0.01, 3, true, 0.0, color, timeOfs, durationMs);
+                case SHAPE_BOX:
+                    double rB = Math.Sqrt(2.0 * Math.Pow(shapeSzCm / 2.0, 2.0));
+                    return AddRegularShape(list, rB, rB * 0.66, 4, false, Math.PI / 4.0, color, timeOfs, durationMs);
+                case SHAPE_RING:
+                    double rG = shapeSzCm / 2.0;
+                    return AddRegularShape(list, rG, rG * 0.5, 20, false, 0.0, color, timeOfs, durationMs);
+                case SHAPE_PLUS:
+                    return AddPlus(list, shapeSzCm, shapeSzCm * 0.33, color, timeOfs, durationMs);
+                case SHAPE_HORZ:
+                    return AddBar(list, shapeSzCm, shapeSzCm / 4.0, 0.0, color, timeOfs, durationMs);
+                case SHAPE_VERT:
+                    return AddBar(list, shapeSzCm, shapeSzCm / 4.0, Math.PI / 2.0, color, timeOfs, durationMs);
+                case SHAPE_SQUARE:
+                    return AddBar(list, shapeSzCm, shapeSzCm, 0.0, color, timeOfs, durationMs);
+                case SHAPE_CIRCLE:
+                    return AddCircle(list, shapeSzCm / 2, color, timeOfs, durationMs);
+                case SHAPE_STAR:
+                    return AddStar(list, shapeSzCm, color, timeOfs, durationMs);
+                default:
+                    return null;
+            }
         }
 
         public static PlayItem SetPos(this PlayItem itm, int dstPos, double posDistCm)

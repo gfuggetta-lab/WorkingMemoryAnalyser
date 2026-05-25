@@ -26,6 +26,12 @@ namespace WMAData
 
         public PlayItemType itemType = PlayItemType.None;
         public double radiusCm;
+        public double barLengthCm;
+        public double barWidthCm;
+        public double barTheta;
+        public int regularPoints;
+        public bool regularFilled;
+        public double regularRotation;
         
         public double sizeCm; // width and height for either image or other shapes... other than circles... why not circles?
 
@@ -54,6 +60,10 @@ namespace WMAData
         None,
         CircleFilled, // radiusCm
         CircleHollow, // radiusCm
+        Bar, // barLengthCm, barWidthCm, barTheta
+        Plus, // barLengthCm, barWidthCm
+        Star, // radiusCm
+        RegularShape, // radiusCm, lineWidthCm, regularPoints, regularFilled, regularRotation
         ImageById,
         Sound,
         Text, // draw text, centered at the pos

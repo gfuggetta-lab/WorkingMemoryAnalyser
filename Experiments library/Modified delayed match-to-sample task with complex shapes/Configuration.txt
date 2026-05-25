@@ -1,5 +1,7 @@
 Experiment:	Modified_delayed_match-to-sample_task_with_complex_shapes
-				
+s2_set_size: 16
+s3_set_size: 16
+s4_set_size: 16				
 				
 Monitor_name:	"HP_Laptop_1920x1080_60Hz"			
 Monitor_width_cm:	34.4			
@@ -149,3 +151,4 @@ Upload_Output_file_online: https://www.cognitoforms.com/GiorgioFuggetta/Modified
 Complete_Questionnaires_online: https://www.kcl.ac.uk/people/giorgio-fuggetta
 
 Complete_Questionnaires_online_under_18: https://www.kcl.ac.uk/people/giorgio-fuggetta
+

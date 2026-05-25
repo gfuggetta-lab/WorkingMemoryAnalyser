@@ -7,7 +7,7 @@ namespace WMAData
     public static class Consts
     {
         public const int SHAPE_NONE = 0;
-        public const int SHAPE_DIAMON = 1; // diamond_area_equal_to_bar
+        public const int SHAPE_DIAMOND = 1; // diamond_area_equal_to_bar
         public const int SHAPE_HEX = 2; // hexagon_area_equal_to_bar
         public const int SHAPE_TRIANGLE = 3; // triangle_area_equal_to_bar
         public const int SHAPE_BOX = 4; // box_area_equal_to_bar
