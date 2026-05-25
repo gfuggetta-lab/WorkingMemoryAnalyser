@@ -242,8 +242,8 @@ namespace WMAData
             {
                 case POS_TOP_LEFT: return PlayItemPos.NW;
                 case POS_TOP_RIGHT: return PlayItemPos.NE;
-                case POS_BOT_LEFT: return PlayItemPos.SW;
-                case POS_BOT_RIGHT: return PlayItemPos.SE;
+                case POS_BOT_LEFT: return PlayItemPos.SE;
+                case POS_BOT_RIGHT: return PlayItemPos.SW;
                 case POS_CENTER: return PlayItemPos.Center;
                 default: 
                     return PlayItemPos.Undefined;

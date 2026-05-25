@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.ConstrainedExecution;
 using System.Security.Cryptography;
 using System.Text;
 using static System.Math;
@@ -132,6 +133,22 @@ namespace WMAData
             }
         }
 
+        private void ScheduleShapesN(PlayList dst, double ofs, double duration, int count, int shape, int color)
+        {
+            var placeHolderRad = DegToCm(Placeholder_diameter_deg / 2);
+            var lineWidthCm = DegToCm(0.05);
+            for (int i = 0; i < count; i++)
+            {
+                var ph = dst.AddByShape(shape, Image_size_CM, Shape_size_CM,  GetShapeColor(color), ofs, duration);
+                ph.pos = PlayItemPos.OneOfCount;
+                ph.posOther = i;
+                ph.posCount = count;
+                ph.posDistanceCm = targetRadiusCM;
+                ph.drawOrder = FIXATION_ORDER;
+                ph.lineWidthCm = lineWidthCm;
+            }
+        }
+
         private void SchedulePlaceholdersN(PlayList dst, double ofs, double duration, int count)
         {
             var placeHolderRad = DegToCm(Placeholder_diameter_deg / 2);
@@ -227,6 +244,7 @@ namespace WMAData
             dst.StartSection("S2", ofsTime, duration);
             var half = s2_sample_diameter_cm / 2;
 
+            // draw S2 cues
             var v1 = dst.AddByShape(tr.S2.ShapePos1_NW, Image_size_CM, Shape_size_CM, Fixation_colour, ofsTime, duration);
             v1.pos = PlayItemPos.NW;
             v1.posDistanceCm = half;
@@ -243,8 +261,9 @@ namespace WMAData
             v4.pos = PlayItemPos.SE;
             v4.posDistanceCm = half;
 
+            dst.PlaySoundAt(tr.S2.Sound, ofsTime);
             ScheduleFixationDot(dst, ofsTime, duration);
-            SchedulePlaceholders4(dst, ofsTime, duration);
+            SchedulePlaceholdersN(dst, ofsTime, duration, s2_set_size);
 
             ofsTime += duration;
         }
@@ -268,16 +287,22 @@ namespace WMAData
             if (tr.S3.Shape != SHAPE_SKIP_TO_S2)
             {
                 if (Show_S3_peripheral_placeholders)
-                    SchedulePlaceholdersN(dst, ofsTime, duration, s3_set_size);
+                {
+                    ScheduleShapesN(dst, ofsTime, duration, s3_set_size, tr.S3.DistractShape, tr.S3.DistractColor);
+                }
             }
 
-            // todo: target Image at S3? 
-            var c3 = dst.AddCircle(Image_size_CM, Fixation_colour, ofsTime, duration);
-            c3.pos = PlayListHelper.ToPlayPos(tr.S3.Position);
-            c3.posDistanceCm = targetRadiusCM;
+            // target Image
+            dst.AddByShape(tr.S3.Shape, Image_size_CM, Shape_size_CM, GetShapeColor(tr.S3.Color), ofsTime, duration)
+                .SetPos(tr.S3.Position, targetRadiusCM);
+
+            dst.PlaySoundAt(tr.S3.Sound, ofsTime);
 
 
-            ScheduleFixationDot(dst, ofsTime, duration);
+            if (tr.S3.Position != POS_ALL)
+                ScheduleFixationDot(dst, ofsTime, duration);
+
+            SchedulePlaceholdersN(dst, ofsTime, duration, s3_set_size);
 
             ofsTime += duration;
         }
@@ -294,11 +319,18 @@ namespace WMAData
         {
             double duration = tr.S4.Duration;
             dst.StartSection("S4", ofsTime, duration);
-            var c4 = dst.AddCircle(Image_size_CM, Fixation_colour, ofsTime, duration);
-            c4.pos = PlayListHelper.ToPlayPos(tr.S4.Position);
-            c4.posDistanceCm = targetRadiusCM;
 
+            dst.AddByShape(tr.S4.Shape, Image_size_CM, Shape_size_CM, GetShapeColor(tr.S4.Color), ofsTime, duration)
+                .SetPos(tr.S4.Position, targetRadiusCM);
+
+            //if (Show_S4_peripheral_placeholders)
+            //    SchedulePlaceholdersN(dst, ofsTime, duration, s4_set_size);
+
+            dst.PlaySoundAt(tr.S4.Sound, ofsTime);
+
+            // always show fixation, no expetions
             ScheduleFixationDot(dst, ofsTime, duration);
+
             SchedulePlaceholdersN(dst, ofsTime, duration, s4_set_size);
 
             ofsTime += duration;

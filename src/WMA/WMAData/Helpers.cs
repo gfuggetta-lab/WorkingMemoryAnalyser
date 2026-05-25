@@ -48,7 +48,7 @@ namespace WMAData
                 }
             }
             foreach (var nm in imageCheck.Keys)
-                images.Add($"{nm}.bmp");
+                images.Add(nm.ToString());
         }
 
         public static void GetPreloadFonts(this Configuration cfg, List<string> fonts)
