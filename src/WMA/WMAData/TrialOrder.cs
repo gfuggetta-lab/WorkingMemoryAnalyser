@@ -6,14 +6,21 @@ namespace WMAData
 {
     public class StageData
     {
+        // Markers are used only for the Serial device reporting.
+        // Those are not reflect on the screen in any way?
         public int Markers;
-        
-        public int Shape; // see SHAPE_ constants. No used in S2.
-                            // S2 is using ShapePos_XX instead
-        public int Color; // Shape color. No used in S2.
+
+        // see SHAPE_ constants. 
+        // For S2, the value isn't used, use ShapePos_XX instead
+        public int Shape;
+
+        // Shape color. No used in S2, use ShapeClr1_ instead
+        public int Color; 
 
         // distraction shape is not used in S1 or S2
-        public int DistractShape; // used only on S3 and S4
+        public int DistractShape; 
+        
+        // used only on S3 and S4
         public int DistractColor; 
 
         public int Sound; // 1..99 

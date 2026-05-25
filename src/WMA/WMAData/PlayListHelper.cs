@@ -153,30 +153,51 @@ namespace WMAData
                 case SHAPE_DIAMOND:
                     double szD = Math.Sqrt(2.0 * Math.Pow(shapeSzCm / 2.0, 2.0));
                     return AddBar(list, szD, szD, Math.PI / 4.0, color, timeOfs, durationMs);
+                
                 case SHAPE_HEX:
                     double rH = shapeSzCm / 2.0;
                     return AddRegularShape(list, rH, rH * 0.01, 6, true, 0.0, color, timeOfs, durationMs);
+
                 case SHAPE_TRIANGLE:
-                    double rT = shapeSzCm / 2.0;
+                    double rT = Math.Sqrt(3.0) / 3.0 * shapeSzCm;
                     return AddRegularShape(list, rT, rT * 0.01, 3, true, Math.PI, color, timeOfs, durationMs);
+
                 case SHAPE_BOX:
                     double rB = Math.Sqrt(2.0 * Math.Pow(shapeSzCm / 2.0, 2.0));
                     return AddRegularShape(list, rB, rB * 0.66, 4, false, Math.PI / 4.0, color, timeOfs, durationMs);
+
                 case SHAPE_RING:
                     double rG = shapeSzCm / 2.0;
                     return AddRegularShape(list, rG, rG * 0.5, 20, false, 0.0, color, timeOfs, durationMs);
+
                 case SHAPE_PLUS:
                     return AddPlus(list, shapeSzCm, shapeSzCm * 0.33, color, timeOfs, durationMs);
+
                 case SHAPE_HORZ:
-                    return AddBar(list, shapeSzCm, shapeSzCm / 4.0, 0.0, color, timeOfs, durationMs);
+                    return AddBar(list, shapeSzCm, shapeSzCm * 0.5, 0.0, color, timeOfs, durationMs);
+
                 case SHAPE_VERT:
-                    return AddBar(list, shapeSzCm, shapeSzCm / 4.0, Math.PI / 2.0, color, timeOfs, durationMs);
+                    return AddBar(list, shapeSzCm, shapeSzCm * 0.5, Math.PI / 2.0, color, timeOfs, durationMs);
+
                 case SHAPE_SQUARE:
                     return AddBar(list, shapeSzCm, shapeSzCm, 0.0, color, timeOfs, durationMs);
+
                 case SHAPE_CIRCLE:
                     return AddCircle(list, shapeSzCm / 2, color, timeOfs, durationMs);
+
                 case SHAPE_STAR:
-                    return AddStar(list, shapeSzCm, color, timeOfs, durationMs);
+                    // Star with radius equal to placeholder's radius. Area of 0.82627615cm2 on AOC monitor at 71cm
+                    // To make this equal area to bar, replace the decimal value below with 1.145
+                    //r := tan(0.69230769  *(pi/180) * SCALE_FACTOR * Shape_scale_factor)*ef.distance;
+                    //r := (sqrt(5) - 1)* shapeSizeCM / 2; // using (shapeSize/2) for inscribed circle of the star
+                    // r - is now a side of a pentagon
+                    double PENTAGON_ANGLE = (5 - 2) * 180 / 5;
+                    double PENTAGON_SIDETORADIUS = Math.Sqrt(10) * Math.Sqrt(5 + Math.Sqrt(5)) / 10;
+                    double rS = (shapeSzCm / 2) / Math.Sin(DegToRad(PENTAGON_ANGLE / 2));
+                    // r is now a radius of
+                    rS = PENTAGON_SIDETORADIUS * rS; // sqrt(10)*sqrt(5 + sqrt(5)) / 10 * r;  
+                    return AddStar(list, rS, color, timeOfs, durationMs);
+
                 default:
                     return null;
             }
@@ -253,6 +274,11 @@ namespace WMAData
             itm.startMs = ofsMs;
             itm.durationMs = duration;
             return itm;
+        }
+
+        public static double DegToRad(double degrees)
+        {
+            return degrees * (Math.PI / 180.0);
         }
     }
 }
