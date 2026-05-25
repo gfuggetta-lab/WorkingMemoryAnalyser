@@ -470,10 +470,34 @@ public partial class BootScript : Node2D
 		}
 	}
 
+	private void CancelTrial()
+	{
+		// todo: maybe add a signal to verify if we actually
+		//       want to cancel the trial?
+		GetTree().Quit();
+	}
 
+	public override void _Input(InputEvent ev)
+	{
+		if (ev.IsActionPressed("CloseTrial"))
+		{
+			CancelTrial();
+			return;
+		}
 
-
-
-
-	
+		if (!isWaitingResponse)
+			return;
+		if (ev is InputEventKey evKey)
+		{
+			log($"keycode={evKey.Keycode}");
+		} 
+		else if (ev is InputEventMouse evMouse)
+		{
+			log($"mouse={evMouse.ButtonMask}");
+		}
+		//if (ev.IsActionPressed("jump"))
+		//{
+		//    Jump();
+		//}
+	}
 }
