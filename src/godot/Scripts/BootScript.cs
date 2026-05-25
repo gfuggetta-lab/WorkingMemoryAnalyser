@@ -51,6 +51,7 @@ public partial class BootScript : Node2D
 
 	public Configuration exam;
 	public List<TrialOrder> trials = new List<TrialOrder>();
+	private int curTrialIdx = -1;
 	public TrialOrder curTrial = null;
 
 
@@ -103,6 +104,8 @@ public partial class BootScript : Node2D
 		exam.Schedule(tm, trials, playList);
 		log($"trials:  {trials.Count}");
 		curTrial = trials[0];
+		curTrialIdx = -1; // needed to handle TrialStart properly
+
 
 		drawItems.Clear();
 		plrTrack = new PlayListTracker(playList);
@@ -112,9 +115,11 @@ public partial class BootScript : Node2D
 		imgDir = Path.GetDirectoryName(imgDir);
 		Preload(exam, imgDir, trials);
 
+		ControlEvents(drawItems);
 		RebuildDrawNodes();
-		UpdateSectionInfo();
 		PlaySoundIfAny(drawItems);
+	
+		UpdateSectionInfo();
 	}
 
 	private void Preload(Configuration exam, string expDir, List<TrialOrder> list)
@@ -362,6 +367,27 @@ public partial class BootScript : Node2D
 
 			switch (itm.itemType)
 			{
+				case PlayItemType.TrialStart:
+					log($"Trial start: {itm.text}");
+					currentCond = PlayItemCond.None;
+					curTrialIdx++;
+					if ((curTrialIdx>= 0) && (curTrialIdx < trials.Count))
+						curTrial = trials[curTrialIdx];
+					break;
+
+				case PlayItemType.TrialEnd:
+					log($"Trial end: {itm.text}; {(curTrialIdx + 1)}/{trials.Count}");
+					if ((curTrialIdx+1) >= trials.Count)
+					{
+						log("ending trials");
+						EndTrial();
+					}
+					break;
+				
+				case PlayItemType.SectionStart:
+					log($"start: {itm.text}");
+					SetCurrentSection(itm);
+					break;
 
 				case PlayItemType.CheckResponse:
 					log("checking response");
@@ -468,18 +494,6 @@ public partial class BootScript : Node2D
 			Node2D node = null;
 			switch (itm.itemType)
 			{
-				case PlayItemType.TrialStart:
-					log($"Trial start: {itm.text}");
-					currentCond = PlayItemCond.None;
-					break;
-				case PlayItemType.TrialEnd:
-					log($"Trial end: {itm.text}");
-					break;
-				case PlayItemType.SectionStart:
-					log($"start: {itm.text}");
-					SetCurrentSection(itm);
-					break;
-
 				case PlayItemType.ReadResponse:
 					if (!isWaitingResponse)
 						log("waiting for response");
@@ -556,6 +570,12 @@ public partial class BootScript : Node2D
 				TrackDrawNode(node);
 			}
 		}
+	}
+
+	private void EndTrial()
+	{
+		// we're done with al all the trials
+		GetTree().Quit();
 	}
 
 	private void CancelTrial()
