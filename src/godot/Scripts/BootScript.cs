@@ -46,11 +46,14 @@ public partial class BootScript : Node2D
 	public bool isWaitingResponse = false;
 	public ResponseButton trialResponse = ResponseButton.NotGiven;
 
+	public Configuration exam;
+	public List<TrialOrder> trials = new List<TrialOrder>();
 
-	// Called when the node enters the scene tree for the first time.
-	public override void _Ready()
+
+    // Called when the node enters the scene tree for the first time.
+    public override void _Ready()
 	{
-		Configuration exam = new Configuration();
+		exam = new Configuration();
 		// there's no configuration for the clear color
 		RenderingServer.SetDefaultClearColor(new Color(0f, 0f, 0f));
 		drawRoot = new Node2D
@@ -89,12 +92,12 @@ public partial class BootScript : Node2D
 			screenRes.Text = b.ToString();
 		}
 		string inp = @"C:\FPC_Laz\WorkingMemoryAnalyser_pas\Experiments library\TestExp\Input data\InputData_1.txt";
-		var list = InputDataHelper.LoadTrials(inp);
+		trials = InputDataHelper.LoadTrials(inp);
 		
 		
 
-		exam.Schedule(tm, list, playList);
-		log($"trials:  {list.Count}");
+		exam.Schedule(tm, trials, playList);
+		log($"trials:  {trials.Count}");
 
 		drawItems.Clear();
 		plrTrack = new PlayListTracker(playList);
@@ -102,7 +105,7 @@ public partial class BootScript : Node2D
 
 		string imgDir = Path.GetDirectoryName(inp);
 		imgDir = Path.GetDirectoryName(imgDir);
-		Preload(exam, imgDir, list);
+		Preload(exam, imgDir, trials);
 
 		RebuildDrawNodes();
 		UpdateSectionInfo();
