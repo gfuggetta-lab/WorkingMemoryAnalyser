@@ -216,7 +216,7 @@ public partial class BootScript : Node2D
 		{
 			case PlayItemPos.OneOfCount:
 				double diff = (double)posVal * (Math.PI * 2 / (double)posCount);
-				res.X += (float)((double)distance * Math.Cos(Math.PI / 4.0 + diff));
+				res.X -= (float)((double)distance * Math.Cos(Math.PI / 4.0 + diff));
 				res.Y -= (float)((double)distance * Math.Sin(Math.PI / 4.0 + diff));
 				break;
 			case PlayItemPos.NW:
