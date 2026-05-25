@@ -344,6 +344,41 @@ public partial class BootScript : Node2D
 						node = CreateHollowCircleNode(pos, r, lw, GDColor(itm.color));
 					}
 					break;
+
+				case PlayItemType.Bar:
+					node = CreateBarNode(
+						pos,
+						(float)(itm.barLengthCm * cmToPix),
+						(float)(itm.barWidthCm * cmToPix),
+						(float)itm.barTheta,
+						GDColor(itm.color));
+					break;
+
+				case PlayItemType.Plus:
+					node = CreatePlusNode(
+						pos,
+						(float)(itm.barLengthCm * cmToPix),
+						(float)(itm.barWidthCm * cmToPix),
+						GDColor(itm.color));
+					break;
+
+				case PlayItemType.Star:
+					node = CreateStarNode(
+						pos,
+						(float)(itm.radiusCm * cmToPix),
+						GDColor(itm.color));
+					break;
+
+				case PlayItemType.RegularShape:
+					node = CreateRegularShapeNode(
+						pos,
+						(float)(itm.radiusCm * cmToPix),
+						(float)(itm.lineWidthCm * cmToPix),
+						itm.regularPoints,
+						itm.regularFilled,
+						(float)itm.regularRotation,
+						GDColor(itm.color));
+					break;
 			}
 			if (node != null)
 			{
@@ -353,31 +388,6 @@ public partial class BootScript : Node2D
 		}
 	}
 
-	private static Sprite2D CreateImageNode(Texture2D texture, Vector2 pos, float sizePx)
-	{
-		var sprite = new Sprite2D
-		{
-			Name = "ImageStimulus",
-			Texture = texture,
-			Centered = true,
-			Position = pos
-		};
-		Vector2 texSize = texture.GetSize();
-		if ((texSize.X > 0.0f) && (texSize.Y > 0.0f))
-			sprite.Scale = new Vector2(sizePx / texSize.X, sizePx / texSize.Y);
-		return sprite;
-	}
-
-	private static Polygon2D CreateFilledCircleNode(Vector2 pos, float radius, Color color)
-	{
-		return new Polygon2D
-		{
-			Name = "CircleFilledStimulus",
-			Position = pos,
-			Color = color,
-			Polygon = CreateCirclePoints(radius)
-		};
-	}
 
 
 

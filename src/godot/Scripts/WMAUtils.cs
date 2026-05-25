@@ -35,13 +35,91 @@ namespace godot
 		{
 			return new Line2D
 			{
-				Name = "CircleHollowStimulus",
+				Name = "CircleHollow",
 				Position = pos,
 				Closed = true,
 				DefaultColor = color,
 				Width = lineWidth,
 				Antialiased = true,
 				Points = CreateCirclePoints(radius)
+			};
+		}
+
+
+		public static Sprite2D CreateImageNode(Texture2D texture, Vector2 pos, float sizePx)
+		{
+			var sprite = new Sprite2D
+			{
+				Name = "Image",
+				Texture = texture,
+				Centered = true,
+				Position = pos
+			};
+			Vector2 texSize = texture.GetSize();
+			if ((texSize.X > 0.0f) && (texSize.Y > 0.0f))
+				sprite.Scale = new Vector2(sizePx / texSize.X, sizePx / texSize.Y);
+			return sprite;
+		}
+
+		public static BarStimulusNode CreateBarNode(Vector2 pos, float lengthPx, float widthPx, float theta, Color color)
+		{
+			return new BarStimulusNode
+			{
+				Name = "Bar",
+				Position = pos,
+				LengthPx = lengthPx,
+				WidthPx = widthPx,
+				Theta = theta,
+				FillColor = color
+			};
+		}
+
+		public static PlusStimulusNode CreatePlusNode(Vector2 pos, float lengthPx, float widthPx, Color color)
+		{
+			return new PlusStimulusNode
+			{
+				Name = "Plus",
+				Position = pos,
+				LengthPx = lengthPx,
+				WidthPx = widthPx,
+				FillColor = color
+			};
+		}
+
+		public static StarStimulusNode CreateStarNode(Vector2 pos, float outerRadiusPx, Color color)
+		{
+			return new StarStimulusNode
+			{
+				Name = "Star",
+				Position = pos,
+				OuterRadiusPx = outerRadiusPx,
+				FillColor = color
+			};
+		}
+
+		public static RegularShapeStimulusNode CreateRegularShapeNode(Vector2 pos, float outerRadiusPx, float lineWidthPx, int pointCount, bool filled, float rotation, Color color)
+		{
+			return new RegularShapeStimulusNode
+			{
+				Name = "RegularShape",
+				Position = pos,
+				OuterRadiusPx = outerRadiusPx,
+				LineWidthPx = lineWidthPx,
+				PointCount = pointCount,
+				Filled = filled,
+				RotationRadians = rotation,
+				FillColor = color
+			};
+		}
+
+		public static Polygon2D CreateFilledCircleNode(Vector2 pos, float radius, Color color)
+		{
+			return new Polygon2D
+			{
+				Name = "CircleFilled",
+				Position = pos,
+				Color = color,
+				Polygon = CreateCirclePoints(radius)
 			};
 		}
 	}
