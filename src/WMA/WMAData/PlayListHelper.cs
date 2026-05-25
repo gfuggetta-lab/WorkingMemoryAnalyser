@@ -151,13 +151,14 @@ namespace WMAData
             switch (Shape)
             {
                 case SHAPE_DIAMOND:
-                    return AddBar(list, shapeSzCm, shapeSzCm, Math.PI / 4.0, color, timeOfs, durationMs);
+                    double szD = Math.Sqrt(2.0 * Math.Pow(shapeSzCm / 2.0, 2.0));
+                    return AddBar(list, szD, szD, Math.PI / 4.0, color, timeOfs, durationMs);
                 case SHAPE_HEX:
                     double rH = shapeSzCm / 2.0;
                     return AddRegularShape(list, rH, rH * 0.01, 6, true, 0.0, color, timeOfs, durationMs);
                 case SHAPE_TRIANGLE:
                     double rT = shapeSzCm / 2.0;
-                    return AddRegularShape(list, rT, rT * 0.01, 3, true, 0.0, color, timeOfs, durationMs);
+                    return AddRegularShape(list, rT, rT * 0.01, 3, true, Math.PI, color, timeOfs, durationMs);
                 case SHAPE_BOX:
                     double rB = Math.Sqrt(2.0 * Math.Pow(shapeSzCm / 2.0, 2.0));
                     return AddRegularShape(list, rB, rB * 0.66, 4, false, Math.PI / 4.0, color, timeOfs, durationMs);

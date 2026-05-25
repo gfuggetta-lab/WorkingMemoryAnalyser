@@ -103,7 +103,7 @@ namespace WMAData
 
         private void ScheduleFixationDot(PlayList dst, double ofs, double duration)
         {
-            var fx = dst.AddCircle(fixSpotSizeCM, Fixation_colour);
+            var fx = dst.AddCircle(fixSpotSizeCM / 2.0, Fixation_colour);
             fx.drawOrder = FIXATION_ORDER;
             fx.startMs = ofs;
             fx.durationMs = duration;
@@ -173,6 +173,8 @@ namespace WMAData
         private void ScheduleS1_Focus(TrialOrder tr, PlayList dst, ref double ofsTime)
         {
             double duration = tr.S1.Duration;
+            dst.StartSection("S1", ofsTime, duration);
+
             var clr = GetShapeColor(tr.S1.Color);
             //var c = dst.AddCircle(Image_size_CM, Fixation_colour, ofsTime, duration);
             double fntsz = Math.Round(font_1.size * (width_px / width_cm) * (distanceCm / 57));
@@ -213,6 +215,7 @@ namespace WMAData
         private void ScheduleS1_S2(TrialOrder tr, PlayList dst, ref double ofsTime)
         {
             double duration = tr.S1.Next_ISI;
+            dst.StartSection("S1>S2", ofsTime, duration);
             ScheduleFixationDot(dst, ofsTime, duration);
             SchedulePlaceholders4(dst, ofsTime, duration);
             ofsTime += duration;
@@ -221,6 +224,7 @@ namespace WMAData
         private void ScheduleS2_Info(TrialOrder tr, PlayList dst, ref double ofsTime)
         {
             double duration = tr.S2.Duration;
+            dst.StartSection("S2", ofsTime, duration);
             var half = s2_sample_diameter_cm / 2;
 
             var v1 = dst.AddByShape(tr.S2.ShapePos1_NW, Image_size_CM, Shape_size_CM, Fixation_colour, ofsTime, duration);
@@ -249,6 +253,7 @@ namespace WMAData
         {
             double duration = tr.S2.Next_ISI;
 
+            dst.StartSection("S2>S3", ofsTime, duration);
             ScheduleFixationDot(dst, ofsTime, duration);
             SchedulePlaceholders4(dst, ofsTime, duration);
 
@@ -259,6 +264,7 @@ namespace WMAData
         {
             double duration = tr.S3.Duration;
 
+            dst.StartSection("S3", ofsTime, duration);
             if (tr.S3.Shape != SHAPE_SKIP_TO_S2)
             {
                 if (Show_S3_peripheral_placeholders)
@@ -278,7 +284,7 @@ namespace WMAData
         private void ScheduleS3_S4(TrialOrder tr, PlayList dst, ref double ofsTime)
         {
             double duration = tr.S3.Next_ISI;
-
+            dst.StartSection("S3>S4", ofsTime, duration);
             ScheduleFixationDot(dst, ofsTime, duration);
             SchedulePlaceholders4(dst, ofsTime, duration);
             ofsTime += duration;
@@ -287,6 +293,7 @@ namespace WMAData
         private void ScheduleS4_Target(TrialOrder tr, PlayList dst, ref double ofsTime)
         {
             double duration = tr.S4.Duration;
+            dst.StartSection("S4", ofsTime, duration);
             var c4 = dst.AddCircle(Image_size_CM, Fixation_colour, ofsTime, duration);
             c4.pos = PlayListHelper.ToPlayPos(tr.S4.Position);
             c4.posDistanceCm = targetRadiusCM;
@@ -300,12 +307,14 @@ namespace WMAData
         private void Schedule_Response(TrialOrder tr, PlayList dst, ref double ofsTime)
         {
             double duration = tr.S4.Next_ISI; // Response_Time_after_S4
+            dst.StartSection("RSP", ofsTime, duration);
             ofsTime += duration;
         }
 
         private void Schedule_AfterResponse(TrialOrder tr, PlayList dst, ref double ofsTime)
         {
             double duration = tr.ITI_after_feedback; // Response_Time_after_S4
+            dst.StartSection("Aft", ofsTime, duration);
             ofsTime += duration;
         }
 
