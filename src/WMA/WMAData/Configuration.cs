@@ -328,7 +328,9 @@ namespace WMAData
 
             dst.PlaySoundAt(tr.S4.Sound, ofsTime);
 
-            // always show fixation, no expetions
+            // originally there would be a condition, not to draw the fixation
+            // when "ALL" position is selected (similar to one at S3),
+            // but it was removed for some reason
             ScheduleFixationDot(dst, ofsTime, duration);
 
             SchedulePlaceholdersN(dst, ofsTime, duration, s4_set_size);
