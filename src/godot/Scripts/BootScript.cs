@@ -39,6 +39,8 @@ public partial class BootScript : Node2D
 	Dictionary<string, AudioStream> sounds = new Dictionary<string, AudioStream>(StringComparer.OrdinalIgnoreCase);
 
 
+	public bool isWaitingResponse = false;
+
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -72,7 +74,7 @@ public partial class BootScript : Node2D
 				b.Append($"physSize: {m.PhysWidthMM}x{m.PhysHeightMM}; Res:{m.PixelWidth}x{m.PixelHeight};  " +
 					$"SysDpi: {m.Dpi}; PhysDpi: {physdpi}");
 				cmToPix = m.PixelWidth / (m.PhysWidthMM / 10.0);
-				GD.Print($"cmToPix: {cmToPix}; pixels:{m.PixelWidth}; cm: {(m.PhysWidthMM / 10.0)}");
+				//GD.Print($"cmToPix: {cmToPix}; pixels:{m.PixelWidth}; cm: {(m.PhysWidthMM / 10.0)}");
 				tm.widthPx = m.PixelWidth;
 				tm.heightPx = m.PixelHeight;
 				tm.widthCm = m.PhysWidthMM / 10.0;
@@ -86,14 +88,11 @@ public partial class BootScript : Node2D
 		
 
 		exam.Schedule(tm, list, playList);
-		GD.Print($"trials:  {list.Count}");
-		GD.Print($"actions: {playList.items.Count}");
+		log($"trials:  {list.Count}");
 
 		drawItems.Clear();
 		plrTrack = new PlayListTracker(playList);
 		plrTrack.Track(0, drawItems, null, null, null);
-
-		GD.Print($"init: {drawItems.Count}");
 
 		string imgDir = Path.GetDirectoryName(inp);
 		imgDir = Path.GetDirectoryName(imgDir);
@@ -111,7 +110,6 @@ public partial class BootScript : Node2D
 		List<string> resNames = new List<string>();
 		
 		exam.GetPreloadImages(list, resNames);
-		GD.Print($"images: {resNames.Count}");
 		
 		List<string> tryExt = new List<string>();
 		tryExt.Add(".png");
@@ -137,29 +135,26 @@ public partial class BootScript : Node2D
 
 
 			Image img = new Image();
-			GD.Print($"loading: {bmpFn}");
 			var err = img.Load(bmpFn);
 			if (err != 0)
 			{
-				GD.Print($"loading image from {bmpFn} failed: {err}");
+				log($"loading image from {bmpFn} failed: {err}");
 				continue;
 			}
 			var _tex = ImageTexture.CreateFromImage(img);
-			GD.Print($"loaded: {nm} {_tex != null}");
+			//GD.Print($"loaded: {nm} {_tex != null}");
 			texs[nm] = _tex;
 		}
 
 		// loading fonts
 		resNames.Clear();
 		exam.GetPreloadFonts(resNames);
-		GD.Print($"fonts: {resNames.Count}");
 		foreach(var fn in resNames)
 		{
 			if (string.IsNullOrWhiteSpace(fn))
 				continue;
 			if (fonts.ContainsKey(fn))
 				continue;
-			GD.Print($"preloading: {fn}");
 			FontFile ff = GD.Load<FontFile>($"res://Fonts/{fn}");
 			if (ff != null)
 				fonts[fn] = ff;
@@ -192,16 +187,19 @@ public partial class BootScript : Node2D
 	public override void _Process(double delta)
 	{
 		List<PlayItem> eff = new List<PlayItem>();
-		List<PlayItem> fadeTrig = new List<PlayItem>();
-		int cnt = plrTrack.Track(delta*1000.0, eff, null, null, fadeTrig);
+		List<PlayItem> trigAndOff = new List<PlayItem>();
+		List<PlayItem> offList = new List<PlayItem>();
+		int cnt = plrTrack.Track(delta*1000.0, eff, null, offList, trigAndOff);
 		if (cnt != 0)
 		{
 			drawItems = eff;
-			GD.Print($"cnt: {cnt}; {plrTrack.lastMs}; drawItems: {eff.Count}");
+			//GD.Print($"cnt: {cnt}; {plrTrack.lastMs}; drawItems: {eff.Count}");
 			RebuildDrawNodes();
 		}
 		UpdateSectionInfo();
-		PlaySoundIfAny(fadeTrig);
+		PlaySoundIfAny(trigAndOff);
+		StopReadResponse(offList);
+		StopReadResponse(trigAndOff);
 	}
 
 	public static Vector2 GetPos(PlayItemPos pos, Vector2 center, double distance, int posVal, int posCount)
@@ -272,7 +270,7 @@ public partial class BootScript : Node2D
 	protected void PlaySound(PlayItem itm)
 	{
 		string snd = itm.soundId;
-		GD.Print($"playing sound: {snd}");
+		log($"playing sound: {snd}");
 		if (!sounds.TryGetValue(snd, out var strm))
 		{
 			sounds.TryGetValue($"{snd}.wav", out strm);
@@ -283,9 +281,24 @@ public partial class BootScript : Node2D
 		if (soundPlayer.Playing)
 			soundPlayer.Stop();
 		soundPlayer.Stream = strm;
-		GD.Print($"start!");
 		soundPlayer.Play();
 	}
+
+	// if any of the items is "ReadResponse", then we mark read response as false
+	private void StopReadResponse(IEnumerable<PlayItem> items)
+	{
+		foreach(var itm in items)
+		{
+			if (itm == null) 
+				continue;
+			if (itm.itemType != PlayItemType.ReadResponse)
+				continue;
+			if (isWaitingResponse)
+				log("Stop waiting for the response. Timeout");
+			isWaitingResponse = false;
+		}
+	}
+
 
 	private void PlaySoundIfAny(List<PlayItem> items)
 	{
@@ -294,10 +307,8 @@ public partial class BootScript : Node2D
 		if (items == null) return;
 		foreach(var itm in items)
 		{
-			GD.Print($"{itm.itemType}");
 			if (itm.itemType == PlayItemType.Sound)
 			{
-				GD.Print("sound found!");
 				PlaySound(itm);
 			}
 		}
@@ -373,14 +384,19 @@ public partial class BootScript : Node2D
 			switch (itm.itemType)
 			{
 				case PlayItemType.TrialStart:
-					GD.Print($"Trial start: {itm.text}");
+					log($"Trial start: {itm.text}");
 					break;
 				case PlayItemType.TrialEnd:
-					GD.Print($"Trial end: {itm.text}");
+					log($"Trial end: {itm.text}");
 					break;
 				case PlayItemType.SectionStart:
-					GD.Print($"start: {itm.text}");
+					log($"start: {itm.text}");
 					SetCurrentSection(itm);
+					break;
+				case PlayItemType.ReadResponse:
+					if (!isWaitingResponse)
+						log("waiting for response");
+					isWaitingResponse = true;
 					break;
 
 				case PlayItemType.Text:
@@ -396,7 +412,7 @@ public partial class BootScript : Node2D
 						node = CreateImageNode(tt, pos, w);
 					}
 					else
-						GD.Print($"image not found: {n}; {itm.imageId}");
+						log($"image not found: {n}; {itm.imageId}");
 					break;
 
 				case PlayItemType.CircleFilled:

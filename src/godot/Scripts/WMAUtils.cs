@@ -122,5 +122,11 @@ namespace godot
 				Polygon = CreateCirclePoints(radius)
 			};
 		}
+
+		public static void log(string message)
+		{
+			var stamp = DateTime.Now.ToString("HH:mm:ss.fff");
+			GD.Print($"{stamp}: {message}");
+		}
 	}
 }
