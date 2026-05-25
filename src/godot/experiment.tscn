@@ -2,9 +2,10 @@
 
 [ext_resource type="Script" uid="uid://copnukkbt081u" path="res://Scripts/BootScript.cs" id="1_y6ufa"]
 
-[node name="Node2D" type="Node2D" unique_id=851726454 node_paths=PackedStringArray("screenRes", "soundPlayer")]
+[node name="Node2D" type="Node2D" unique_id=851726454 node_paths=PackedStringArray("screenRes", "sectionInfo", "soundPlayer")]
 script = ExtResource("1_y6ufa")
 screenRes = NodePath("Label")
+sectionInfo = NodePath("SectionInfo")
 fileName = "C:\\FPC_Laz\\WorkingMemoryAnalyser_pas\\Experiments library\\TestExp\\Configuration.txt"
 soundPlayer = NodePath("Sounds")
 
@@ -15,3 +16,11 @@ offset_left = 32.0
 offset_top = 29.0
 offset_right = 756.0
 offset_bottom = 119.0
+
+[node name="SectionInfo" type="Label" parent="." unique_id=431226523]
+offset_left = 9.0
+offset_top = 69.0
+offset_right = 219.0
+offset_bottom = 139.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+text = "Section:"

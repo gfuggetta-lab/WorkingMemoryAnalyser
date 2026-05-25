@@ -16,6 +16,9 @@ public partial class BootScript : Node2D
 	public Label screenRes;
 
 	[Export]
+	public Label sectionInfo;
+
+	[Export]
 	public string fileName;
 
 	[Export]
@@ -27,6 +30,8 @@ public partial class BootScript : Node2D
 	PlayList playList = new PlayList();
 	PlayListTracker plrTrack;
 	List<PlayItem> drawItems = new List<PlayItem>();
+	PlayItem currentSection;
+	double currentSectionEndMs = -1.0;
 	Node2D drawRoot;
 	readonly List<Node> drawNodes = new List<Node>();
 	Dictionary<string, Texture2D> texs = new Dictionary<string, Texture2D>(StringComparer.OrdinalIgnoreCase);
@@ -46,6 +51,8 @@ public partial class BootScript : Node2D
 			Name = "StimulusNodes"
 		};
 		AddChild(drawRoot);
+		if (sectionInfo != null)
+			sectionInfo.ZIndex = 1000;
 
 		if (File.Exists(fileName))
 		{
@@ -93,6 +100,7 @@ public partial class BootScript : Node2D
 		Preload(exam, imgDir, list);
 
 		RebuildDrawNodes();
+		UpdateSectionInfo();
 		PlaySoundIfAny(drawItems);
 	}
 
@@ -171,6 +179,7 @@ public partial class BootScript : Node2D
 			GD.Print($"cnt: {cnt}; {plrTrack.lastMs}; drawItems: {eff.Count}");
 			RebuildDrawNodes();
 		}
+		UpdateSectionInfo();
 		PlaySoundIfAny(fadeTrig);
 	}
 
@@ -273,6 +282,41 @@ public partial class BootScript : Node2D
 		}
 	}
 
+	private void SetCurrentSection(PlayItem itm)
+	{
+		currentSection = itm;
+		currentSectionEndMs = itm.durationMs < 0.0
+			? double.MaxValue
+			: itm.startMs + itm.durationMs;
+		UpdateSectionInfo();
+	}
+
+	private void UpdateSectionInfo()
+	{
+		if (sectionInfo == null)
+			return;
+
+		if (currentSection == null)
+		{
+			sectionInfo.Text = "";
+			return;
+		}
+
+		if (currentSectionEndMs == double.MaxValue)
+		{
+			sectionInfo.Text = $"Section: {currentSection.text}\nLeft: unlimited";
+			return;
+		}
+
+		double remainingMs = Math.Max(0.0, currentSectionEndMs - plrTrack.lastMs);
+		int seconds = (int)(remainingMs / 1000.0);
+		int milliseconds = (int)(remainingMs % 1000.0);
+		sectionInfo.Text = $"Section: {currentSection.text}\nLeft: {seconds}.{milliseconds:000} s";
+
+		if (remainingMs <= 0.0)
+			currentSection = null;
+	}
+
 	private void ClearDrawNodes()
 	{
 		foreach (var node in drawNodes)
@@ -315,6 +359,7 @@ public partial class BootScript : Node2D
 					break;
 				case PlayItemType.SectionStart:
 					GD.Print($"start: {itm.text}");
+					SetCurrentSection(itm);
 					break;
 
 				case PlayItemType.Text:
