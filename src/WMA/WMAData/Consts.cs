@@ -21,6 +21,8 @@ namespace WMAData
         public const int SHAPE_SKIP_TO_S2 = 12; // Go_to_S2_shape_(same/different_task)
         public const int SHAPE_SKIP_TO_S3 = 13; // Go_to_S3_shape_(identification_task)
         public const int SHAPE_SKIP_TO_S4 = 14; // Go_to_S4_shape_(identification_task)
+        public const int SHAPE_RESPONSE_TEXT = 12; // used only when showing response
+        public const int SHAPE_RESPONSE_IMAGE = 13; // used only when showing response
         public const int SHAPE_CHAR_MIN = 33; // 33-255:character
         public const int SHAPE_CHAR_MAX = 255;
         public const int SHAPE_BMP_MIN = 300; // BMP_image
@@ -71,10 +73,13 @@ namespace WMAData
 
         public const int RESPONSE_DIFF = 0;
         public const int RESPONSE_SAME = 1;
+        public const int RESPONSE_NOTGIVEN = -1;
 
         public const int TASKTYPE_SHAPE = 1;
         public const int TASKTYPE_COLOR = 2;
         public const int TASKTYPE_IDENTIFY = 3;
 
+        public const int IMAGEID_CORRECT = 100;
+        public const int IMAGEID_INCORRECT = 101;
     }
 }

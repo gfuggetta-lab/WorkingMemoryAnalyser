@@ -77,12 +77,13 @@ namespace WMAData
         TrialEnd, // does nothing, only debugging
         SectionStart, // does nothing, only debugging
         ReadResponse, // the time when the response is expected
+        CheckResponse, // check the response (for the following condition feedback)
     }
 
     public enum PlayItemCond
     {
         None,
-        OnSuccess,
-        OnFail
+        Correct,
+        Incorrect
     }
 }

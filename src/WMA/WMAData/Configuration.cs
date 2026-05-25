@@ -100,7 +100,9 @@ namespace WMAData
         public double Shape_size_deg;
         public double Shape_size_CM;
 
+        // the size of the feedback image in degrees
         public double Image_feedback_deg;
+        // the size of the feedback image if used
         public double Image_feedback_CM;
 
         public string keyboards;
@@ -403,6 +405,9 @@ namespace WMAData
         {
             double duration = tr.S4.Next_ISI; // Response_Time_after_S4
             dst.StartSection("RSP", ofsTime, duration);
+
+            ScheduleFixationDot(dst, ofsTime, duration);
+            SchedulePlaceholders4(dst, ofsTime, duration);
             ofsTime += duration;
         }
 
@@ -410,6 +415,39 @@ namespace WMAData
         {
             double duration = tr.ITI_after_feedback; // Response_Time_after_S4
             dst.StartSection("Aft", ofsTime, duration);
+            dst.CheckResponse(ofsTime);
+
+            ScheduleFixationDot(dst, ofsTime, duration);
+            SchedulePlaceholders4(dst, ofsTime, duration);
+
+            // The correct feedback
+            PlayItem res = null;
+            if ((tr.Feedback_shape >= SHAPE_DIAMOND) && (tr.Feedback_shape <= SHAPE_STAR))
+                res = dst.AddByShape(tr.Feedback_shape, Image_size_CM, Shape_size_CM, Correct_feedback_colour, ofsTime, duration);
+            else if (tr.Feedback_shape == SHAPE_RESPONSE_TEXT)
+                res = dst.AddText(Feedback_text_correct, "Arial", GetShapeColor(COLOR_WHITE0));
+            else if (tr.Feedback_shape == SHAPE_RESPONSE_IMAGE)
+                res = dst.AddImageById(IMAGEID_CORRECT, Image_feedback_CM, GetShapeColor(COLOR_WHITE0), ofsTime, duration);
+            if (res != null)
+                res.cond = PlayItemCond.Correct;
+
+            res = dst.AddSound("correct.wav", ofsTime);
+            res.cond = PlayItemCond.Correct;
+
+            // The incorrect feedback
+            res = null;
+            if ((tr.Feedback_shape >= SHAPE_DIAMOND) && (tr.Feedback_shape <= SHAPE_STAR))
+                res = dst.AddByShape(tr.Feedback_shape, Image_size_CM, Shape_size_CM, Incorrect_feedback_colour, ofsTime, duration);
+            else if (tr.Feedback_shape == SHAPE_RESPONSE_TEXT)
+                res = dst.AddText(Feedback_text_incorrect, "Arial", GetShapeColor(COLOR_WHITE0));
+            else if (tr.Feedback_shape == SHAPE_RESPONSE_IMAGE)
+                res = dst.AddImageById(IMAGEID_INCORRECT, Image_feedback_CM, GetShapeColor(COLOR_WHITE0), ofsTime, duration);
+            if (res != null)
+                res.cond = PlayItemCond.Incorrect;
+
+            res = dst.AddSound("incorrect.wav", ofsTime);
+            res.cond = PlayItemCond.Incorrect;
+
             ofsTime += duration;
         }
 
@@ -533,9 +571,9 @@ namespace WMAData
             out int isSameDiff, 
             out bool isCorrect)
         {
-            isSameDiff = -1;
             if (btn == ResponseButton.NotGiven)
             {
+                isSameDiff = RESPONSE_NOTGIVEN;
                 isCorrect = false;
                 return;
             }

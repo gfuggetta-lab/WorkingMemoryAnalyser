@@ -255,7 +255,6 @@ namespace WMAData
             var itm = list.Add(ofsMs);
             itm.itemType = PlayItemType.TrialStart;
             itm.text = name;
-            itm.startMs = ofsMs;
             return itm;
         }
         public static PlayItem EndTrial(this PlayList list, string name, double ofsMs)
@@ -263,7 +262,6 @@ namespace WMAData
             var itm = list.Add(ofsMs);
             itm.itemType = PlayItemType.TrialEnd;
             itm.text = name;
-            itm.startMs = ofsMs;
             return itm;
         }
         public static PlayItem StartSection(this PlayList list, string name, double ofsMs, double duration)
@@ -271,7 +269,6 @@ namespace WMAData
             var itm = list.Add(ofsMs);
             itm.itemType = PlayItemType.SectionStart;
             itm.text = name;
-            itm.startMs = ofsMs;
             itm.durationMs = duration;
             return itm;
         }
@@ -280,8 +277,16 @@ namespace WMAData
         {
             var itm = list.Add(ofsMs);
             itm.itemType = PlayItemType.ReadResponse;
-            itm.startMs = ofsMs;
             itm.durationMs = duration;
+            return itm;
+        }
+
+
+        public static PlayItem CheckResponse(this PlayList list, double ofsMs)
+        {
+            var itm = list.Add(ofsMs);
+            itm.itemType = PlayItemType.CheckResponse;
+            itm.durationMs = 0;
             return itm;
         }
 
