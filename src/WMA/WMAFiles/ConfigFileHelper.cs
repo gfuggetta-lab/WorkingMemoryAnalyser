@@ -243,8 +243,8 @@ namespace WMAFiles
 
             dst.Image_size_deg = src.FloatNonZero("Image_size_deg:", Image_size_deg_DEFAULT);
 
-            dst.keyboards = src.StringLine("Keyboard_keys_used_to_respond:");
-            //KeyboardSetupResponse(keyboards);                
+            // default is "a,f", but it's usually assigned to "a,d" in the config file
+            dst.keyboards = src.StringLine("Keyboard_keys_used_to_respond:", "a,f");
 
             dst.CalculateCmFromDeg();
         }
