@@ -43,6 +43,11 @@ namespace WMAData
         public int fontSizePx; // font size in godot pixels
 
         public string soundId; // extensions might not be needed
+
+        // Condition of which to play the item.
+        // it's usually used for sucess of failure feedback
+        // audio and visual
+        public PlayItemCond cond = PlayItemCond.None;
     }
 
     public enum PlayItemPos
@@ -72,5 +77,12 @@ namespace WMAData
         TrialEnd, // does nothing, only debugging
         SectionStart, // does nothing, only debugging
         ReadResponse, // the time when the response is expected
+    }
+
+    public enum PlayItemCond
+    {
+        None,
+        OnSuccess,
+        OnFail
     }
 }

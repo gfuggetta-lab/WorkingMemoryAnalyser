@@ -62,7 +62,7 @@ namespace WMAData
         public int ITI_after_feedback; // Inter_trial_interval
 
         public int key_mapping;
-        public int task;
+        public int taskType;
 
         public int TMS_S3_SOA = -100000; // milisecond
 

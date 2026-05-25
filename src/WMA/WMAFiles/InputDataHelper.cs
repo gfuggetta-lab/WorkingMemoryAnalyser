@@ -84,7 +84,7 @@ namespace WMAFiles
             dst.S4.DistractColor = rdr.GetInt("S4_distractor_colour", dst.S4.DistractColor);
 
             dst.key_mapping = rdr.GetInt("key_mapping", dst.key_mapping);
-            dst.task = rdr.GetInt("Task", dst.task);
+            dst.taskType = rdr.GetInt("Task", dst.taskType);
             dst.TMS_S3_SOA = rdr.GetInt("TMS_s3_SOA", dst.TMS_S3_SOA);
             dst.ExpCondition = rdr.GetStr("Experimental_Condition");
 

@@ -67,7 +67,14 @@ namespace WMAData
         public const double Sample_diameter_deg_DEFAULT = 4.1;
         public const double Shape_size_deg_DEFAULT = 1.6;
         public const double Image_feedback_deg_DEFAULT = 3.2;
-        public const double Image_size_deg_DEFAULT = 1.6; 
+        public const double Image_size_deg_DEFAULT = 1.6;
+
+        public const int RESPONSE_DIFF = 0;
+        public const int RESPONSE_SAME = 1;
+
+        public const int TASKTYPE_SHAPE = 1;
+        public const int TASKTYPE_COLOR = 2;
+        public const int TASKTYPE_IDENTIFY = 3;
 
     }
 }

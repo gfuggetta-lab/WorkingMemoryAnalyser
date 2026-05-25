@@ -418,7 +418,7 @@ namespace WMAData
             bool show_s1 = true;
             bool show_s2 = true;
             bool show_s3 = true;
-            dst.StartTrial($"trial {tr.task}", ofsTime);
+            dst.StartTrial($"trial {tr.taskType}", ofsTime);
 
             switch (tr.S1.Shape)
             {
@@ -493,7 +493,7 @@ namespace WMAData
             Schedule_Response(tr, dst, ref ofsTime);
             Schedule_AfterResponse(tr, dst, ref ofsTime);
 
-            dst.EndTrial($"trial {tr.task}", ofsTime);
+            dst.EndTrial($"trial {tr.taskType}", ofsTime);
         }
         private void ScheduleTrials(List<TrialOrder> trials, PlayList dst)
         {
@@ -525,6 +525,78 @@ namespace WMAData
             if (trials != null)
                 ScheduleTrials(trials, dst);
             dst.Sort();
+        }
+
+        public void ProcessResponse(
+            ResponseButton btn, 
+            TrialOrder trial,
+            out int isSameDiff, 
+            out bool isCorrect)
+        {
+            isSameDiff = -1;
+            if (btn == ResponseButton.NotGiven)
+            {
+                isCorrect = false;
+                return;
+            }
+
+            if (trial.key_mapping == 0)
+            {
+                if (btn == ResponseButton.LeftButton)
+                    isSameDiff = RESPONSE_DIFF; 
+                else
+                    isSameDiff = RESPONSE_SAME;
+            }
+            else
+            {
+                if (btn == ResponseButton.LeftButton)
+                    isSameDiff = RESPONSE_SAME;
+                else
+                    isSameDiff = RESPONSE_DIFF;
+            }
+
+            // determine whether cue and target match on the task dimension in same/different tasks (taskType 1 and 2)
+            bool isTargetMatchesCue = false;
+            switch (trial.taskType)
+            {
+                //shape matching task   
+                case TASKTYPE_SHAPE:
+                    isTargetMatchesCue = 
+                        ((trial.S2.ShapePos1_NW == trial.S4.Shape)
+                        || (trial.S2.ShapePos2_NE == trial.S4.Shape)
+                        || (trial.S2.ShapePos3_SE == trial.S4.Shape)
+                        || (trial.S2.ShapePos4_SW == trial.S4.Shape)
+                        || (trial.S2.ShapePos5_Center == trial.S4.Shape)
+                        );
+                    break;
+
+                // colour matching task   
+                case TASKTYPE_COLOR:
+                    isTargetMatchesCue =
+                        (((trial.S2.ShapePos1_NW != 0) && (trial.S2.ShapeClr1_NW == trial.S4.Color)) 
+                        || ((trial.S2.ShapePos2_NE != 0) && (trial.S2.ShapeClr2_NE == trial.S4.Color)) 
+                        || ((trial.S2.ShapePos3_SE != 0) && (trial.S2.ShapeClr3_SE == trial.S4.Color)) 
+                        || ((trial.S2.ShapePos4_SW != 0) && (trial.S2.ShapeClr4_SW == trial.S4.Color)) 
+                        || ((trial.S2.ShapePos5_Center != 0) && (trial.S2.ShapeClr5_Center == trial.S4.Color)));
+                    break;
+
+                default:
+                    isTargetMatchesCue = false;
+                    break;
+            }
+
+
+            if (trial.taskType != TASKTYPE_IDENTIFY)
+            {
+                // check for correct/incorrect response.  
+                // same/different tasks (taskType 1 and 2)
+                isCorrect = ((isSameDiff == RESPONSE_SAME) == isTargetMatchesCue);
+            }
+            else
+            {
+                // Task Type 3 identification task  
+                isCorrect = isSameDiff == RESPONSE_SAME;
+            }
         }
     }
 }
