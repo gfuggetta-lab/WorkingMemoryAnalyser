@@ -3664,8 +3664,6 @@ begin
 
      handledSuspended(isRuinedTrial); // suspend rendering the stimulus if IS_SUSPENDED
 
-    ef.renderStereo;
-
     {if (frameNo = 0) then begin
        // Play a sound on the first frame
        Mix_PlayChannel(1,  sounds_numbered[feedback_sound], 0);
@@ -4048,6 +4046,7 @@ begin
        //showmessage('not responded');
     end;
 
+    ef.renderStereo;
     frameNoTotal := frameNoTotal+1;
   until trialDone; // this trial is done
 
