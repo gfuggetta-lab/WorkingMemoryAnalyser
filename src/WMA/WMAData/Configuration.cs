@@ -333,7 +333,7 @@ namespace WMAData
                 dst.CustomEvent(tmsOfs, "S3TMS");
             }
 
-            if (tr.S3.Shape != SHAPE_SKIP_TO_S2)
+            if (tr.S3.Shape != SHAPE_S3_HIDE)
             {
                 if (Show_S3_peripheral_placeholders)
                 {
@@ -380,7 +380,7 @@ namespace WMAData
             // the response can be given as soon as S4 is shown
             dst.ReadResponse(ofsTime, duration + tr.S4.Next_ISI);
 
-            if (tr.S4.Shape != SHAPE_SKIP_TO_S2)
+            if (tr.S4.Shape != SHAPE_S4_HIDE)
             {
                 if ((Show_S4_peripheral_placeholders)&&(tr.S4.DistractShape != 0))
                 {
@@ -475,14 +475,14 @@ namespace WMAData
 
             switch (tr.S1.Shape)
             {
-                case SHAPE_SKIP_TO_S2:
+                case SHAPE_S1_SKIP_TO_S2:
                     show_s1 = false;
                     break;
-                case SHAPE_SKIP_TO_S3:
+                case SHAPE_S1_SKIP_TO_S3:
                     show_s1 = false;
                     show_s2 = false;
                     break;
-                case SHAPE_SKIP_TO_S4:
+                case SHAPE_S1_SKIP_TO_S4:
                     show_s1 = false;
                     show_s2 = false;
                     show_s3 = false;

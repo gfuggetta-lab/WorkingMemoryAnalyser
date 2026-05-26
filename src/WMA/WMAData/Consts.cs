@@ -18,9 +18,11 @@ namespace WMAData
         public const int SHAPE_SQUARE = 9; // square_area_equal_to_bar
         public const int SHAPE_CIRCLE = 10; // circle_area_equal_to_bar
         public const int SHAPE_STAR = 11; // star
-        public const int SHAPE_SKIP_TO_S2 = 12; // Go_to_S2_shape_(same/different_task)
-        public const int SHAPE_SKIP_TO_S3 = 13; // Go_to_S3_shape_(identification_task)
-        public const int SHAPE_SKIP_TO_S4 = 14; // Go_to_S4_shape_(identification_task)
+        public const int SHAPE_S1_SKIP_TO_S2 = 12; // Go_to_S2_shape_(same/different_task)
+        public const int SHAPE_S1_SKIP_TO_S3 = 13; // Go_to_S3_shape_(identification_task)
+        public const int SHAPE_S1_SKIP_TO_S4 = 14; // Go_to_S4_shape_(identification_task)
+        public const int SHAPE_S3_HIDE = 12;
+        public const int SHAPE_S4_HIDE = 12;
         public const int SHAPE_RESPONSE_TEXT = 12; // used only when showing response
         public const int SHAPE_RESPONSE_IMAGE = 13; // used only when showing response
         public const int SHAPE_CHAR_MIN = 33; // 33-255:character
