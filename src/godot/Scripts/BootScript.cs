@@ -403,6 +403,15 @@ public partial class BootScript : Node2D
 					SetCurrentSection(itm);
 					break;
 
+				case PlayItemType.CustomEvent:
+					log($"event: {itm.text}");
+					if (string.Compare(itm.text, "S3TMS", true)==0)
+                    {
+						result.TMS_onsetTime = GetOnSetTime();
+					}
+					//SetCurrentSection(itm);
+					break;
+
 				case PlayItemType.CheckResponse:
 					log("checking response");
 					currentCond = PlayItemCond.Incorrect;
@@ -424,20 +433,25 @@ public partial class BootScript : Node2D
 		}
 	}
 
+	public int GetOnSetTime()
+    {
+		return (int)(Time.GetTicksMsec() - timeOfExperimentStart);
+	}
+
 	private void SetCurrentSection(PlayItem itm)
 	{
 
 		if (string.Compare(itm.text, "S1", true) == 0)
 		{
-			result.s1_onsetTime = (int)(Time.GetTicksMsec() - timeOfExperimentStart);
+			result.s1_onsetTime = GetOnSetTime();
 		}
 		else if (string.Compare(itm.text, "S2", true) == 0)
 		{
-			result.s2_onsetTime = (int)(Time.GetTicksMsec() - timeOfExperimentStart);
+			result.s2_onsetTime = GetOnSetTime();
 		}
 		else if (string.Compare(itm.text, "S3", true) == 0)
 		{
-			result.s3_onsetTime = (int)(Time.GetTicksMsec() - timeOfExperimentStart);
+			result.s3_onsetTime = GetOnSetTime();
 		}
 		else if (string.Compare(itm.text, "S4", true)==0)
 		{
@@ -446,7 +460,7 @@ public partial class BootScript : Node2D
 		}
 		else if (string.Compare(itm.text, "Aft", true) == 0)
 		{
-			result.feedback_onsetTime = (int)(Time.GetTicksMsec() - timeOfExperimentStart);
+			result.feedback_onsetTime = GetOnSetTime();
 		}
 
 
