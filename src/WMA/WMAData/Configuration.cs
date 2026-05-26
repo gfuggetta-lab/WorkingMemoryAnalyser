@@ -318,11 +318,21 @@ namespace WMAData
             ofsTime += duration;
         }
 
-        private void ScheduleS3_Distract(TrialOrder tr, PlayList dst, ref double ofsTime)
+        private void ScheduleS3_Distract(TrialOrder tr, PlayList dst, double trialOfs, ref double ofsTime)
         {
             double duration = tr.S3.Duration;
 
             dst.StartSection("S3", ofsTime, duration);
+
+            double tmsOfs = ofsTime + tr.TMS_S3_SOA;
+            if (tmsOfs >= trialOfs)
+            {
+                // the event is not scheduled, unless S3 is used
+                // the TMS event should not be called Prior to the current trial
+                // and it's not uncommon for TMS offset to be negative -100000
+                dst.CustomEvent(tmsOfs, "S3TMS");
+            }
+
             if (tr.S3.Shape != SHAPE_SKIP_TO_S2)
             {
                 if (Show_S3_peripheral_placeholders)
@@ -459,6 +469,8 @@ namespace WMAData
             bool show_s1 = true;
             bool show_s2 = true;
             bool show_s3 = true;
+
+            double trialOfs = ofsTime;
             dst.StartTrial($"trial {tr.taskType}", ofsTime);
 
             switch (tr.S1.Shape)
@@ -526,7 +538,7 @@ namespace WMAData
             // skip S3 if show_s3=false   
             if (show_s3)
             {
-                ScheduleS3_Distract(tr, dst, ref ofsTime);
+                ScheduleS3_Distract(tr, dst, trialOfs, ref ofsTime);
                 ScheduleS3_S4(tr, dst, ref ofsTime);
             }
 

@@ -78,6 +78,8 @@ namespace WMAData
         SectionStart, // does nothing, only debugging
         ReadResponse, // the time when the response is expected
         CheckResponse, // check the response (for the following condition feedback)
+
+        CustomEvent, // custom event for anything else.
     }
 
     public enum PlayItemCond

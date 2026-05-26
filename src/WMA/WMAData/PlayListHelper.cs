@@ -153,7 +153,7 @@ namespace WMAData
                 case SHAPE_DIAMOND:
                     double szD = Math.Sqrt(2.0 * Math.Pow(shapeSzCm / 2.0, 2.0));
                     return AddBar(list, szD, szD, Math.PI / 4.0, color, timeOfs, durationMs);
-                
+
                 case SHAPE_HEX:
                     double rH = shapeSzCm / 2.0;
                     return AddRegularShape(list, rH, rH * 0.01, 6, true, 0.0, color, timeOfs, durationMs);
@@ -245,7 +245,7 @@ namespace WMAData
                 case POS_BOT_LEFT: return PlayItemPos.SE;
                 case POS_BOT_RIGHT: return PlayItemPos.SW;
                 case POS_CENTER: return PlayItemPos.Center;
-                default: 
+                default:
                     return PlayItemPos.Undefined;
             }
         }
@@ -293,6 +293,14 @@ namespace WMAData
         public static double DegToRad(double degrees)
         {
             return degrees * (Math.PI / 180.0);
+        }
+        public static PlayItem CustomEvent(this PlayList list, double ofsMs, string text = "")
+        {
+            var itm = list.Add(ofsMs);
+            itm.itemType = PlayItemType.CustomEvent;
+            itm.text = text;
+            itm.durationMs = 0;
+            return itm;
         }
     }
 }
