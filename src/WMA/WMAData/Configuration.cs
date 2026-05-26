@@ -324,6 +324,8 @@ namespace WMAData
 
             dst.StartSection("S3", ofsTime, duration);
 
+            // The TMS onset frame is specified relative to S3
+            // If s3 is not shown then there is no TMS photodiode patch.
             double tmsOfs = ofsTime + tr.TMS_S3_SOA;
             if (tmsOfs >= trialOfs)
             {
@@ -424,7 +426,7 @@ namespace WMAData
             ofsTime += duration;
         }
 
-        private void Schedule_AfterResponse(TrialOrder tr, PlayList dst, ref double ofsTime)
+        private void Schedule_AfterResponse(TrialOrder tr, PlayList dst, bool isBaseLineCond, ref double ofsTime)
         {
             double duration = tr.ITI_after_feedback; // Response_Time_after_S4
             dst.StartSection("Aft", ofsTime, duration);
@@ -433,33 +435,38 @@ namespace WMAData
             ScheduleFixationDot(dst, ofsTime, duration);
             SchedulePlaceholders4(dst, ofsTime, duration);
 
-            // The correct feedback
-            PlayItem res = null;
-            if ((tr.Feedback_shape >= SHAPE_DIAMOND) && (tr.Feedback_shape <= SHAPE_STAR))
-                res = dst.AddByShape(tr.Feedback_shape, Image_size_CM, Shape_size_CM, Correct_feedback_colour, ofsTime, duration);
-            else if (tr.Feedback_shape == SHAPE_RESPONSE_TEXT)
-                res = dst.AddText(Feedback_text_correct, "Arial", GetShapeColor(COLOR_WHITE0));
-            else if (tr.Feedback_shape == SHAPE_RESPONSE_IMAGE)
-                res = dst.AddImageById(IMAGEID_CORRECT, Image_feedback_CM, GetShapeColor(COLOR_WHITE0), ofsTime, duration);
-            if (res != null)
+
+            // With the baseline condition, no audio or visual feedback is given.
+            if (!isBaseLineCond)
+            {
+                // The correct feedback
+                PlayItem res = null;
+                if ((tr.Feedback_shape >= SHAPE_DIAMOND) && (tr.Feedback_shape <= SHAPE_STAR))
+                    res = dst.AddByShape(tr.Feedback_shape, Image_size_CM, Shape_size_CM, Correct_feedback_colour, ofsTime, duration);
+                else if (tr.Feedback_shape == SHAPE_RESPONSE_TEXT)
+                    res = dst.AddText(Feedback_text_correct, "Arial", GetShapeColor(COLOR_WHITE0));
+                else if (tr.Feedback_shape == SHAPE_RESPONSE_IMAGE)
+                    res = dst.AddImageById(IMAGEID_CORRECT, Image_feedback_CM, GetShapeColor(COLOR_WHITE0), ofsTime, duration);
+                if (res != null)
+                    res.cond = PlayItemCond.Correct;
+
+                res = dst.AddSound("correct.wav", ofsTime);
                 res.cond = PlayItemCond.Correct;
 
-            res = dst.AddSound("correct.wav", ofsTime);
-            res.cond = PlayItemCond.Correct;
+                // The incorrect feedback
+                res = null;
+                if ((tr.Feedback_shape >= SHAPE_DIAMOND) && (tr.Feedback_shape <= SHAPE_STAR))
+                    res = dst.AddByShape(tr.Feedback_shape, Image_size_CM, Shape_size_CM, Incorrect_feedback_colour, ofsTime, duration);
+                else if (tr.Feedback_shape == SHAPE_RESPONSE_TEXT)
+                    res = dst.AddText(Feedback_text_incorrect, "Arial", GetShapeColor(COLOR_WHITE0));
+                else if (tr.Feedback_shape == SHAPE_RESPONSE_IMAGE)
+                    res = dst.AddImageById(IMAGEID_INCORRECT, Image_feedback_CM, GetShapeColor(COLOR_WHITE0), ofsTime, duration);
+                if (res != null)
+                    res.cond = PlayItemCond.Incorrect;
 
-            // The incorrect feedback
-            res = null;
-            if ((tr.Feedback_shape >= SHAPE_DIAMOND) && (tr.Feedback_shape <= SHAPE_STAR))
-                res = dst.AddByShape(tr.Feedback_shape, Image_size_CM, Shape_size_CM, Incorrect_feedback_colour, ofsTime, duration);
-            else if (tr.Feedback_shape == SHAPE_RESPONSE_TEXT)
-                res = dst.AddText(Feedback_text_incorrect, "Arial", GetShapeColor(COLOR_WHITE0));
-            else if (tr.Feedback_shape == SHAPE_RESPONSE_IMAGE)
-                res = dst.AddImageById(IMAGEID_INCORRECT, Image_feedback_CM, GetShapeColor(COLOR_WHITE0), ofsTime, duration);
-            if (res != null)
+                res = dst.AddSound("incorrect.wav", ofsTime);
                 res.cond = PlayItemCond.Incorrect;
-
-            res = dst.AddSound("incorrect.wav", ofsTime);
-            res.cond = PlayItemCond.Incorrect;
+            }
 
             ofsTime += duration;
         }
@@ -489,14 +496,8 @@ namespace WMAData
                     break;
             }
 
-            // Determine the frame numbers of s3 . The TMS onset frame is specified relative to this
-            // If s3 is not shown then there is no TMS photodiode patch.
-            // int s3_onset_frameNo = 0;
-            // if (show_s1) 
-            //     s3_onset_frameNo = s3_onset_frameNo + round(s1_duration / 1000 / (1 / REFRESH_RATE)) + round(s1_s2_isi / 1000 / (1 / REFRESH_RATE));
-            // if (show_s2)
-            //     s3_onset_frameNo:= s3_onset_frameNo + round(s2_duration / 1000 / (1 / REFRESH_RATE)) + round(s2_s3_isi / 1000 / (1 / REFRESH_RATE));
-
+            // if none of the stimuli s2-s4 are being shown (shape=11)
+            // then this is a baseline condition, and we want no audio 'feedback'
             bool isBaselineCondition = (tr.S2.ShapePos1_NW == SHAPE_STAR)
                 && (tr.S3.Shape == SHAPE_STAR)
                 && (tr.S4.Shape == SHAPE_STAR);
@@ -510,8 +511,6 @@ namespace WMAData
             //     S1
             //=======================================================================================
             // skip S1 if show_s1=false
-            int s1_onsetTime = -1;
-            double duration;
             if (show_s1)
             {
                 ScheduleS1_Focus(tr, dst, ref ofsTime);
@@ -544,7 +543,7 @@ namespace WMAData
 
             ScheduleS4_Target(tr, dst, ref ofsTime);
             Schedule_Response(tr, dst, ref ofsTime);
-            Schedule_AfterResponse(tr, dst, ref ofsTime);
+            Schedule_AfterResponse(tr, dst, isBaselineCondition, ref ofsTime);
 
             dst.EndTrial($"trial {tr.taskType}", ofsTime);
         }
