@@ -68,9 +68,9 @@ object Form2: TForm2
     Visible = False
   end
   object Label1: TLabel
-    Left = 104
+    Left = 8
     Height = 29
-    Top = 479
+    Top = 456
     Width = 73
     Anchors = [akLeft, akBottom]
     Caption = 'Label1'
