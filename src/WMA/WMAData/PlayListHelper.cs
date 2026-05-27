@@ -302,5 +302,18 @@ namespace WMAData
             itm.durationMs = 0;
             return itm;
         }
+
+        public static PlayItem WaitMouse(this PlayList list, double ofsMs)
+        {
+            var itm = list.Add(ofsMs);
+            itm.itemType = PlayItemType.WaitForMouse;
+            return itm;
+        }
+        public static PlayItem WaitInput(this PlayList list, double ofsMs)
+        {
+            var itm = list.Add(ofsMs);
+            itm.itemType = PlayItemType.WaitForInput;
+            return itm;
+        }
     }
 }

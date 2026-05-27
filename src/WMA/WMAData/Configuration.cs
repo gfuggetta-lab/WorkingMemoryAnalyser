@@ -547,13 +547,14 @@ namespace WMAData
 
             dst.EndTrial($"trial {tr.taskType}", ofsTime);
         }
-        private void ScheduleTrials(List<TrialOrder> trials, PlayList dst)
+        private void ScheduleTrials(List<TrialOrder> trials, PlayList dst, double startOffset = 0.0)
         {
-            double ofsTime = 0;
+            double ofsTime = startOffset;
 
             for (int i = 0; i < trials.Count; i++)
             {
                 var tr = trials[i];
+                Schedule2SecDelay(dst, ref ofsTime);
                 ScheduleTrial(tr, dst, ref ofsTime);
             }
         }
@@ -565,6 +566,25 @@ namespace WMAData
             return ShapeColors[i];
         }
 
+        private void Schedule2SecDelay(PlayList dst, ref double ofsTime)
+        {
+            double duration = 2000.0; // 2 seconds
+            dst.StartSection("del2", ofsTime, duration);
+            ScheduleFixationDot(dst, ofsTime, duration);
+            SchedulePlaceholders4(dst, ofsTime, duration);
+            ofsTime += duration;
+        }
+
+        private double ScheduleWaitClick(PlayList dst)
+        {
+            double duration = 0.001; // this is 0.001 of ms
+            ScheduleFixationDot(dst, 0.0, duration);
+            SchedulePlaceholders4(dst, 0.0, duration);
+            dst.AddText("hello world", "Arial", GetShapeColor(COLOR_WHITE0), duration);
+            dst.WaitMouse(0.0);
+            return duration;
+        }
+
 
         public void Schedule(TrialMonitor tm, List<TrialOrder> trials, PlayList dst)
         {
@@ -574,8 +594,11 @@ namespace WMAData
             height_cm = tm.heightCm;
 
             ScheduleBackground(dst);
+            double startOffset = ScheduleWaitClick(dst);
             if (trials != null)
-                ScheduleTrials(trials, dst);
+            {
+                ScheduleTrials(trials, dst, startOffset);
+            }
             dst.Sort();
         }
 

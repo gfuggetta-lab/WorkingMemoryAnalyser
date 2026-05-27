@@ -80,12 +80,24 @@ namespace WMAData
         CheckResponse, // check the response (for the following condition feedback)
 
         CustomEvent, // custom event for anything else.
+
+        WaitForMouse, // mouse click
+        WaitForInput, // key or mouse click
     }
 
     public enum PlayItemCond
     {
         None,
+
+        // items to draw, for the correct answer
         Correct,
-        Incorrect
+
+        // items to draw, for the incorrect answer
+        Incorrect,
+
+        // items to draw, when paused. If none specified
+        // when the last state is drawn
+        // Item's duration is ignored as pause is timeless
+        Paused
     }
 }
