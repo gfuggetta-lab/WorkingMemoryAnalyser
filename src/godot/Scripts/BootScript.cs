@@ -15,6 +15,7 @@ public partial class BootScript : Node2D
 	public const string CloseTrial = "CloseTrial";
 	public const string LeftResponse = "LeftResponse";
 	public const string RightResponse = "RightResponse";
+	public const string Pause = "Pause";
 
 	[Export]
 	public Label screenRes;
@@ -58,6 +59,8 @@ public partial class BootScript : Node2D
 	
 	private ulong timeOfExperimentStart;
 	private ulong s4start;
+
+	private bool isWaitInput;
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -224,6 +227,10 @@ public partial class BootScript : Node2D
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
+		
+		// don't count, time because we wait for input
+		if (isWaitInput) return;
+
 		List<PlayItem> eff = new List<PlayItem>();
 		List<PlayItem> trigAndOff = new List<PlayItem>();
 		List<PlayItem> offList = new List<PlayItem>();
@@ -406,7 +413,7 @@ public partial class BootScript : Node2D
 				case PlayItemType.CustomEvent:
 					log($"event: {itm.text}");
 					if (string.Compare(itm.text, "S3TMS", true)==0)
-                    {
+					{
 						result.TMS_onsetTime = GetOnSetTime();
 					}
 					//SetCurrentSection(itm);
@@ -429,12 +436,19 @@ public partial class BootScript : Node2D
 					}
 					log($"is correct response: {currentCond}");
 					break;
+
+				case PlayItemType.WaitForMouse:
+				case PlayItemType.WaitForInput:
+					log($"waiting for input: {itm.itemType}");
+					isWaitInput = true;
+					break;
+
 			}
 		}
 	}
 
 	public int GetOnSetTime()
-    {
+	{
 		return (int)(Time.GetTicksMsec() - timeOfExperimentStart);
 	}
 
@@ -685,6 +699,12 @@ public partial class BootScript : Node2D
 		{
 			CancelTrial();
 			return;
+		}
+
+		if (isWaitInput)
+		{
+			if (ev is InputEventMouseButton)
+				isWaitInput = false;
 		}
 
 		if (!isWaitingResponse)
