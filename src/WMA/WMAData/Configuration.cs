@@ -580,7 +580,10 @@ namespace WMAData
             double duration = 0.001; // this is 0.001 of ms
             ScheduleFixationDot(dst, 0.0, duration);
             SchedulePlaceholders4(dst, 0.0, duration);
-            dst.AddText("hello world", "Arial", GetShapeColor(COLOR_WHITE0), duration);
+            var txt = dst.AddText("hello world", "Arial.ttf", GetShapeColor(COLOR_WHITE0), 0, duration)
+                .SetPos(PlayItemPos.Center, 0);
+            txt.fontSizePx = (int)Math.Round(2.0 * (width_px / width_cm) * (distanceCm / 57));
+
             dst.WaitMouse(0.0);
             return duration;
         }
