@@ -35,6 +35,7 @@ public partial class BootScript : Node2D
 	PlayList playList = new PlayList();
 	PlayListTracker plrTrack;
 	List<PlayItem> drawItems = new List<PlayItem>();
+	List<PlayItem> pauseList = new List<PlayItem>();
 	PlayItem currentSection;
 	double currentSectionEndMs = -1.0;
 	Node2D drawRoot;
@@ -45,6 +46,7 @@ public partial class BootScript : Node2D
 
 
 	public bool isWaitingResponse = false;
+	public bool isDrawPause = false;
 	public ResponseButton trialResponse = ResponseButton.NotGiven;
 	// the condition evaluated based on the response.
 	// it's populated at CheckResponse, based on the actual response given
@@ -127,6 +129,9 @@ public partial class BootScript : Node2D
 		ControlEvents(drawItems);
 		RebuildDrawNodes();
 		PlaySoundIfAny(drawItems);
+
+		pauseList.Clear();
+        GatherPause(drawItems, pauseList);
 	
 		UpdateSectionInfo();
 	}
@@ -351,7 +356,15 @@ public partial class BootScript : Node2D
 		}
 	}
 
-
+	private void GatherPause(List<PlayItem> items, List<PlayItem> dstList)
+	{
+		foreach(var itm in items)
+		{
+			if (itm == null) continue;
+			if (itm.cond == PlayItemCond.Paused)
+				dstList.Add(itm);
+		}
+	}
 	private void PlaySoundIfAny(List<PlayItem> items)
 	{
 		if (soundPlayer == null) return;
@@ -534,11 +547,24 @@ public partial class BootScript : Node2D
 
 	public bool IsCondMet(PlayItem itm)
 	{
-		return (itm != null) 
-			&& ((itm.cond == PlayItemCond.None) || (itm.cond == currentCond));
+		return IsCondMet(itm, currentCond);
+	}
+    public bool IsCondMet(PlayItem itm, PlayItemCond condCheck)
+    {
+        return (itm != null)
+            && ((itm.cond == PlayItemCond.None) || (itm.cond == condCheck));
+    }
+
+    private void RebuildDrawNodes()
+	{
+		if (isDrawPause)
+			RebuildDrawNodes(pauseList, PlayItemCond.Paused);
+		else
+			RebuildDrawNodes(drawItems, currentCond);
 	}
 
-	private void RebuildDrawNodes()
+
+    private void RebuildDrawNodes(List<PlayItem> itemsList, PlayItemCond checkCond)
 	{
 		if (drawRoot == null)
 			return;
@@ -551,7 +577,7 @@ public partial class BootScript : Node2D
 			if (itm.cond != PlayItemCond.None)
 			{
 				log($"condition check: {itm.cond}; needed {currentCond}");
-				if (!IsCondMet(itm))
+				if (!IsCondMet(itm, checkCond))
 				{
 					log("failed");
 					continue;
