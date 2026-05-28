@@ -4,6 +4,7 @@ using System.Runtime.ConstrainedExecution;
 using System.Security.Cryptography;
 using System.Text;
 using static System.Math;
+using static System.Net.Mime.MediaTypeNames;
 using static WMAData.Consts;
 
 namespace WMAData
@@ -588,6 +589,19 @@ namespace WMAData
             return duration;
         }
 
+        private void SchedulePause(PlayList dst)
+        {
+            int i = dst.items.Count;
+            ScheduleBackground(dst);
+            SchedulePlaceholders4(dst, 0, 0);
+            dst.AddText("PAUSED", "Arial.ttf", GetShapeColor(COLOR_WHITE0), 0, 0)
+                .SetPos(PlayItemPos.Center, 0);
+
+            // mark all freshly added items as on "Pause" condition
+            for (; i < dst.items.Count; i++)
+                dst.items[i].cond = PlayItemCond.Paused;
+
+        }
 
         public void Schedule(TrialMonitor tm, List<TrialOrder> trials, PlayList dst)
         {
