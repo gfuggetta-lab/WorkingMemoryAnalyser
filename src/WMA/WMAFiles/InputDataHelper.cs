@@ -117,7 +117,7 @@ namespace WMAFiles
             return result;
         }
 
-        public static bool LoadTrials(string sourceFn, List<TrialOrder> trials)
+        public static bool LoadTrials(string sourceFn, List<TrialOrder> trials, List<PauseData> pauses)
         {
             string[] lines = File.ReadAllLines(sourceFn);
 
@@ -129,16 +129,26 @@ namespace WMAFiles
                 {
                     var d = rdr.FillTrialData();
                     trials.Add(d);
+                } 
+                else if (ltype == InputLine.PauseData)
+                {
+                    if (rdr.lineVals.Length >= 2)
+                    {
+                        PauseData pd = new PauseData();
+                        int.TryParse(rdr.lineVals[0], out pd.trial_no);
+                        int.TryParse(rdr.lineVals[1], out pd.message_no);
+                        pauses.Add(pd);
+                    }
                 }
             }
             return true;
         }
 
-        public static List<TrialOrder> LoadTrials(string sourceFn)
-        {
-            List<TrialOrder> result = new List<TrialOrder>();
-            LoadTrials(sourceFn, result);
-            return result;
-        }
+        // public static List<TrialOrder> LoadTrials(string sourceFn)
+        // {
+        //     List<TrialOrder> result = new List<TrialOrder>();
+        //     LoadTrials(sourceFn, result);
+        //     return result;
+        // }
     }
 }

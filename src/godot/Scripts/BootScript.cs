@@ -54,6 +54,7 @@ public partial class BootScript : Node2D
 
 	public Configuration exam;
 	public List<TrialOrder> trials = new List<TrialOrder>();
+	public List<PauseData> pauses = new List<PauseData>();
 	private int curTrialIdx = -1;
 	public TrialOrder curTrial = null;
 	public TrialResults result = new TrialResults();
@@ -106,11 +107,11 @@ public partial class BootScript : Node2D
 			screenRes.Text = b.ToString();
 		}
 		string inp = @"C:\FPC_Laz\WorkingMemoryAnalyser_pas\Experiments library\TestExp\Input data\InputData_1.txt";
-		trials = InputDataHelper.LoadTrials(inp);
-		
+		trials = new List<TrialOrder>();
+		InputDataHelper.LoadTrials(inp, trials, pauses);
 		
 
-		exam.Schedule(tm, trials, playList);
+		exam.Schedule(tm, trials, pauses, playList);
 		log($"trials:  {trials.Count}");
 		curTrial = trials[0];
 		curTrialIdx = -1; // needed to handle TrialStart properly

@@ -560,13 +560,29 @@ namespace WMAData
 
             dst.EndTrial($"trial {tr.taskType}", ofsTime);
         }
-        private void ScheduleTrials(List<TrialOrder> trials, PlayList dst)
+        private void ScheduleTrials(List<TrialOrder> trials, List<PauseData> pauses, PlayList dst)
         {
-            double ofsTime = 0;
-            double startOffset = ScheduleWaitClick(dst);
+            List<PauseData> pauseSorted = new List<PauseData>();
+            pauseSorted.AddRange(pauses);
+            pauseSorted.Sort((a, b) =>
+            {
+                return a.trial_no.CompareTo(b.trial_no);
+            });
 
+            double ofsTime = 0;
+
+            int pidx = 0;
             for (int i = 0; i < trials.Count; i++)
             {
+                while ((pidx < pauseSorted.Count) &&( (i + 1) == pauseSorted[pidx].trial_no))
+                {
+                    var pd = pauseSorted[pidx];
+                    double dur = ScheduleWaitInput(dst, GetMessage(pd.message_no), ofsTime, pidx == 0);
+                    ofsTime += dur;
+
+                    pidx++;
+                }
+
                 var tr = trials[i];
                 Schedule2SecDelay(dst, ref ofsTime);
                 ScheduleTrial(tr, dst, ref ofsTime);
@@ -589,16 +605,22 @@ namespace WMAData
             ofsTime += duration;
         }
 
-        private double ScheduleWaitClick(PlayList dst)
+        private double ScheduleWaitInput(PlayList dst,
+            string message,
+            double ofsTime,
+            bool mouseOnly,
+            double duration = 0.001)
         {
-            double duration = 0.001; // this is 0.001 of ms
-            ScheduleFixationDot(dst, 0.0, duration);
-            SchedulePlaceholders4(dst, 0.0, duration);
-            var txt = dst.AddText("hello world", "Arial.ttf", GetShapeColor(COLOR_WHITE0), 0, duration)
+            ScheduleFixationDot(dst, ofsTime, duration);
+            SchedulePlaceholders4(dst, ofsTime, duration);
+            var txt = dst.AddText(message, "Arial.ttf", GetShapeColor(COLOR_WHITE0), 0, duration)
                 .SetPos(PlayItemPos.Center, 0);
             txt.fontSizePx = (int)Math.Round(2.0 * (width_px / width_cm) * (distanceCm / 57));
 
-            dst.WaitMouse(0.0);
+            if (mouseOnly)
+                dst.WaitMouse(ofsTime);
+            else
+                dst.WaitInput(ofsTime);
             return duration;
         }
 
@@ -616,7 +638,7 @@ namespace WMAData
 
         }
 
-        public void Schedule(TrialMonitor tm, List<TrialOrder> trials, PlayList dst)
+        public void Schedule(TrialMonitor tm, List<TrialOrder> trials, List<PauseData> pauses, PlayList dst)
         {
             width_px = tm.widthPx;
             height_px = tm.widthPx;
@@ -626,7 +648,7 @@ namespace WMAData
             ScheduleBackground(dst);
             if (trials != null)
             {
-                ScheduleTrials(trials, dst);
+                ScheduleTrials(trials, pauses, dst);
             }
             dst.Sort();
         }
