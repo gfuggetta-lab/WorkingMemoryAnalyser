@@ -117,20 +117,27 @@ namespace WMAFiles
             return result;
         }
 
-        public static List<TrialOrder> LoadTrials(string sourceFn)
+        public static bool LoadTrials(string sourceFn, List<TrialOrder> trials)
         {
             string[] lines = File.ReadAllLines(sourceFn);
+
             InputDataReader rdr = new InputDataReader();
-            List<TrialOrder> result = new List<TrialOrder>();
             foreach (var ln in lines)
             {
                 var ltype = rdr.ConsumeLine(ln);
                 if (ltype == InputLine.TrialData)
                 {
                     var d = rdr.FillTrialData();
-                    result.Add(d);
+                    trials.Add(d);
                 }
             }
+            return true;
+        }
+
+        public static List<TrialOrder> LoadTrials(string sourceFn)
+        {
+            List<TrialOrder> result = new List<TrialOrder>();
+            LoadTrials(sourceFn, result);
             return result;
         }
     }

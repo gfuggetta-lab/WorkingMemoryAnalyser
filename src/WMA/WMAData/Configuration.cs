@@ -560,9 +560,10 @@ namespace WMAData
 
             dst.EndTrial($"trial {tr.taskType}", ofsTime);
         }
-        private void ScheduleTrials(List<TrialOrder> trials, PlayList dst, double startOffset = 0.0)
+        private void ScheduleTrials(List<TrialOrder> trials, PlayList dst)
         {
-            double ofsTime = startOffset;
+            double ofsTime = 0;
+            double startOffset = ScheduleWaitClick(dst);
 
             for (int i = 0; i < trials.Count; i++)
             {
@@ -623,10 +624,9 @@ namespace WMAData
             height_cm = tm.heightCm;
 
             ScheduleBackground(dst);
-            double startOffset = ScheduleWaitClick(dst);
             if (trials != null)
             {
-                ScheduleTrials(trials, dst, startOffset);
+                ScheduleTrials(trials, dst);
             }
             dst.Sort();
         }
