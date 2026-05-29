@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.ConstrainedExecution;
 using System.Security.Cryptography;
@@ -72,6 +73,9 @@ namespace WMAData
 
         public ColorFloat[] ShapeColors = new ColorFloat[15];
 
+        // The "pause" messages. They're used during scheduling when setting up Trials 
+        public string[] Message = new string[0];
+
         // should S3 show additional placeholder (not just default 4)
         // the placeholders would be filled with the distractionShape (unless it's zero)
         // The default S3 is actually 16
@@ -124,6 +128,14 @@ namespace WMAData
         {
             return (((deg / 2) * (PI / 180)) * distanceCm) * 2;
         }
+
+        public string GetMessage(int msgId, string def = "")
+        {
+            if (msgId < 0 || msgId >= Message.Length)
+                return def;
+            return Message[msgId];
+        }
+
 
         private void ScheduleFixationDot(PlayList dst, double ofs, double duration)
         {

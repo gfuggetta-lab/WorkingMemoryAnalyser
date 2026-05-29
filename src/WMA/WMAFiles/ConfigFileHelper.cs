@@ -220,13 +220,27 @@ namespace WMAFiles
                 src.Color($"Shapes_colour_{i}:", out dst.ShapeColors[i]);
             }
 
+            int msgid = 0;
+            List<string> mlist = new List<string>();
+            while (true)
+            {
+                string m = src.StringLine($"Message_{msgid}:");
+                if (string.IsNullOrWhiteSpace(m))
+                    break;
+                m = m.Trim();
+
+                mlist.Add(m);
+                msgid++;
+            }
+            dst.Message = mlist.ToArray();
+
             // not used
             // Monitor_name:= getStringForParameter(configDataFilename, 'Monitor_name:');
 
-            // todo:
-            // ReadPhotodiode( Photodiode_S3,     configDataFilename, 'S3_photodiode_patch');
-            // ReadPhotodiode( Photodiode_TMS_S3, configDataFilename, 'TMS_S3_photodiode_patch');
-            // ReadPhotodiode( Photodiode_S4,     configDataFilename, 'S4_photodiode_patch');
+                // todo:
+                // ReadPhotodiode( Photodiode_S3,     configDataFilename, 'S3_photodiode_patch');
+                // ReadPhotodiode( Photodiode_TMS_S3, configDataFilename, 'TMS_S3_photodiode_patch');
+                // ReadPhotodiode( Photodiode_S4,     configDataFilename, 'S4_photodiode_patch');
 
             dst.Show_S3_peripheral_placeholders = src.Integer("Show_S3_peripheral_placeholders:") != 0;
             dst.Show_S4_peripheral_placeholders = src.Integer("Show_S4_peripheral_placeholders:") != 0;
