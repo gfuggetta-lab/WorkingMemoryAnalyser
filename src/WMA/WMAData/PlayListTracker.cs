@@ -25,7 +25,8 @@ namespace WMAData
             // the list of items that stopped being active within this delta
             List<PlayItem> fadeList,
             // only items that triggered AND faded would go into this list
-            List<PlayItem> trigFadeList
+            List<PlayItem> trigFadeList,
+            bool stopOnPause = true
             )
         {
             double curMs = lastMs + deltaMs;
@@ -35,7 +36,7 @@ namespace WMAData
                 if (itm == null) continue;
                 if (itm.itemType == PlayItemType.None) continue;
                 if (itm.startMs > curMs) continue;
-                
+
                 bool hasExp = (itm.durationMs >= 0); // negative amount means it's eternal!
                 double endMs;
                 if (!hasExp) endMs = double.MaxValue;
@@ -57,6 +58,31 @@ namespace WMAData
                     cnt++;
                 if (isFaded && isTriggered && (trigFadeList != null))
                     trigFadeList.Add(itm);
+
+                if ((isTriggered) && (stopOnPause))
+                {
+                    bool isPause = (itm.itemType == PlayItemType.WaitForInput
+                        || itm.itemType == PlayItemType.WaitForMouse);
+                    if (isPause)
+                    {
+                        double pauseStart = itm.startMs;
+
+                        // all triggered and faded are considerd to be in effect,
+                        if ((trigFadeList != null)&&(effList != null))
+                        {
+                            foreach (var ii in trigFadeList)
+                            {
+                                if  (ii.startMs + ii.durationMs > pauseStart)
+                                {
+                                    effList.Add(ii);
+                                }
+                            }
+                        }
+
+                        curMs = itm.startMs + itm.durationMs;
+                        break;
+                    }
+                }
             }
             lastMs = curMs;
             return cnt;
