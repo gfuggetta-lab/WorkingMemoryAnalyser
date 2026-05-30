@@ -65,6 +65,7 @@ public partial class BootScript : Node2D
 	private ulong s4start;
 
 	private bool isWaitInput;
+	private bool isWaitMouseOnly;
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -159,7 +160,9 @@ public partial class BootScript : Node2D
 			bool doTryExt = string.IsNullOrEmpty(ext);
 
 			string bmpFn = Path.Combine(imgDir, nm);
-			if (!File.Exists(bmpFn)&&doTryExt)
+			bool exists = File.Exists(bmpFn);
+
+			if (!exists && doTryExt)
 			{
 				foreach (var x in tryExt)
 				{
@@ -167,22 +170,37 @@ public partial class BootScript : Node2D
 					if (File.Exists(newfn))
 					{
 						bmpFn = newfn;
+						exists = true;
+
 						break;
 					}
 				}
 			}
 
-
-			Image img = new Image();
-			var err = img.Load(bmpFn);
-			if (err != 0)
+			if (!exists)
 			{
-				log($"loading image from {bmpFn} failed: {err}");
+				log($"the file image from {bmpFn} doesn't exist");
 				continue;
 			}
-			var _tex = ImageTexture.CreateFromImage(img);
-			//GD.Print($"loaded: {nm} {_tex != null}");
-			texs[nm] = _tex;
+
+
+			Image img = new Image();
+			try
+			{
+				var err = img.Load(bmpFn);
+				if (err != 0)
+				{
+					log($"loading image from {bmpFn} failed: {err}");
+					continue;
+				}
+				var _tex = ImageTexture.CreateFromImage(img);
+				GD.Print($"loaded: {Path.GetFileName(bmpFn)}");
+				texs[nm] = _tex;
+			} 
+			catch(Exception x)
+			{
+				log($"loading image from {bmpFn} failed: {x.Message}");
+			}
 		}
 		// for compatibility with the "integer" based images
 		// the response images are reported as "int" with 100 for correct 
@@ -245,10 +263,11 @@ public partial class BootScript : Node2D
 		List<PlayItem> offList = new List<PlayItem>();
 		List<PlayItem> trig = new List<PlayItem>();
 		int cnt = plrTrack.Track(delta*1000.0, eff, trig, offList, trigAndOff);
-		
+
 		// this must run before RebuildDrawNodes
 		// because BuildDraw nodes would verify the condition
 		// controlevents actually update the currentCondition
+
 		ControlEvents(trig);
 
 		if (cnt != 0)
@@ -459,6 +478,7 @@ public partial class BootScript : Node2D
 				case PlayItemType.WaitForInput:
 					log($"waiting for input: {itm.itemType}");
 					isWaitInput = true;
+					isWaitMouseOnly = itm.itemType == PlayItemType.WaitForMouse;
 					break;
 
 			}
@@ -735,6 +755,8 @@ public partial class BootScript : Node2D
 		if (isWaitInput)
 		{
 			if (ev is InputEventMouseButton)
+				isWaitInput = false;
+			else if ((ev is InputEventKey)&& (!isWaitMouseOnly))
 				isWaitInput = false;
 		}
 
