@@ -18,11 +18,13 @@ namespace testFiles
             ConfigFile cfg = ConfigFile.FromFile("Configuration.txt");
             Configuration exam = new Configuration();
             exam.LoadConfig(cfg);
-            var trials = InputDataHelper.LoadTrials("InputData_1.txt");
+            List<TrialOrder> trials = new List<TrialOrder>();
+            List<PauseData> pauses = new List<PauseData>();
+            InputDataHelper.LoadTrials("InputData_1.txt", trials, pauses);
 
 
             PlayList playList = new PlayList();
-            exam.Schedule(TrialMonitor.DefaultMonitor(), trials, playList);
+            exam.Schedule(TrialMonitor.DefaultMonitor(), trials, pauses, playList);
 
             var tick = 1000.0 / 60.0;
             PlayListTracker trck = new PlayListTracker(playList);

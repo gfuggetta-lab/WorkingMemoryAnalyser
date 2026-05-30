@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Runtime.ConstrainedExecution;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.Extensions.Logging;
 using static System.Math;
 using static System.Net.Mime.MediaTypeNames;
 using static WMAData.Consts;
@@ -127,6 +128,18 @@ namespace WMAData
         public const int FIXATION_ORDER = 1000;
 
         // drawFixationWithPlaceholders
+
+        public ILogger log;
+
+        public Configuration()
+        {
+
+        }
+
+        public Configuration(ILogger logger)
+        {
+            this.log = logger;
+        }
 
         private double DegToCm(double deg)
         {
@@ -577,7 +590,7 @@ namespace WMAData
             int pidx = 0;
             for (int i = 0, trNum = 1; i < trials.Count; i++, trNum++)
             {
-                while ((pidx < pauseSorted.Count) &&( trNum == pauseSorted[pidx].trial_no))
+                while ((pidx < pauseSorted.Count) &&(pauseSorted[pidx].trial_no <= trNum))
                 {
                     var pd = pauseSorted[pidx];
                     double dur = ScheduleWaitInput(dst, GetMessage(pd.message_no), ofsTime, pidx == 0);
@@ -616,7 +629,7 @@ namespace WMAData
         {
             ScheduleFixationDot(dst, ofsTime, duration);
             SchedulePlaceholders4(dst, ofsTime, duration);
-            var txt = dst.AddText(message, "Arial.ttf", fontCol, 0, duration)
+            var txt = dst.AddText(message, "Arial.ttf", fontCol, ofsTime, duration)
                 .SetPos(PlayItemPos.Center, 0);
             txt.fontSizePx = (int)Math.Round(2.0 * (width_px / width_cm) * (distanceCm / 57));
 

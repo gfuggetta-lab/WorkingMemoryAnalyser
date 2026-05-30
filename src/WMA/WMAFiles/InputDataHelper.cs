@@ -135,20 +135,22 @@ namespace WMAFiles
                     if (rdr.lineVals.Length >= 2)
                     {
                         PauseData pd = new PauseData();
-                        int.TryParse(rdr.lineVals[0], out pd.trial_no);
-                        int.TryParse(rdr.lineVals[1], out pd.message_no);
-                        pauses.Add(pd);
+                        bool isTr = int.TryParse(rdr.lineVals[0], out pd.trial_no);
+                        bool isMsg = int.TryParse(rdr.lineVals[1], out pd.message_no);
+                        if (isTr&&isMsg)
+                            pauses.Add(pd);
                     }
                 }
             }
             return true;
         }
 
-        // public static List<TrialOrder> LoadTrials(string sourceFn)
-        // {
-        //     List<TrialOrder> result = new List<TrialOrder>();
-        //     LoadTrials(sourceFn, result);
-        //     return result;
-        // }
+        public static List<TrialOrder> LoadTrials(string sourceFn)
+        {
+            List<TrialOrder> result = new List<TrialOrder>();
+            List<PauseData> pauses = new List<PauseData>();
+            LoadTrials(sourceFn, result, pauses);
+            return result;
+        }
     }
 }
