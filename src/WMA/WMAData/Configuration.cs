@@ -118,6 +118,10 @@ namespace WMAData
         // Monitor Refresh rate
         public int RefreshRate = 100;
 
+        public ColorFloat whiteCol = new ColorFloat { r = 1.0, g = 1.0, b = 1.0 };
+        public ColorFloat fontCol = new ColorFloat { r = 1.0, g = 1.0, b = 1.0 };
+        public ColorFloat fontColStim = new ColorFloat { r = 1.0, g = 1.0, b = 1.0 };
+        
 
         // above all others!
         public const int FIXATION_ORDER = 1000;
@@ -196,12 +200,15 @@ namespace WMAData
                 if (skipPos == i)
                     continue;
                 var ph = dst.AddByShape(shape, Image_size_CM, Shape_size_CM, GetShapeColor(color), ofs, duration);
-                ph.pos = PlayItemPos.OneOfCount;
-                ph.posOther = i;
-                ph.posCount = count;
-                ph.posDistanceCm = targetRadiusCM;
-                ph.drawOrder = FIXATION_ORDER;
-                ph.lineWidthCm = lineWidthCm;
+                if (ph != null)
+                {
+                    ph.pos = PlayItemPos.OneOfCount;
+                    ph.posOther = i;
+                    ph.posCount = count;
+                    ph.posDistanceCm = targetRadiusCM;
+                    ph.drawOrder = FIXATION_ORDER;
+                    ph.lineWidthCm = lineWidthCm;
+                }
             }
         }
 
@@ -297,21 +304,17 @@ namespace WMAData
             var half = s2_sample_diameter_cm / 2;
 
             // draw S2 cues
-            var v1 = dst.AddByShape(tr.S2.ShapePos1_NW, Image_size_CM, Shape_size_CM, Fixation_colour, ofsTime, duration);
-            v1.pos = PlayItemPos.NW;
-            v1.posDistanceCm = half;
+            var v1 = dst.AddByShape(tr.S2.ShapePos1_NW, Image_size_CM, Shape_size_CM, Fixation_colour, ofsTime, duration)
+                .SetPos(PlayItemPos.NW, half);
 
-            var v2 = dst.AddByShape(tr.S2.ShapePos2_NE, Image_size_CM, Shape_size_CM, Fixation_colour, ofsTime, duration);
-            v2.pos = PlayItemPos.NE;
-            v2.posDistanceCm = half;
+            var v2 = dst.AddByShape(tr.S2.ShapePos2_NE, Image_size_CM, Shape_size_CM, Fixation_colour, ofsTime, duration)
+                .SetPos(PlayItemPos.NE, half);
 
-            var v3 = dst.AddByShape(tr.S2.ShapePos4_SW, Image_size_CM, Shape_size_CM, Fixation_colour, ofsTime, duration);
-            v3.pos = PlayItemPos.SW;
-            v3.posDistanceCm = half;
+            var v3 = dst.AddByShape(tr.S2.ShapePos4_SW, Image_size_CM, Shape_size_CM, Fixation_colour, ofsTime, duration)
+                .SetPos(PlayItemPos.SW, half);
 
-            var v4 = dst.AddByShape(tr.S2.ShapePos3_SE, Image_size_CM, Shape_size_CM, Fixation_colour, ofsTime, duration);
-            v4.pos = PlayItemPos.SE;
-            v4.posDistanceCm = half;
+            var v4 = dst.AddByShape(tr.S2.ShapePos3_SE, Image_size_CM, Shape_size_CM, Fixation_colour, ofsTime, duration)
+                .SetPos(PlayItemPos.SE, half);
 
             dst.PlaySoundAt(tr.S2.Sound, ofsTime);
             ScheduleFixationDot(dst, ofsTime, duration);
@@ -457,9 +460,9 @@ namespace WMAData
                 if ((tr.Feedback_shape >= SHAPE_DIAMOND) && (tr.Feedback_shape <= SHAPE_STAR))
                     res = dst.AddByShape(tr.Feedback_shape, Image_size_CM, Shape_size_CM, Correct_feedback_colour, ofsTime, duration);
                 else if (tr.Feedback_shape == SHAPE_RESPONSE_TEXT)
-                    res = dst.AddText(Feedback_text_correct, "Arial", GetShapeColor(COLOR_WHITE0));
+                    res = dst.AddText(Feedback_text_correct, "Arial", Correct_feedback_colour);
                 else if (tr.Feedback_shape == SHAPE_RESPONSE_IMAGE)
-                    res = dst.AddImageById(IMAGEID_CORRECT, Image_feedback_CM, GetShapeColor(COLOR_WHITE0), ofsTime, duration);
+                    res = dst.AddImageById(IMAGEID_CORRECT, Image_feedback_CM, fontCol, ofsTime, duration);
                 if (res != null)
                     res.cond = PlayItemCond.Correct;
 
@@ -471,9 +474,9 @@ namespace WMAData
                 if ((tr.Feedback_shape >= SHAPE_DIAMOND) && (tr.Feedback_shape <= SHAPE_STAR))
                     res = dst.AddByShape(tr.Feedback_shape, Image_size_CM, Shape_size_CM, Incorrect_feedback_colour, ofsTime, duration);
                 else if (tr.Feedback_shape == SHAPE_RESPONSE_TEXT)
-                    res = dst.AddText(Feedback_text_incorrect, "Arial", GetShapeColor(COLOR_WHITE0));
+                    res = dst.AddText(Feedback_text_incorrect, "Arial", Incorrect_feedback_colour);
                 else if (tr.Feedback_shape == SHAPE_RESPONSE_IMAGE)
-                    res = dst.AddImageById(IMAGEID_INCORRECT, Image_feedback_CM, GetShapeColor(COLOR_WHITE0), ofsTime, duration);
+                    res = dst.AddImageById(IMAGEID_INCORRECT, Image_feedback_CM, whiteCol, ofsTime, duration);
                 if (res != null)
                     res.cond = PlayItemCond.Incorrect;
 
@@ -572,9 +575,9 @@ namespace WMAData
             double ofsTime = 0;
 
             int pidx = 0;
-            for (int i = 0; i < trials.Count; i++)
+            for (int i = 0, trNum = 1; i < trials.Count; i++, trNum++)
             {
-                while ((pidx < pauseSorted.Count) &&( (i + 1) == pauseSorted[pidx].trial_no))
+                while ((pidx < pauseSorted.Count) &&( trNum == pauseSorted[pidx].trial_no))
                 {
                     var pd = pauseSorted[pidx];
                     double dur = ScheduleWaitInput(dst, GetMessage(pd.message_no), ofsTime, pidx == 0);
@@ -613,7 +616,7 @@ namespace WMAData
         {
             ScheduleFixationDot(dst, ofsTime, duration);
             SchedulePlaceholders4(dst, ofsTime, duration);
-            var txt = dst.AddText(message, "Arial.ttf", GetShapeColor(COLOR_WHITE0), 0, duration)
+            var txt = dst.AddText(message, "Arial.ttf", fontCol, 0, duration)
                 .SetPos(PlayItemPos.Center, 0);
             txt.fontSizePx = (int)Math.Round(2.0 * (width_px / width_cm) * (distanceCm / 57));
 

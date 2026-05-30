@@ -9,5 +9,10 @@ namespace WMAData
         public double r;
         public double g;
         public double b;
+
+        public override string ToString()
+        {
+            return $"r:{r};g:{g}b:{b}";
+        }
     }
 }
