@@ -6,7 +6,7 @@
 script = ExtResource("1_y6ufa")
 screenRes = NodePath("Label")
 sectionInfo = NodePath("SectionInfo")
-fileName = "C:\\FPC_Laz\\WorkingMemoryAnalyser_pas\\Experiments library\\TestExp\\Configuration.txt"
+fileName = "C:\\FPC_Laz\\WorkingMemoryAnalyser_pas\\Experiment Library\\Exp 01 Working Memory Capacity\\Configuration.txt"
 soundPlayer = NodePath("Sounds")
 
 [node name="Sounds" type="AudioStreamPlayer2D" parent="." unique_id=1528746559]

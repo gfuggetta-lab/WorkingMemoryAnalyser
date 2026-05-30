@@ -1,0 +1,87 @@
+[gd_scene format=3 uid="uid://b61tfka4qu14w"]
+
+[node name="uiInstructions" type="Control" unique_id=130860802]
+custom_minimum_size = Vector2(800, 541)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="FormPanel" type="Panel" parent="." unique_id=644401495]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="WindowTitle" type="Label" parent="FormPanel" unique_id=998396733]
+layout_mode = 0
+offset_right = 800.0
+offset_bottom = 24.0
+theme_override_font_sizes/font_size = 14
+text = "Instructions"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="btnBegin" type="Button" parent="FormPanel" unique_id=281868584]
+layout_mode = 0
+offset_left = 717.0
+offset_top = 491.0
+offset_right = 792.0
+offset_bottom = 516.0
+text = "Begin"
+
+[node name="btnQuit" type="Button" parent="FormPanel" unique_id=752906242]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 491.0
+offset_right = 83.0
+offset_bottom = 516.0
+text = "Quit"
+
+[node name="Image1" type="TextureRect" parent="FormPanel" unique_id=1332978692]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 792.0
+offset_bottom = 455.0
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Button3" type="Button" parent="FormPanel" unique_id=196686140]
+visible = false
+layout_mode = 0
+offset_left = 197.0
+offset_top = 483.0
+offset_right = 272.0
+offset_bottom = 508.0
+text = "Continue"
+
+[node name="Label1" type="Label" parent="FormPanel" unique_id=1650630974]
+visible = false
+layout_mode = 0
+offset_left = 104.0
+offset_top = 479.0
+offset_right = 177.0
+offset_bottom = 508.0
+theme_override_font_sizes/font_size = 24
+text = "Label1"
+
+[node name="btnPlay" type="Button" parent="FormPanel" unique_id=385090933]
+layout_mode = 0
+offset_left = 96.0
+offset_top = 491.0
+offset_right = 171.0
+offset_bottom = 516.0
+text = "Play"
+
+[node name="btnStop" type="Button" parent="FormPanel" unique_id=314905242]
+layout_mode = 0
+offset_left = 184.0
+offset_top = 491.0
+offset_right = 259.0
+offset_bottom = 516.0
+text = "Stop"

@@ -1,3 +1,4 @@
+using godot.Scripts;
 using Godot;
 using MonitorInfo;
 using System;
@@ -68,7 +69,8 @@ public partial class BootScript : Node2D
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		exam = new Configuration();
+		exam = new Configuration(new GodotMSLogger());
+
 		// there's no configuration for the clear color
 		RenderingServer.SetDefaultClearColor(new Color(0f, 0f, 0f));
 		drawRoot = new Node2D
@@ -106,13 +108,14 @@ public partial class BootScript : Node2D
 			}
 			screenRes.Text = b.ToString();
 		}
-		string inp = @"C:\FPC_Laz\WorkingMemoryAnalyser_pas\Experiments library\TestExp\Input data\InputData_1.txt";
+		var dir = Path.GetDirectoryName(fileName);
+		string inp = Path.Combine(dir, "Input data", "InputData_1.txt");
+
 		trials = new List<TrialOrder>();
 		InputDataHelper.LoadTrials(inp, trials, pauses);
-		
 
+		log($"trials:  {trials.Count}; pauses: {pauses.Count}");
 		exam.Schedule(tm, trials, pauses, playList);
-		log($"trials:  {trials.Count}");
 		curTrial = trials[0];
 		curTrialIdx = -1; // needed to handle TrialStart properly
 
@@ -132,7 +135,7 @@ public partial class BootScript : Node2D
 		PlaySoundIfAny(drawItems);
 
 		pauseList.Clear();
-        GatherPause(drawItems, pauseList);
+		GatherPause(drawItems, pauseList);
 	
 		UpdateSectionInfo();
 	}
@@ -313,6 +316,7 @@ public partial class BootScript : Node2D
 		float descent = fnt.GetDescent(fontSize);
 		Vector2 textPos = new Vector2(-size.X / 2.0f, (ascent - descent) / 2.0f);
 
+		GD.Print($"text color: {itm.color}");
 		return new TextStimulusNode
 		{
 			Name = "TextStimulus",
@@ -550,13 +554,13 @@ public partial class BootScript : Node2D
 	{
 		return IsCondMet(itm, currentCond);
 	}
-    public bool IsCondMet(PlayItem itm, PlayItemCond condCheck)
-    {
-        return (itm != null)
-            && ((itm.cond == PlayItemCond.None) || (itm.cond == condCheck));
-    }
+	public bool IsCondMet(PlayItem itm, PlayItemCond condCheck)
+	{
+		return (itm != null)
+			&& ((itm.cond == PlayItemCond.None) || (itm.cond == condCheck));
+	}
 
-    private void RebuildDrawNodes()
+	private void RebuildDrawNodes()
 	{
 		if (isDrawPause)
 			RebuildDrawNodes(pauseList, PlayItemCond.Paused);
@@ -565,7 +569,7 @@ public partial class BootScript : Node2D
 	}
 
 
-    private void RebuildDrawNodes(List<PlayItem> itemsList, PlayItemCond checkCond)
+	private void RebuildDrawNodes(List<PlayItem> itemsList, PlayItemCond checkCond)
 	{
 		if (drawRoot == null)
 			return;
