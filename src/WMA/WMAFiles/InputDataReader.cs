@@ -39,7 +39,22 @@ namespace WMAFiles
         {
             if (vals == null) return;
             names.Clear();
-            for(int i = 0; i < vals.Length; i++)
+
+            // This is a special workaround for some older files that had "Feedback_duration_after_response_time"
+            // declared twice
+            for (int i = 0; i < vals.Length; i++)
+            {
+                if (string.Compare(vals[i], "Feedback_duration_after_response_time", true)==0)
+                {
+                    if ((i + 1 < vals.Length)&& (string.Compare(vals[i+1], "Feedback_duration_after_response_time", true) == 0))
+                    {
+                        vals[i] = "Feedback_shape";
+                    }
+                }
+            }
+
+
+            for (int i = 0; i < vals.Length; i++)
             {
                 string n = vals[i];
                 if (string.IsNullOrWhiteSpace(n))
