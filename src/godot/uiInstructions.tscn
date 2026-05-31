@@ -1,6 +1,9 @@
 [gd_scene format=3 uid="uid://b61tfka4qu14w"]
 
 [ext_resource type="Script" uid="uid://dp6adpvj7xy0" path="res://Scripts/InstructionsShow.cs" id="1_jsu0n"]
+[ext_resource type="Script" uid="uid://cuucqman7g4fq" path="res://Scripts/SceneLoad.cs" id="2_ap3cv"]
+[ext_resource type="Script" uid="uid://ri8ujbhpth3d" path="res://Scripts/QuitApp.cs" id="2_g1uyt"]
+[ext_resource type="PackedScene" uid="uid://kfxkun5kasfk" path="res://experiment.tscn" id="3_ellux"]
 
 [node name="uiInstructions" type="Control" unique_id=130860802 node_paths=PackedStringArray("instructionsImage")]
 custom_minimum_size = Vector2(800, 541)
@@ -13,6 +16,14 @@ grow_vertical = 2
 script = ExtResource("1_jsu0n")
 instructionsImage = NodePath("FormPanel/Image1")
 
+[node name="DoQuit" type="Node" parent="." unique_id=386563136]
+script = ExtResource("2_g1uyt")
+
+[node name="StartExperiment" type="Node" parent="." unique_id=241598564]
+script = ExtResource("2_ap3cv")
+sceneAsTscn = ExtResource("3_ellux")
+replaceScene = true
+
 [node name="FormPanel" type="Panel" parent="." unique_id=644401495]
 layout_mode = 1
 anchors_preset = 15
@@ -21,71 +32,97 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="WindowTitle" type="Label" parent="FormPanel" unique_id=998396733]
-layout_mode = 0
-offset_right = 800.0
-offset_bottom = 24.0
-theme_override_font_sizes/font_size = 14
-text = "Instructions"
-horizontal_alignment = 1
-vertical_alignment = 1
-
 [node name="btnBegin" type="Button" parent="FormPanel" unique_id=281868584]
-layout_mode = 0
-offset_left = 717.0
-offset_top = 491.0
-offset_right = 792.0
-offset_bottom = 516.0
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -164.0
+offset_top = -61.0
+offset_right = -37.0
+offset_bottom = -25.0
+grow_horizontal = 0
+grow_vertical = 0
 text = "Begin"
 
 [node name="btnQuit" type="Button" parent="FormPanel" unique_id=752906242]
-layout_mode = 0
-offset_left = 8.0
-offset_top = 491.0
-offset_right = 83.0
-offset_bottom = 516.0
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 31.0
+offset_top = -63.0
+offset_right = 158.0
+offset_bottom = -27.0
 text = "Quit"
 
 [node name="Image1" type="TextureRect" parent="FormPanel" unique_id=1332978692]
-layout_mode = 0
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 0.795
 offset_left = 8.0
 offset_top = 8.0
-offset_right = 792.0
-offset_bottom = 455.0
+offset_right = -11.0
+offset_bottom = -0.16003418
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Button3" type="Button" parent="FormPanel" unique_id=196686140]
+[node name="btnContinue" type="Button" parent="FormPanel" unique_id=196686140]
 visible = false
-layout_mode = 0
-offset_left = 197.0
-offset_top = 483.0
-offset_right = 272.0
-offset_bottom = 508.0
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -166.0
+offset_top = -113.0
+offset_right = -39.0
+offset_bottom = -77.0
+grow_horizontal = 0
+grow_vertical = 0
 text = "Continue"
 
 [node name="Label1" type="Label" parent="FormPanel" unique_id=1650630974]
 visible = false
-layout_mode = 0
-offset_left = 104.0
-offset_top = 479.0
-offset_right = 177.0
-offset_bottom = 508.0
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 35.0
+offset_top = -121.0
+offset_right = 111.0
+offset_bottom = -87.0
+grow_vertical = 2
 theme_override_font_sizes/font_size = 24
 text = "Label1"
 
 [node name="btnPlay" type="Button" parent="FormPanel" unique_id=385090933]
-layout_mode = 0
-offset_left = 96.0
-offset_top = 491.0
-offset_right = 171.0
-offset_bottom = 516.0
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 223.0
+offset_top = -62.0
+offset_right = 350.0
+offset_bottom = -26.0
+grow_vertical = 0
 text = "Play"
 
 [node name="btnStop" type="Button" parent="FormPanel" unique_id=314905242]
-layout_mode = 0
-offset_left = 184.0
-offset_top = 491.0
-offset_right = 259.0
-offset_bottom = 516.0
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 413.0
+offset_top = -64.0
+offset_right = 540.0
+offset_bottom = -28.0
+grow_vertical = 0
 text = "Stop"
+
+[connection signal="pressed" from="FormPanel/btnBegin" to="StartExperiment" method="LoadScene"]
+[connection signal="pressed" from="FormPanel/btnQuit" to="DoQuit" method="DoQuit"]

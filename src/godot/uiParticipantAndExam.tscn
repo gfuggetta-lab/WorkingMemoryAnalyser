@@ -2713,6 +2713,7 @@ grow_horizontal = 0
 text = "About"
 
 [node name="ComboBox8" type="OptionButton" parent="FormPanel" unique_id=1053553267]
+visible = false
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -3241,6 +3242,7 @@ popup/item_255/text = "255"
 popup/item_255/id = 255
 
 [node name="Label10" type="Label" parent="FormPanel" unique_id=776479312]
+visible = false
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -3270,6 +3272,7 @@ grow_horizontal = 2
 grow_vertical = 0
 
 [node name="Label16" type="Label" parent="FormPanel" unique_id=2002771322]
+visible = false
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
