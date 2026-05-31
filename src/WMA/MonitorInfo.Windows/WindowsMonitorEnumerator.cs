@@ -322,6 +322,9 @@ namespace MonitorInfo.Windows
         public static bool ParsePhysicalSizeFromEdid(byte[] edid, out double widthMM, out double heightMM)
         {
 
+            if (TryParsePhysicalSizeFromDetailedTimingDescriptor(edid, out widthMM, out heightMM))
+                return true;
+
             // EDID byte 21: maximum horizontal image size in centimeters.
             // EDID byte 22: maximum vertical image size in centimeters.
             int widthCm = edid[EDID_WIDTH_OFS];
@@ -333,10 +336,12 @@ namespace MonitorInfo.Windows
                 heightMM = heightCm * 10.0;
                 return true;
             }
+            else
+                return false;
 
             // Fallback: try detailed timing descriptors.
             // Physical size may be stored in millimeters inside descriptor blocks.
-            return TryParsePhysicalSizeFromDetailedTimingDescriptor(edid, out widthMM, out heightMM);
+            
         }
 
         public static bool TryParseMonitorNameFromEdid(byte[] edid, out string monitorName)
