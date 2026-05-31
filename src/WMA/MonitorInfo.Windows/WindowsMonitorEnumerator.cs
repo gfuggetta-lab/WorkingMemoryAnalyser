@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Text;
 using Microsoft.Win32;
 
 namespace MonitorInfo.Windows
@@ -44,9 +45,20 @@ namespace MonitorInfo.Windows
             bool haveSize = false;
             double wmm = 0.0;
             double hmm = 0.0;
+            string edidName = "";
 
             if (monitorDevice != null)
-                haveSize = TryGetPhysicalSizeFromEdid(monitorDevice.DeviceID, out wmm, out hmm);
+            {
+                if (TryGetEdid(monitorDevice.DeviceID, out byte[] edid))
+                {
+                    haveSize = ParsePhysicalSizeFromEdid(edid, out wmm, out hmm);
+                    if (!TryParseMonitorNameFromEdid(edid, out edidName))
+                    {
+                        edidName = "";
+                    }
+                }
+            }
+                //haveSize = TryGetPhysicalSizeFromEdid(monitorDevice.DeviceID, out wmm, out hmm);
 
             if (!haveSize)
                 TryGetPhysicalSizeFromDeviceCaps(displayDeviceName, out wmm, out hmm);
@@ -58,7 +70,10 @@ namespace MonitorInfo.Windows
 
             ConnectedMonitor result = new ConnectedMonitor();
             result.Id = displayDeviceName;
-            result.Name = displayDeviceName;
+            if (!string.IsNullOrEmpty(edidName))
+                result.Name = edidName;
+            else 
+                result.Name = GetHumanReadableMonitorName(displayDeviceName, monitorDevice);
             //result.MonitorDeviceName = monitorDevice == null ? null : monitorDevice.DeviceName;
             //result.MonitorFriendlyName = monitorDevice == null ? null : monitorDevice.DeviceString;
             //result.MonitorDeviceId = monitorDevice == null ? null : monitorDevice.DeviceID;
@@ -112,6 +127,18 @@ namespace MonitorInfo.Windows
             }
 
             return null;
+        }
+
+        private static string GetHumanReadableMonitorName(string displayDeviceName, DisplayDeviceInfo monitorDevice)
+        {
+            if (monitorDevice != null)
+            {
+
+                if (!string.IsNullOrWhiteSpace(monitorDevice.DeviceString))
+                    return monitorDevice.DeviceString.Trim();
+            }
+
+            return displayDeviceName;
         }
 
         /*
@@ -185,34 +212,81 @@ namespace MonitorInfo.Windows
         {
             heightMM = 0;
             widthMM = 0;
-            if (string.IsNullOrEmpty(monitorDeviceId))
+
+            if (!TryGetEdid(monitorDeviceId, out byte[] edid))
                 return false;
 
-            string normalizedDeviceId = NormalizeMonitorDeviceIdForRegistry(monitorDeviceId);
-            if (string.IsNullOrEmpty(normalizedDeviceId))
-                return false;
-
-            string keyPath = @"SYSTEM\CurrentControlSet\Enum\" +
-                             normalizedDeviceId +
-                             @"\Device Parameters";
-
-            using (RegistryKey key = Registry.LocalMachine.OpenSubKey(keyPath, false))
-            {
-                if (key == null)
-                    return false;
-
-                object value = key.GetValue("EDID");
-                byte[] edid = value as byte[];
-
-                if (edid == null || edid.Length < 23)
-                    return false;
-
-                return ParsePhysicalSizeFromEdid(edid, out widthMM, out heightMM);
-            }
+            return ParsePhysicalSizeFromEdid(edid, out widthMM, out heightMM);
         }
 
-        private static string NormalizeMonitorDeviceIdForRegistry(string monitorDeviceId)
+        private static bool TryGetMonitorNameFromEdid(string monitorDeviceId, out string monitorName)
         {
+            monitorName = null;
+
+            if (!TryGetEdid(monitorDeviceId, out byte[] edid))
+                return false;
+
+            return TryParseMonitorNameFromEdid(edid, out monitorName);
+        }
+
+        private static bool TryGetEdid(string monitorDeviceId, out byte[] edid)
+        {
+            edid = null;
+
+            if (string.IsNullOrEmpty(monitorDeviceId))
+                return false;
+            if (!NormalizeMonitorDeviceIdForRegistry(monitorDeviceId, out var dispName, out var clsid))
+                return false;
+
+            string keyPath = @"SYSTEM\CurrentControlSet\Enum\DISPLAY\" + dispName;
+                             //@"\Device Parameters";
+
+            using (RegistryKey dispKey = Registry.LocalMachine.OpenSubKey(keyPath, false))
+            {
+                if (dispKey == null)
+                    return false;
+
+                string[] subDisp = dispKey.GetSubKeyNames();
+
+                if (subDisp == null || subDisp.Length == 0)
+                    return false;
+
+                foreach (var sub in subDisp)
+                {
+                    using (RegistryKey inKey = dispKey.OpenSubKey(sub))
+                    {
+                        if (inKey == null)
+                            continue;
+
+                        string cls = inKey.GetValue("ClassGUID") as string;
+                        if (string.Compare(cls, clsid, true) != 0)
+                            continue;
+
+                        using (RegistryKey edidKey = inKey.OpenSubKey("Device Parameters"))
+                        {
+                            if (edidKey == null)
+                                return false;
+
+                            object value = edidKey.GetValue("EDID");
+                            byte[] edidBytes = value as byte[];
+
+                            if (edidBytes == null || edidBytes.Length < 23)
+                                return false;
+
+                            edid = edidBytes;
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        private static bool NormalizeMonitorDeviceIdForRegistry(string monitorDeviceId, out string dispName, out string classId)
+        {
+            const string monitorPrefix = @"MONITOR\";
+            dispName = "";
+            classId = "";
             string s = monitorDeviceId.Trim();
 
             if (s.StartsWith(@"\\?\", StringComparison.OrdinalIgnoreCase))
@@ -224,16 +298,28 @@ namespace MonitorInfo.Windows
 
             s = s.Replace('#', '\\');
 
-            if (!s.StartsWith(@"MONITOR\", StringComparison.OrdinalIgnoreCase))
-                return null;
+            if (!s.StartsWith(monitorPrefix, StringComparison.OrdinalIgnoreCase))
+                return false;
 
-            return s;
+            string[] parts = s.Split(new string[] { "\\" }, StringSplitOptions.None);
+            if (parts.Length < 3) return false;
+
+            // MONITOR\NAME\ClassID
+            dispName = parts[1];
+            classId = parts[2];
+
+            return true;
         }
 
         public const int EDID_WIDTH_OFS = 21;
         public const int EDID_HEIGHT_OFS = 22;
+        public const int EDID_TIMING_DESCR_MIN_LENGTH = 128;
+        public const int EDID_DESCRIPTOR_START = 54;
+        public const int EDID_DESCRIPTOR_END = 108;
+        public const int EDID_DESCRIPTOR_SIZE = 18;
+        public const byte EDID_MONITOR_NAME_TAG = 0xFC;
 
-        private static bool ParsePhysicalSizeFromEdid(byte[] edid, out double widthMM, out double heightMM)
+        public static bool ParsePhysicalSizeFromEdid(byte[] edid, out double widthMM, out double heightMM)
         {
 
             // EDID byte 21: maximum horizontal image size in centimeters.
@@ -253,7 +339,36 @@ namespace MonitorInfo.Windows
             return TryParsePhysicalSizeFromDetailedTimingDescriptor(edid, out widthMM, out heightMM);
         }
 
-        public const int EDID_TIMING_DESCR_MIN_LENGTH = 128;
+        public static bool TryParseMonitorNameFromEdid(byte[] edid, out string monitorName)
+        {
+            monitorName = null;
+
+            if (edid == null || edid.Length < EDID_TIMING_DESCR_MIN_LENGTH)
+                return false;
+
+            for (int offset = EDID_DESCRIPTOR_START; offset <= EDID_DESCRIPTOR_END; offset += EDID_DESCRIPTOR_SIZE)
+            {
+                if (edid[offset] != 0x00 ||
+                    edid[offset + 1] != 0x00 ||
+                    edid[offset + 2] != 0x00 ||
+                    edid[offset + 3] != EDID_MONITOR_NAME_TAG ||
+                    edid[offset + 4] != 0x00)
+                {
+                    continue;
+                }
+
+                string name = Encoding.ASCII.GetString(edid, offset + 5, 13)
+                    .Trim('\0', '\r', '\n', ' ');
+
+                if (!string.IsNullOrWhiteSpace(name))
+                {
+                    monitorName = name;
+                    return true;
+                }
+            }
+
+            return false;
+        }
 
         private static bool TryParsePhysicalSizeFromDetailedTimingDescriptor(byte[] edid, out double widthMM, out double heightMM)
         {
@@ -264,7 +379,7 @@ namespace MonitorInfo.Windows
 
             // https://en.wikipedia.org/wiki/Extended_Display_Identification_Data
 
-            for (int offset = 54; offset <= 108; offset += 18)
+            for (int offset = EDID_DESCRIPTOR_START; offset <= EDID_DESCRIPTOR_END; offset += EDID_DESCRIPTOR_SIZE)
             {
                 int pixelClock = edid[offset] | (edid[offset + 1] << 8);
                 if (pixelClock == 0)

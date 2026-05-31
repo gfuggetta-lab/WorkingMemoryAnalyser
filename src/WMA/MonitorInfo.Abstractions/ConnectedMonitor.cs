@@ -16,6 +16,8 @@ namespace MonitorInfo
         /// </summary>
         public string Id { get; set; }
 
+
+        // Human readable name
         public string Name { get; set; }
 
         public bool IsPrimary { get; set; }
