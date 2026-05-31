@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.IO;
 
 public partial class ParticipantAndExamDataBinder : Control
 {
@@ -9,6 +10,8 @@ public partial class ParticipantAndExamDataBinder : Control
 	[Export] public CheckBox displayTypeInput;
 	[Export] public TextEdit overviewText;
 	[Export] public Button enableButton;
+	[Export] public Button selectExperimentButton;
+	[Export] public FileDialog experimentDirectoryDialog;
 
 	[Signal]
 	public delegate void dataReceivedEventHandler();
@@ -28,6 +31,12 @@ public partial class ParticipantAndExamDataBinder : Control
 
 		if (overviewText != null)
 			overviewText.TextChanged += UpdateData;
+
+		if (selectExperimentButton != null)
+			selectExperimentButton.Pressed += SelectExperiment;
+
+		if (experimentDirectoryDialog != null)
+			experimentDirectoryDialog.DirSelected += OnExperimentDirectorySelected;
 
 		UpdateData();
 	}
@@ -85,5 +94,30 @@ public partial class ParticipantAndExamDataBinder : Control
 			EmitSignal(SignalName.dataReceived);
 		else
 			EmitSignal(SignalName.dataIncomplete);
+	}
+
+	private void SelectExperiment()
+	{
+		if (experimentDirectoryDialog == null)
+			return;
+
+		experimentDirectoryDialog.PopupCenteredRatio(0.8f);
+	}
+
+	private void OnExperimentDirectorySelected(string directory)
+	{
+		ExperimentShared.SourcePath = directory;
+
+		var overviewPath = Path.Combine(directory, "Overview.txt");
+		if (!File.Exists(overviewPath))
+		{
+			GD.PushWarning($"Overview.txt was not found in selected experiment directory: {directory}");
+			return;
+		}
+
+		if (overviewText != null)
+			overviewText.Text = File.ReadAllText(overviewPath);
+
+		UpdateData();
 	}
 }

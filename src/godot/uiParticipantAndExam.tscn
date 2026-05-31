@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://db2mels6ojsyr" path="res://Scripts/ParticipantAndExamDataBinder.cs" id="1_lxf75"]
 
-[node name="uiParticipantAndExam" type="Control" unique_id=1922825012 node_paths=PackedStringArray("ageInput", "sexInput", "handednessInput", "displayTypeInput", "overviewText", "enableButton")]
+[node name="uiParticipantAndExam" type="Control" unique_id=1922825012 node_paths=PackedStringArray("ageInput", "sexInput", "handednessInput", "displayTypeInput", "overviewText", "enableButton", "selectExperimentButton", "experimentDirectoryDialog")]
 custom_minimum_size = Vector2(836, 503)
 layout_mode = 3
 anchors_preset = 15
@@ -17,6 +17,8 @@ handednessInput = NodePath("FormPanel/ComboBox14")
 displayTypeInput = NodePath("FormPanel/RadioGroup4/Option1")
 overviewText = NodePath("FormPanel/textOverview")
 enableButton = NodePath("FormPanel/btnBegin")
+selectExperimentButton = NodePath("FormPanel/btnSelectExperiment")
+experimentDirectoryDialog = NodePath("ExperimentDirectoryDialog")
 
 [node name="FormPanel" type="Panel" parent="." unique_id=644262766]
 layout_mode = 1
@@ -27,6 +29,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="WindowTitle" type="Label" parent="FormPanel" unique_id=2080722551]
+process_mode = 4
 layout_mode = 0
 offset_right = 836.0
 offset_bottom = 24.0
@@ -78,20 +81,31 @@ offset_bottom = 653.0
 text = "It is essential to select correct values for the following:"
 
 [node name="btnBegin" type="Button" parent="FormPanel" unique_id=25630888]
-layout_mode = 0
-offset_left = 749.0
-offset_top = 444.0
-offset_right = 824.0
-offset_bottom = 469.0
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -155.0
+offset_top = -55.0
+offset_right = -32.0
+offset_bottom = -19.0
+grow_horizontal = 0
+grow_vertical = 0
 disabled = true
 text = "Begin"
 
 [node name="btnQuit" type="Button" parent="FormPanel" unique_id=1743685519]
-layout_mode = 0
-offset_left = 16.0
-offset_top = 444.0
-offset_right = 61.0
-offset_bottom = 469.0
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 18.0
+offset_top = -55.0
+offset_right = 141.0
+offset_bottom = -19.0
+grow_vertical = 0
 text = "Quit"
 
 [node name="Edit1" type="LineEdit" parent="FormPanel" unique_id=331990037]
@@ -2518,11 +2532,15 @@ offset_bottom = 757.0
 text = "Blue"
 
 [node name="RadioGroup4" type="Panel" parent="FormPanel" unique_id=210544909]
-layout_mode = 0
-offset_left = 464.0
-offset_top = 16.0
-offset_right = 824.0
-offset_bottom = 141.0
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -596.0
+offset_top = 23.0
+offset_right = -23.0
+offset_bottom = 148.0
+grow_horizontal = 0
 
 [node name="Caption" type="Label" parent="FormPanel/RadioGroup4" unique_id=1815487345]
 layout_mode = 0
@@ -2607,11 +2625,17 @@ offset_bottom = 653.0
 text = "Part"
 
 [node name="textOverview" type="TextEdit" parent="FormPanel" unique_id=1912455576]
-layout_mode = 0
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.37
+anchor_right = 1.0
+anchor_bottom = 0.82100004
 offset_left = 16.0
-offset_top = 240.0
-offset_right = 824.0
-offset_bottom = 432.0
+offset_top = 0.23999023
+offset_right = -17.0
+offset_bottom = -0.0079956055
+editable = false
+wrap_mode = 1
 
 [node name="Label13" type="Label" parent="FormPanel" unique_id=1449459462]
 layout_mode = 0
@@ -2670,19 +2694,30 @@ offset_bottom = 29.0
 text = "Handedness"
 
 [node name="btnAbout" type="Button" parent="FormPanel" unique_id=391105848]
-layout_mode = 0
-offset_left = 749.0
-offset_top = 152.0
-offset_right = 824.0
-offset_bottom = 177.0
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -149.0
+offset_top = 155.0
+offset_right = -26.0
+offset_bottom = 191.0
+grow_horizontal = 0
 text = "About"
 
 [node name="ComboBox8" type="OptionButton" parent="FormPanel" unique_id=1053553267]
-layout_mode = 0
-offset_left = 456.0
-offset_top = 440.0
-offset_right = 556.0
-offset_bottom = 461.0
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = 180.0
+offset_top = -80.0
+offset_right = 282.0
+offset_bottom = -49.0
+grow_horizontal = 2
+grow_vertical = 0
 selected = 14
 item_count = 256
 popup/item_0/text = "Not used"
@@ -3199,24 +3234,54 @@ popup/item_255/text = "255"
 popup/item_255/id = 255
 
 [node name="Label10" type="Label" parent="FormPanel" unique_id=776479312]
-layout_mode = 0
-offset_left = 248.0
-offset_top = 444.0
-offset_right = 448.0
-offset_bottom = 457.0
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -160.0
+offset_top = -76.0
+offset_right = 160.0
+offset_bottom = -53.0
+grow_horizontal = 2
+grow_vertical = 0
 text = "LUFA USB serial device COM port number"
 
 [node name="ScrollBar1" type="HScrollBar" parent="FormPanel" unique_id=250656963]
-layout_mode = 0
-offset_left = 864.0
-offset_top = 447.0
-offset_right = 900.0
-offset_bottom = 463.0
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = 332.0
+offset_top = -79.0
+offset_right = 368.0
+offset_bottom = -63.0
+grow_horizontal = 2
+grow_vertical = 0
 
 [node name="Label16" type="Label" parent="FormPanel" unique_id=2002771322]
-layout_mode = 0
-offset_left = 248.0
-offset_top = 472.0
-offset_right = 257.0
-offset_bottom = 485.0
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -5.0
+offset_top = -43.0
+offset_right = 11.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 0
 text = "---"
+
+[node name="ExperimentDirectoryDialog" type="FileDialog" parent="." unique_id=348450104]
+title = "Open a Directory"
+initial_position = 2
+size = Vector2i(676, 420)
+ok_button_text = "Select Current Folder"
+file_mode = 2
+access = 2
+use_native_dialog = true
