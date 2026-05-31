@@ -28,16 +28,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="WindowTitle" type="Label" parent="FormPanel" unique_id=2080722551]
-process_mode = 4
-layout_mode = 0
-offset_right = 836.0
-offset_bottom = 24.0
-theme_override_font_sizes/font_size = 14
-text = "Working Memory Analyser"
-horizontal_alignment = 1
-vertical_alignment = 1
-
 [node name="Label1" type="Label" parent="FormPanel" unique_id=1942164570]
 visible = false
 layout_mode = 0

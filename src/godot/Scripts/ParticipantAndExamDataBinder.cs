@@ -217,7 +217,7 @@ public partial class ParticipantAndExamDataBinder : Control
 
 		var widthCm = monitor.PhysWidthMM / 10.0;
 		var heightCm = monitor.PhysHeightMM / 10.0;
-		return $"{monitor.Name}: {monitor.PixelWidth}x{monitor.PixelHeight} px, {widthCm:0.#}x{heightCm:0.#} cm";
+		return $"{monitor.Name} ({monitor.PixelWidth}x{monitor.PixelHeight}) ({widthCm:0.#}cm x {heightCm:0.#}cm)";
 	}
 
 	private static string GetMonitorId(ConnectedMonitor monitor)
