@@ -1,23 +1,24 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene format=3 uid="uid://ty3n27ms4gr8"]
 
-[ext_resource type="Script" path="res://Scripts/ParticipantAndExamDataBinder.cs" id="1_lxf75"]
+[ext_resource type="Script" uid="uid://db2mels6ojsyr" path="res://Scripts/ParticipantAndExamDataBinder.cs" id="1_lxf75"]
 
-[node name="uiParticipantAndExam" type="Control" node_paths=PackedStringArray("ageInput", "sexInput", "handednessInput", "displayTypeInput", "overviewText")]
+[node name="uiParticipantAndExam" type="Control" unique_id=1922825012 node_paths=PackedStringArray("ageInput", "sexInput", "handednessInput", "displayTypeInput", "overviewText", "enableButton")]
+custom_minimum_size = Vector2(836, 503)
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-custom_minimum_size = Vector2(836, 503)
 script = ExtResource("1_lxf75")
 ageInput = NodePath("FormPanel/ComboBox3")
 sexInput = NodePath("FormPanel/ComboBox13")
 handednessInput = NodePath("FormPanel/ComboBox14")
 displayTypeInput = NodePath("FormPanel/RadioGroup4/Option1")
-overviewText = NodePath("FormPanel/Memo1")
+overviewText = NodePath("FormPanel/textOverview")
+enableButton = NodePath("FormPanel/btnBegin")
 
-[node name="FormPanel" type="Panel" parent="."]
+[node name="FormPanel" type="Panel" parent="." unique_id=644262766]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -25,10 +26,8 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="WindowTitle" type="Label" parent="FormPanel"]
+[node name="WindowTitle" type="Label" parent="FormPanel" unique_id=2080722551]
 layout_mode = 0
-offset_left = 0.0
-offset_top = 0.0
 offset_right = 836.0
 offset_bottom = 24.0
 theme_override_font_sizes/font_size = 14
@@ -36,16 +35,16 @@ text = "Working Memory Analyser"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Label1" type="Label" parent="FormPanel"]
+[node name="Label1" type="Label" parent="FormPanel" unique_id=1942164570]
+visible = false
 layout_mode = 0
 offset_left = 328.0
 offset_top = 680.0
 offset_right = 416.0
 offset_bottom = 693.0
-visible = false
 text = "Participant's initials"
 
-[node name="Label2" type="Label" parent="FormPanel"]
+[node name="Label2" type="Label" parent="FormPanel" unique_id=1719001517]
 layout_mode = 0
 offset_left = 16.0
 offset_top = 96.0
@@ -53,7 +52,7 @@ offset_right = 94.0
 offset_bottom = 109.0
 text = "Input file number"
 
-[node name="Label3" type="Label" parent="FormPanel"]
+[node name="Label3" type="Label" parent="FormPanel" unique_id=598464123]
 layout_mode = 0
 offset_left = 144.0
 offset_top = 96.0
@@ -61,7 +60,7 @@ offset_right = 219.0
 offset_bottom = 109.0
 text = "Session number"
 
-[node name="Label4" type="Label" parent="FormPanel"]
+[node name="Label4" type="Label" parent="FormPanel" unique_id=685233157]
 layout_mode = 0
 offset_left = 17.0
 offset_top = 16.0
@@ -69,16 +68,16 @@ offset_right = 36.0
 offset_bottom = 29.0
 text = "Age"
 
-[node name="Label6" type="Label" parent="FormPanel"]
+[node name="Label6" type="Label" parent="FormPanel" unique_id=30920418]
+visible = false
 layout_mode = 0
 offset_left = 400.0
 offset_top = 640.0
 offset_right = 653.0
 offset_bottom = 653.0
-visible = false
 text = "It is essential to select correct values for the following:"
 
-[node name="Button1" type="Button" parent="FormPanel"]
+[node name="btnBegin" type="Button" parent="FormPanel" unique_id=25630888]
 layout_mode = 0
 offset_left = 749.0
 offset_top = 444.0
@@ -87,7 +86,7 @@ offset_bottom = 469.0
 disabled = true
 text = "Begin"
 
-[node name="Button2" type="Button" parent="FormPanel"]
+[node name="btnQuit" type="Button" parent="FormPanel" unique_id=1743685519]
 layout_mode = 0
 offset_left = 16.0
 offset_top = 444.0
@@ -95,21 +94,22 @@ offset_right = 61.0
 offset_bottom = 469.0
 text = "Quit"
 
-[node name="Edit1" type="LineEdit" parent="FormPanel"]
+[node name="Edit1" type="LineEdit" parent="FormPanel" unique_id=331990037]
+visible = false
 layout_mode = 0
 offset_left = 208.0
 offset_top = 672.0
 offset_right = 309.0
 offset_bottom = 693.0
-visible = false
 text = "INITIALS"
 
-[node name="ComboBox1" type="OptionButton" parent="FormPanel"]
+[node name="ComboBox1" type="OptionButton" parent="FormPanel" unique_id=1631605131]
 layout_mode = 0
 offset_left = 16.0
 offset_top = 120.0
 offset_right = 114.0
 offset_bottom = 141.0
+selected = 0
 item_count = 303
 popup/item_0/text = "Random"
 popup/item_0/id = 0
@@ -717,9 +717,8 @@ popup/item_301/text = "1001"
 popup/item_301/id = 301
 popup/item_302/text = "1002"
 popup/item_302/id = 302
-selected = 0
 
-[node name="ComboBox2" type="OptionButton" parent="FormPanel"]
+[node name="ComboBox2" type="OptionButton" parent="FormPanel" unique_id=773242744]
 layout_mode = 0
 offset_left = 144.0
 offset_top = 120.0
@@ -767,7 +766,7 @@ popup/item_18/id = 18
 popup/item_19/text = "20"
 popup/item_19/id = 19
 
-[node name="ComboBox3" type="OptionButton" parent="FormPanel"]
+[node name="ComboBox3" type="OptionButton" parent="FormPanel" unique_id=634769870]
 layout_mode = 0
 offset_left = 16.0
 offset_top = 40.0
@@ -925,13 +924,14 @@ popup/item_73/id = 73
 popup/item_74/text = "80"
 popup/item_74/id = 74
 
-[node name="ComboBox5" type="OptionButton" parent="FormPanel"]
+[node name="ComboBox5" type="OptionButton" parent="FormPanel" unique_id=874241447]
+visible = false
 layout_mode = 0
 offset_left = 24.0
 offset_top = 768.0
 offset_right = 124.0
 offset_bottom = 789.0
-visible = false
+selected = 0
 item_count = 256
 popup/item_0/text = "0"
 popup/item_0/id = 0
@@ -1445,15 +1445,15 @@ popup/item_254/text = "254"
 popup/item_254/id = 254
 popup/item_255/text = "255"
 popup/item_255/id = 255
-selected = 0
 
-[node name="ComboBox6" type="OptionButton" parent="FormPanel"]
+[node name="ComboBox6" type="OptionButton" parent="FormPanel" unique_id=2135147038]
+visible = false
 layout_mode = 0
 offset_left = 136.0
 offset_top = 768.0
 offset_right = 236.0
 offset_bottom = 789.0
-visible = false
+selected = 0
 item_count = 256
 popup/item_0/text = "0"
 popup/item_0/id = 0
@@ -1967,15 +1967,15 @@ popup/item_254/text = "254"
 popup/item_254/id = 254
 popup/item_255/text = "255"
 popup/item_255/id = 255
-selected = 0
 
-[node name="ComboBox7" type="OptionButton" parent="FormPanel"]
+[node name="ComboBox7" type="OptionButton" parent="FormPanel" unique_id=1281884951]
+visible = false
 layout_mode = 0
 offset_left = 248.0
 offset_top = 768.0
 offset_right = 348.0
 offset_bottom = 789.0
-visible = false
+selected = 0
 item_count = 256
 popup/item_0/text = "0"
 popup/item_0/id = 0
@@ -2489,93 +2489,92 @@ popup/item_254/text = "254"
 popup/item_254/id = 254
 popup/item_255/text = "255"
 popup/item_255/id = 255
-selected = 0
 
-[node name="Label7" type="Label" parent="FormPanel"]
+[node name="Label7" type="Label" parent="FormPanel" unique_id=1685329138]
+visible = false
 layout_mode = 0
 offset_left = 31.0
 offset_top = 744.0
 offset_right = 51.0
 offset_bottom = 757.0
-visible = false
 text = "Red"
 
-[node name="Label8" type="Label" parent="FormPanel"]
+[node name="Label8" type="Label" parent="FormPanel" unique_id=1111760817]
+visible = false
 layout_mode = 0
 offset_left = 136.0
 offset_top = 744.0
 offset_right = 165.0
 offset_bottom = 757.0
-visible = false
 text = "Green"
 
-[node name="Label9" type="Label" parent="FormPanel"]
+[node name="Label9" type="Label" parent="FormPanel" unique_id=2064160917]
+visible = false
 layout_mode = 0
 offset_left = 248.0
 offset_top = 744.0
 offset_right = 269.0
 offset_bottom = 757.0
-visible = false
 text = "Blue"
 
-[node name="RadioGroup4" type="Panel" parent="FormPanel"]
+[node name="RadioGroup4" type="Panel" parent="FormPanel" unique_id=210544909]
 layout_mode = 0
 offset_left = 464.0
 offset_top = 16.0
 offset_right = 824.0
 offset_bottom = 141.0
 
-[node name="Caption" type="Label" parent="FormPanel/RadioGroup4"]
+[node name="Caption" type="Label" parent="FormPanel/RadioGroup4" unique_id=1815487345]
 layout_mode = 0
 offset_left = 8.0
-offset_top = 0.0
 offset_right = 352.0
 offset_bottom = 22.0
 text = "Display type (Must match Windows Display Settings!)"
 
-[node name="Option1" type="CheckBox" parent="FormPanel/RadioGroup4"]
+[node name="Option1" type="CheckBox" parent="FormPanel/RadioGroup4" unique_id=1862952052]
 layout_mode = 0
 offset_left = 8.0
 offset_top = 24.0
 offset_right = 352.0
 offset_bottom = 48.0
-text = "1: Default"
 button_pressed = true
+text = "1: Default"
 
-[node name="Label12" type="Label" parent="FormPanel"]
+[node name="Label12" type="Label" parent="FormPanel" unique_id=1643971722]
+visible = false
 layout_mode = 0
 offset_left = 23.0
 offset_top = 480.0
 offset_right = 61.0
 offset_bottom = 493.0
-visible = false
 text = "Label12"
 
-[node name="Edit3" type="LineEdit" parent="FormPanel"]
+[node name="Edit3" type="LineEdit" parent="FormPanel" unique_id=88500613]
+visible = false
 layout_mode = 0
 offset_left = 368.0
 offset_top = 768.0
 offset_right = 448.0
 offset_bottom = 789.0
-visible = false
 text = "400"
 
-[node name="Label11" type="Label" parent="FormPanel"]
+[node name="Label11" type="Label" parent="FormPanel" unique_id=1964479511]
+visible = false
 layout_mode = 0
 offset_left = 368.0
 offset_top = 750.0
 offset_right = 468.0
 offset_bottom = 763.0
-visible = false
 text = "Photodiode threshold"
 
-[node name="ComboBox4" type="OptionButton" parent="FormPanel"]
+[node name="ComboBox4" type="OptionButton" parent="FormPanel" unique_id=1598358987]
+visible = false
 layout_mode = 0
 offset_left = 16.0
 offset_top = 672.0
 offset_right = 116.0
 offset_bottom = 693.0
-visible = false
+selected = 0
 item_count = 10
 popup/item_0/text = "1"
 popup/item_0/id = 0
@@ -2597,27 +2596,24 @@ popup/item_8/text = "9"
 popup/item_8/id = 8
 popup/item_9/text = "10"
 popup/item_9/id = 9
-selected = 0
 
-[node name="Label5" type="Label" parent="FormPanel"]
+[node name="Label5" type="Label" parent="FormPanel" unique_id=528872871]
+visible = false
 layout_mode = 0
 offset_left = 16.0
 offset_top = 640.0
 offset_right = 35.0
 offset_bottom = 653.0
-visible = false
 text = "Part"
 
-[node name="Memo1" type="TextEdit" parent="FormPanel"]
+[node name="textOverview" type="TextEdit" parent="FormPanel" unique_id=1912455576]
 layout_mode = 0
 offset_left = 16.0
 offset_top = 240.0
 offset_right = 824.0
 offset_bottom = 432.0
-text = ""
-scroll_fit_content_height = false
 
-[node name="Label13" type="Label" parent="FormPanel"]
+[node name="Label13" type="Label" parent="FormPanel" unique_id=1449459462]
 layout_mode = 0
 offset_left = 17.0
 offset_top = 216.0
@@ -2625,7 +2621,7 @@ offset_right = 62.0
 offset_bottom = 229.0
 text = "Overview"
 
-[node name="Button3" type="Button" parent="FormPanel"]
+[node name="btnSelectExperiment" type="Button" parent="FormPanel" unique_id=883845903]
 layout_mode = 0
 offset_left = 264.0
 offset_top = 168.0
@@ -2633,7 +2629,7 @@ offset_right = 560.0
 offset_bottom = 209.0
 text = "Select experiment"
 
-[node name="ComboBox13" type="OptionButton" parent="FormPanel"]
+[node name="ComboBox13" type="OptionButton" parent="FormPanel" unique_id=755311192]
 layout_mode = 0
 offset_left = 145.0
 offset_top = 40.0
@@ -2645,7 +2641,7 @@ popup/item_0/id = 0
 popup/item_1/text = "Female"
 popup/item_1/id = 1
 
-[node name="ComboBox14" type="OptionButton" parent="FormPanel"]
+[node name="ComboBox14" type="OptionButton" parent="FormPanel" unique_id=1677412909]
 layout_mode = 0
 offset_left = 273.0
 offset_top = 40.0
@@ -2657,7 +2653,7 @@ popup/item_0/id = 0
 popup/item_1/text = "Right"
 popup/item_1/id = 1
 
-[node name="Label14" type="Label" parent="FormPanel"]
+[node name="Label14" type="Label" parent="FormPanel" unique_id=1694528992]
 layout_mode = 0
 offset_left = 145.0
 offset_top = 16.0
@@ -2665,7 +2661,7 @@ offset_right = 163.0
 offset_bottom = 29.0
 text = "Sex"
 
-[node name="Label15" type="Label" parent="FormPanel"]
+[node name="Label15" type="Label" parent="FormPanel" unique_id=1401424338]
 layout_mode = 0
 offset_left = 273.0
 offset_top = 16.0
@@ -2673,7 +2669,7 @@ offset_right = 333.0
 offset_bottom = 29.0
 text = "Handedness"
 
-[node name="btnAbout" type="Button" parent="FormPanel"]
+[node name="btnAbout" type="Button" parent="FormPanel" unique_id=391105848]
 layout_mode = 0
 offset_left = 749.0
 offset_top = 152.0
@@ -2681,12 +2677,13 @@ offset_right = 824.0
 offset_bottom = 177.0
 text = "About"
 
-[node name="ComboBox8" type="OptionButton" parent="FormPanel"]
+[node name="ComboBox8" type="OptionButton" parent="FormPanel" unique_id=1053553267]
 layout_mode = 0
 offset_left = 456.0
 offset_top = 440.0
 offset_right = 556.0
 offset_bottom = 461.0
+selected = 14
 item_count = 256
 popup/item_0/text = "Not used"
 popup/item_0/id = 0
@@ -3200,9 +3197,8 @@ popup/item_254/text = "254"
 popup/item_254/id = 254
 popup/item_255/text = "255"
 popup/item_255/id = 255
-selected = 14
 
-[node name="Label10" type="Label" parent="FormPanel"]
+[node name="Label10" type="Label" parent="FormPanel" unique_id=776479312]
 layout_mode = 0
 offset_left = 248.0
 offset_top = 444.0
@@ -3210,19 +3206,17 @@ offset_right = 448.0
 offset_bottom = 457.0
 text = "LUFA USB serial device COM port number"
 
-[node name="ScrollBar1" type="HScrollBar" parent="FormPanel"]
+[node name="ScrollBar1" type="HScrollBar" parent="FormPanel" unique_id=250656963]
 layout_mode = 0
 offset_left = 864.0
 offset_top = 447.0
 offset_right = 900.0
 offset_bottom = 463.0
-page = 0.0
 
-[node name="Label16" type="Label" parent="FormPanel"]
+[node name="Label16" type="Label" parent="FormPanel" unique_id=2002771322]
 layout_mode = 0
 offset_left = 248.0
 offset_top = 472.0
 offset_right = 257.0
 offset_bottom = 485.0
 text = "---"
-
