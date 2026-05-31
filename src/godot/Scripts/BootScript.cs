@@ -67,6 +67,32 @@ public partial class BootScript : Node2D
 	private bool isWaitInput;
 	private bool isWaitMouseOnly;
 
+
+	protected string GetConfigFileName()
+	{
+		string result = ExperimentShared.SourcePath;
+		// we started from 
+		if (!string.IsNullOrWhiteSpace(result))
+		{
+			result = Path.Combine(result, "Configuration.txt");
+			if (!File.Exists(result))
+				result = "";
+		}
+
+		// we probably started from the editor
+		if (string.IsNullOrWhiteSpace(result))
+			result = fileName;
+
+		return result;
+	}
+
+	protected int GetWantedTrial()
+	{
+		var result = ExperimentShared.WantedTrialNumber;
+		if (result == 0)
+			result = 1;
+		return result;
+	}
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
@@ -82,9 +108,12 @@ public partial class BootScript : Node2D
 		if (sectionInfo != null)
 			sectionInfo.ZIndex = 1000;
 
-		if (File.Exists(fileName))
+
+		string cfgFileName = GetConfigFileName();
+		
+		if (File.Exists(cfgFileName))
 		{
-			var cfg = ConfigFile.FromFile(fileName);
+			var cfg = ConfigFile.FromFile(cfgFileName);
 			exam.LoadConfig(cfg);
 		}
 		AssignKeyboardEvents(exam.keyboards);
@@ -109,8 +138,9 @@ public partial class BootScript : Node2D
 			}
 			screenRes.Text = b.ToString();
 		}
-		var dir = Path.GetDirectoryName(fileName);
-		string inp = Path.Combine(dir, "Input data", "InputData_1.txt");
+		var dir = Path.GetDirectoryName(cfgFileName);
+		int inpNum = GetWantedTrial();
+		string inp = Path.Combine(dir, "Input data", $"InputData_{inpNum}.txt");
 
 		trials = new List<TrialOrder>();
 		InputDataHelper.LoadTrials(inp, trials, pauses);
