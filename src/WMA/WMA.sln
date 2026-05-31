@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.33328.57
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36811.4 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WMAFiles", "WMAFiles\WMAFiles.csproj", "{8A5D0609-D678-464B-B648-E279CBD77D35}"
 EndProject
@@ -10,6 +10,14 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WMAData", "WMAData\WMAData.csproj", "{C165B768-2CDC-40B6-AA58-C69DAD5E26F3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "testExp", "testExp\testExp.csproj", "{979D433F-D34E-412D-9ACB-38F74E5977A1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "testMonitors", "testMonitors\testMonitors.csproj", "{7A71FBB0-4841-4BD3-8BF2-CA87D1057F3C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonitorInfo.Abstractions", "MonitorInfo.Abstractions\MonitorInfo.Abstractions.csproj", "{3B90E562-01E2-023F-8BDE-F4C1740453C3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonitorInfo.Windows", "MonitorInfo.Windows\MonitorInfo.Windows.csproj", "{E2684F42-CE28-0D63-B3F6-31FF4D3EA11A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonitorInfo", "MonitorInfo\MonitorInfo.csproj", "{BCCE5D6F-5D4C-37E5-F28A-1A312567350F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +41,22 @@ Global
 		{979D433F-D34E-412D-9ACB-38F74E5977A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{979D433F-D34E-412D-9ACB-38F74E5977A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{979D433F-D34E-412D-9ACB-38F74E5977A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A71FBB0-4841-4BD3-8BF2-CA87D1057F3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A71FBB0-4841-4BD3-8BF2-CA87D1057F3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A71FBB0-4841-4BD3-8BF2-CA87D1057F3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A71FBB0-4841-4BD3-8BF2-CA87D1057F3C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B90E562-01E2-023F-8BDE-F4C1740453C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B90E562-01E2-023F-8BDE-F4C1740453C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B90E562-01E2-023F-8BDE-F4C1740453C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B90E562-01E2-023F-8BDE-F4C1740453C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E2684F42-CE28-0D63-B3F6-31FF4D3EA11A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2684F42-CE28-0D63-B3F6-31FF4D3EA11A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E2684F42-CE28-0D63-B3F6-31FF4D3EA11A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2684F42-CE28-0D63-B3F6-31FF4D3EA11A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BCCE5D6F-5D4C-37E5-F28A-1A312567350F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCCE5D6F-5D4C-37E5-F28A-1A312567350F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BCCE5D6F-5D4C-37E5-F28A-1A312567350F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BCCE5D6F-5D4C-37E5-F28A-1A312567350F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
