@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://ri8ujbhpth3d" path="res://Scripts/QuitApp.cs" id="1_q0dcj"]
 [ext_resource type="Script" uid="uid://cf26l0sax4o7o" path="res://Scripts/ParticipantIDStoreAndPermit.cs" id="2_86hwc"]
 [ext_resource type="Script" uid="uid://cuucqman7g4fq" path="res://Scripts/SceneLoad.cs" id="4_70xtq"]
+[ext_resource type="PackedScene" path="res://uiParticipantAndExam.tscn" id="4_nhahw"]
 
 [node name="Control" type="Control" unique_id=1479967369]
 layout_mode = 3
@@ -20,6 +21,11 @@ script = ExtResource("1_q0dcj")
 script = ExtResource("2_86hwc")
 check = NodePath("../VBoxContainer/ParticipantIdCheck")
 enableButton = NodePath("../btnOk")
+
+[node name="NextScreen" type="Node" parent="." unique_id=1181247721]
+script = ExtResource("4_70xtq")
+sceneAsTscn = ExtResource("4_nhahw")
+replaceScene = true
 
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=421801307]
 layout_mode = 1
@@ -399,9 +405,7 @@ grow_horizontal = 0
 grow_vertical = 0
 text = "OK"
 
-[node name="NextScreen" type="Node" parent="." unique_id=1181247721]
-script = ExtResource("4_70xtq")
-
+[connection signal="dataReceived" from="CheckID" to="NextScreen" method="LoadScene"]
 [connection signal="text_refresh" from="VBoxContainer/ParticipantIdCheck" to="CheckID" method="RecheckButton"]
 [connection signal="item_selected" from="VBoxContainer/FirstInitBox/FirstInit" to="VBoxContainer/ParticipantIdCheck" method="RefreshIdTextFromIdx"]
 [connection signal="item_selected" from="VBoxContainer/MomInitBox/MomInit" to="VBoxContainer/ParticipantIdCheck" method="RefreshIdTextFromIdx"]
@@ -409,3 +413,4 @@ script = ExtResource("4_70xtq")
 [connection signal="item_selected" from="VBoxContainer/BDay/BDayNum" to="VBoxContainer/ParticipantIdCheck" method="RefreshIdTextFromIdx"]
 [connection signal="item_selected" from="VBoxContainer/BMonth/BMonthNum" to="VBoxContainer/ParticipantIdCheck" method="RefreshIdTextFromIdx"]
 [connection signal="pressed" from="btnQuit" to="QuitApp" method="DoQuit"]
+[connection signal="pressed" from="btnOk" to="CheckID" method="CheckParticipantData"]

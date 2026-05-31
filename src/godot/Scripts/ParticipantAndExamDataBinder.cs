@@ -3,65 +3,87 @@ using System;
 
 public partial class ParticipantAndExamDataBinder : Control
 {
-    [Export] public OptionButton ageInput;
-    [Export] public OptionButton sexInput;
-    [Export] public OptionButton handednessInput;
-    [Export] public CheckBox displayTypeInput;
-    [Export] public TextEdit overviewText;
+	[Export] public OptionButton ageInput;
+	[Export] public OptionButton sexInput;
+	[Export] public OptionButton handednessInput;
+	[Export] public CheckBox displayTypeInput;
+	[Export] public TextEdit overviewText;
+	[Export] public Button enableButton;
 
-    public override void _Ready()
-    {
-        ConnectOption(ageInput);
-        ConnectOption(sexInput);
-        ConnectOption(handednessInput);
+	[Signal]
+	public delegate void dataReceivedEventHandler();
 
-        if (displayTypeInput != null)
-            displayTypeInput.Toggled += _ => UpdateData();
+	[Signal]
+	public delegate void dataIncompleteEventHandler();
 
-        if (overviewText != null)
-            overviewText.TextChanged += UpdateData;
 
-        UpdateData();
-    }
+	public override void _Ready()
+	{
+		ConnectOption(ageInput);
+		ConnectOption(sexInput);
+		ConnectOption(handednessInput);
 
-    private void ConnectOption(OptionButton option)
-    {
-        if (option != null)
-            option.ItemSelected += _ => UpdateData();
-    }
+		if (displayTypeInput != null)
+			displayTypeInput.Toggled += _ => UpdateData();
 
-    private void UpdateData()
-    {
-        var experimentData = ExperimentShared.data;
-        experimentData.Age = GetOptionText(ageInput);
-        experimentData.Sex = GetOptionText(sexInput);
-        experimentData.Handedness = GetOptionText(handednessInput);
-        experimentData.DisplayType = GetDisplayType();
+		if (overviewText != null)
+			overviewText.TextChanged += UpdateData;
 
-        var experimentName = GetExperimentNameFromOverview();
-        if (!string.IsNullOrWhiteSpace(experimentName))
-            experimentData.ExperimentName = experimentName;
-    }
+		UpdateData();
+	}
 
-    private static string GetOptionText(OptionButton option)
-    {
-        return option == null ? string.Empty : option.Text;
-    }
+	private void ConnectOption(OptionButton option)
+	{
+		if (option != null)
+			option.ItemSelected += _ => UpdateData();
+	}
 
-    private string GetDisplayType()
-    {
-        if (displayTypeInput == null || !displayTypeInput.ButtonPressed)
-            return string.Empty;
+	private bool UpdateDataAndVerify()
+	{
+		var experimentData = ExperimentShared.data;
+		experimentData.Age = GetOptionText(ageInput);
+		experimentData.Sex = GetOptionText(sexInput);
+		experimentData.Handedness = GetOptionText(handednessInput);
+		experimentData.DisplayType = GetDisplayType();
 
-        return displayTypeInput.Text;
-    }
+		var experimentName = GetExperimentNameFromOverview();
+		if (!string.IsNullOrWhiteSpace(experimentName))
+			experimentData.ExperimentName = experimentName;
+		return true;
+	}
+	private void UpdateData()
+	{
+		UpdateDataAndVerify();
+	}
 
-    private string GetExperimentNameFromOverview()
-    {
-        if (overviewText == null || string.IsNullOrWhiteSpace(overviewText.Text))
-            return string.Empty;
+	private static string GetOptionText(OptionButton option)
+	{
+		return option == null ? string.Empty : option.Text;
+	}
 
-        var lines = overviewText.Text.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
-        return lines.Length == 0 ? string.Empty : lines[0].Trim();
-    }
+	private string GetDisplayType()
+	{
+		if (displayTypeInput == null || !displayTypeInput.ButtonPressed)
+			return string.Empty;
+
+		return displayTypeInput.Text;
+	}
+
+	private string GetExperimentNameFromOverview()
+	{
+		if (overviewText == null || string.IsNullOrWhiteSpace(overviewText.Text))
+			return string.Empty;
+
+		var lines = overviewText.Text.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
+		return lines.Length == 0 ? string.Empty : lines[0].Trim();
+	}
+
+	public void CheckParticipantData()
+	{
+		bool succ = UpdateDataAndVerify();
+		if (succ)
+			EmitSignal(SignalName.dataReceived);
+		else
+			EmitSignal(SignalName.dataIncomplete);
+	}
 }
