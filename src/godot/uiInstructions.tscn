@@ -1,6 +1,8 @@
 [gd_scene format=3 uid="uid://b61tfka4qu14w"]
 
-[node name="uiInstructions" type="Control" unique_id=130860802]
+[ext_resource type="Script" uid="uid://dp6adpvj7xy0" path="res://Scripts/InstructionsShow.cs" id="1_jsu0n"]
+
+[node name="uiInstructions" type="Control" unique_id=130860802 node_paths=PackedStringArray("instructionsImage")]
 custom_minimum_size = Vector2(800, 541)
 layout_mode = 3
 anchors_preset = 15
@@ -8,6 +10,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_jsu0n")
+instructionsImage = NodePath("FormPanel/Image1")
 
 [node name="FormPanel" type="Panel" parent="." unique_id=644401495]
 layout_mode = 1

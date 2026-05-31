@@ -1,7 +1,9 @@
 [gd_scene format=3 uid="uid://ty3n27ms4gr8"]
 
 [ext_resource type="Script" uid="uid://db2mels6ojsyr" path="res://Scripts/ParticipantAndExamDataBinder.cs" id="1_lxf75"]
+[ext_resource type="Script" uid="uid://cuucqman7g4fq" path="res://Scripts/SceneLoad.cs" id="2_3n5jo"]
 [ext_resource type="Script" uid="uid://ri8ujbhpth3d" path="res://Scripts/QuitApp.cs" id="2_a4yq7"]
+[ext_resource type="PackedScene" uid="uid://b61tfka4qu14w" path="res://uiInstructions.tscn" id="3_7pu50"]
 
 [node name="uiParticipantAndExam" type="Control" unique_id=1922825012 node_paths=PackedStringArray("ageInput", "sexInput", "handednessInput", "monitorsGroup", "overviewText", "enableButton", "selectExperimentButton", "experimentDirectoryDialog", "aboutButton", "aboutDialog")]
 custom_minimum_size = Vector2(836, 503)
@@ -22,6 +24,11 @@ selectExperimentButton = NodePath("FormPanel/btnSelectExperiment")
 experimentDirectoryDialog = NodePath("ExperimentDirectoryDialog")
 aboutButton = NodePath("FormPanel/btnAbout")
 aboutDialog = NodePath("AboutDialog")
+
+[node name="ToInstructions" type="Node" parent="." unique_id=2006041667]
+script = ExtResource("2_3n5jo")
+sceneAsTscn = ExtResource("3_7pu50")
+replaceScene = true
 
 [node name="QuitApp" type="Node" parent="." unique_id=384851106]
 script = ExtResource("2_a4yq7")
@@ -3321,4 +3328,5 @@ This program is free software: you can redistribute it and/or modify it under th
 editable = false
 wrap_mode = 1
 
+[connection signal="pressed" from="FormPanel/btnBegin" to="ToInstructions" method="LoadScene"]
 [connection signal="pressed" from="FormPanel/btnQuit" to="QuitApp" method="DoQuit"]

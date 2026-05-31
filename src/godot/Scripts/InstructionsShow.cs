@@ -14,7 +14,15 @@ namespace godot.Scripts
 {
     public partial class InstructionsShow : Node
     {
-        
+        [Export] 
+        public TextureRect instructionsImage;
+
+        // Instructions play button
+        [Export]
+        public Button playButton;
+        [Export]
+        public Button stopButton;
+
         public override void _Ready()
         {
             string cfgFn = "";
@@ -29,6 +37,7 @@ namespace godot.Scripts
 
         public void LoadConfig(string configFileName)
         {
+            string dir = Path.GetDirectoryName(configFileName);
             var exam = new Configuration();
             var cfg = ConfigFile.FromFile(configFileName);
             exam.LoadConfig(cfg);
@@ -40,15 +49,35 @@ namespace godot.Scripts
 
             bool isOdd = (ExperimentShared.WantedTrialNumber & 1) != 0;
 
-            string img;
+            string imgFn;
             string audio;
             if (isOdd) 
             {
-                img = exam.Instructions_ODD_participants;
+                imgFn = exam.Instructions_ODD_participants;
             } 
             else
             {
-                img = exam.Instructions_EVEN_participants;
+                imgFn = exam.Instructions_EVEN_participants;
+            }
+
+            imgFn = Path.Combine(dir, imgFn);
+            if (instructionsImage != null)
+            {
+                instructionsImage.Texture = null;
+                try
+                {
+                    Image m = new Image();
+                    var err = m.Load(imgFn);
+                    if (err == 0)
+                    {
+                        var _tex = ImageTexture.CreateFromImage(m);
+                        instructionsImage.Texture = _tex;
+                    }
+                } 
+                catch(Exception x)
+                {
+                    GD.Print($"failed to read: {imgFn}; {x.Message}");
+                }
             }
         }
     }

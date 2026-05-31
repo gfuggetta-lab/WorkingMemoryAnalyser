@@ -67,12 +67,12 @@ public partial class ParticipantAndExamDataBinder : Control
 		experimentData.DisplayType = GetDisplayType();
 		ExperimentShared.SelectedMonitorID = GetMonitorId(selectedMonitor);
 
-        // experimentName is populated elsewhere
-        //var experimentName = GetExperimentNameFromOverview();
-        //if (!string.IsNullOrWhiteSpace(experimentName))
-        //	experimentData.ExperimentName = experimentName;
+		// experimentName is populated elsewhere
+		//var experimentName = GetExperimentNameFromOverview();
+		//if (!string.IsNullOrWhiteSpace(experimentName))
+		//	experimentData.ExperimentName = experimentName;
 
-        bool hasParticipandData = !string.IsNullOrWhiteSpace(experimentData.Age)
+		bool hasParticipandData = !string.IsNullOrWhiteSpace(experimentData.Age)
 			&& !string.IsNullOrWhiteSpace(experimentData.Sex)
 			&& !string.IsNullOrWhiteSpace(experimentData.Handedness);
 
@@ -81,8 +81,8 @@ public partial class ParticipantAndExamDataBinder : Control
 		{
 			string path = Path.Combine(ExperimentShared.SourcePath, "Configuration.txt");
 			hasExperiment = File.Exists(path);
-        }
-        return hasParticipandData && hasExperiment;
+		}
+		return hasParticipandData && hasExperiment;
 	}
 	private void UpdateData()
 	{
