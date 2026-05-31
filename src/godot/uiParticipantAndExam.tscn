@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://db2mels6ojsyr" path="res://Scripts/ParticipantAndExamDataBinder.cs" id="1_lxf75"]
 [ext_resource type="Script" uid="uid://ri8ujbhpth3d" path="res://Scripts/QuitApp.cs" id="2_a4yq7"]
 
-[node name="uiParticipantAndExam" type="Control" unique_id=1922825012 node_paths=PackedStringArray("ageInput", "sexInput", "handednessInput", "monitorsGroup", "overviewText", "enableButton", "selectExperimentButton", "experimentDirectoryDialog")]
+[node name="uiParticipantAndExam" type="Control" unique_id=1922825012 node_paths=PackedStringArray("ageInput", "sexInput", "handednessInput", "monitorsGroup", "overviewText", "enableButton", "selectExperimentButton", "experimentDirectoryDialog", "aboutButton", "aboutDialog")]
 custom_minimum_size = Vector2(836, 503)
 layout_mode = 3
 anchors_preset = 15
@@ -20,6 +20,8 @@ overviewText = NodePath("FormPanel/textOverview")
 enableButton = NodePath("FormPanel/btnBegin")
 selectExperimentButton = NodePath("FormPanel/btnSelectExperiment")
 experimentDirectoryDialog = NodePath("ExperimentDirectoryDialog")
+aboutButton = NodePath("FormPanel/btnAbout")
+aboutDialog = NodePath("AboutDialog")
 
 [node name="QuitApp" type="Node" parent="." unique_id=384851106]
 script = ExtResource("2_a4yq7")
@@ -3283,5 +3285,40 @@ ok_button_text = "Select Current Folder"
 file_mode = 2
 access = 2
 use_native_dialog = true
+
+[node name="AboutDialog" type="AcceptDialog" parent="." unique_id=1059167245]
+title = "About"
+initial_position = 2
+size = Vector2i(631, 381)
+ok_button_text = "Close"
+
+[node name="Memo1" type="TextEdit" parent="AboutDialog" unique_id=2043038364]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -9.0
+offset_bottom = -46.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_readonly_color = Color(0.8745098, 0.8745098, 0.8745098, 1)
+text = "Working Memory Analyser (Version 1.2) Last updated on: 28 March 2026
+
+Copyright (c) 2026 by Phil Duke and Giorgio Fuggetta
+
+Contribution:
+
+Dr Phil Duke (email: pad11@leicester.ac.uk) conceived and primarily developed the software for Windows.
+
+Dr Giorgio Fuggetta (email: giorgio.fuggetta@kcl.ac.uk) conceived the software and created the sequences of cognitive tasks available as part of the software's experiment library. 
+
+skalogryz (email: unspecified), additional developed, optimised and compiled the software for MacOS.
+
+The latest version of Working Memory Analyser and updated experiment library can be downloaded from: https://github.com/gfuggetta-lab/WorkingMemoryAnalyser
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License v3.0. "
+editable = false
+wrap_mode = 1
 
 [connection signal="pressed" from="FormPanel/btnQuit" to="QuitApp" method="DoQuit"]

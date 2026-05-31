@@ -5,10 +5,15 @@ public partial class ExperimentShared : Node
 {
     public static ExperimentData data = null;
 
-    // The exam source directory where Overview.txt and Configure.txt are stored
-    public static string SourcePath;
 
-    public static string SelectedMonitorID;
+    // The exam source directory where Overview.txt and Configure.txt are stored
+    public static string SourcePath = "";
+
+    // The monitor selected
+    public static string SelectedMonitorID = "";
+
+    // Wanted trial number. If 0 or less, then random number is selected
+    public static int WantedTrialNumber = 0;
 
     // the flag is set to true, if we pass all the screens as expected
     // the flag would be false, if launched some scene via Godot editor

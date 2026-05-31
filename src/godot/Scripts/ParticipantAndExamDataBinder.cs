@@ -15,6 +15,8 @@ public partial class ParticipantAndExamDataBinder : Control
 	[Export] public Button enableButton;
 	[Export] public Button selectExperimentButton;
 	[Export] public FileDialog experimentDirectoryDialog;
+	[Export] public Button aboutButton;
+	[Export] public AcceptDialog aboutDialog;
 
 	private readonly ButtonGroup monitorButtonGroup = new ButtonGroup();
 	private readonly Dictionary<BaseButton, ConnectedMonitor> monitorByButton = new Dictionary<BaseButton, ConnectedMonitor>();
@@ -44,6 +46,9 @@ public partial class ParticipantAndExamDataBinder : Control
 		if (experimentDirectoryDialog != null)
 			experimentDirectoryDialog.DirSelected += OnExperimentDirectorySelected;
 
+		if (aboutButton != null)
+			aboutButton.Pressed += ShowAboutDialog;
+
 		UpdateData();
 	}
 
@@ -62,14 +67,28 @@ public partial class ParticipantAndExamDataBinder : Control
 		experimentData.DisplayType = GetDisplayType();
 		ExperimentShared.SelectedMonitorID = GetMonitorId(selectedMonitor);
 
-		var experimentName = GetExperimentNameFromOverview();
-		if (!string.IsNullOrWhiteSpace(experimentName))
-			experimentData.ExperimentName = experimentName;
-		return true;
+        // experimentName is populated elsewhere
+        //var experimentName = GetExperimentNameFromOverview();
+        //if (!string.IsNullOrWhiteSpace(experimentName))
+        //	experimentData.ExperimentName = experimentName;
+
+        bool hasParticipandData = !string.IsNullOrWhiteSpace(experimentData.Age)
+			&& !string.IsNullOrWhiteSpace(experimentData.Sex)
+			&& !string.IsNullOrWhiteSpace(experimentData.Handedness);
+
+		bool hasExperiment = !string.IsNullOrEmpty(ExperimentShared.SourcePath);
+		if (hasExperiment)
+		{
+			string path = Path.Combine(ExperimentShared.SourcePath, "Configuration.txt");
+			hasExperiment = File.Exists(path);
+        }
+        return hasParticipandData && hasExperiment;
 	}
 	private void UpdateData()
 	{
-		UpdateDataAndVerify();
+		var res = UpdateDataAndVerify();
+		if (enableButton != null)
+			enableButton.Disabled = !res;
 	}
 
 	private static string GetOptionText(OptionButton option)
@@ -126,6 +145,14 @@ public partial class ParticipantAndExamDataBinder : Control
 			overviewText.Text = File.ReadAllText(overviewPath);
 
 		UpdateData();
+	}
+
+	private void ShowAboutDialog()
+	{
+		if (aboutDialog == null)
+			return;
+
+		aboutDialog.PopupCentered();
 	}
 
 	private void PopulateMonitorButtons()
