@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://ty3n27ms4gr8"]
 
 [ext_resource type="Script" uid="uid://db2mels6ojsyr" path="res://Scripts/ParticipantAndExamDataBinder.cs" id="1_lxf75"]
+[ext_resource type="Script" uid="uid://ri8ujbhpth3d" path="res://Scripts/QuitApp.cs" id="2_a4yq7"]
 
 [node name="uiParticipantAndExam" type="Control" unique_id=1922825012 node_paths=PackedStringArray("ageInput", "sexInput", "handednessInput", "monitorsGroup", "overviewText", "enableButton", "selectExperimentButton", "experimentDirectoryDialog")]
 custom_minimum_size = Vector2(836, 503)
@@ -19,6 +20,9 @@ overviewText = NodePath("FormPanel/textOverview")
 enableButton = NodePath("FormPanel/btnBegin")
 selectExperimentButton = NodePath("FormPanel/btnSelectExperiment")
 experimentDirectoryDialog = NodePath("ExperimentDirectoryDialog")
+
+[node name="QuitApp" type="Node" parent="." unique_id=384851106]
+script = ExtResource("2_a4yq7")
 
 [node name="FormPanel" type="Panel" parent="." unique_id=644262766]
 layout_mode = 1
@@ -2624,6 +2628,7 @@ offset_left = 16.0
 offset_top = 0.23999023
 offset_right = -17.0
 offset_bottom = -0.0079956055
+theme_override_colors/font_readonly_color = Color(0.8745098, 0.8745098, 0.8745098, 1)
 editable = false
 wrap_mode = 1
 
@@ -2636,11 +2641,14 @@ offset_bottom = 229.0
 text = "Overview"
 
 [node name="btnSelectExperiment" type="Button" parent="FormPanel" unique_id=883845903]
-layout_mode = 0
-offset_left = 264.0
-offset_top = 168.0
-offset_right = 560.0
-offset_bottom = 209.0
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -147.0
+offset_top = 169.0
+offset_right = 149.0
+offset_bottom = 210.0
 text = "Select experiment"
 
 [node name="ComboBox13" type="OptionButton" parent="FormPanel" unique_id=755311192]
@@ -3275,3 +3283,5 @@ ok_button_text = "Select Current Folder"
 file_mode = 2
 access = 2
 use_native_dialog = true
+
+[connection signal="pressed" from="FormPanel/btnQuit" to="QuitApp" method="DoQuit"]
