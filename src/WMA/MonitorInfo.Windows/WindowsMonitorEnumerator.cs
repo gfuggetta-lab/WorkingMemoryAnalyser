@@ -57,6 +57,7 @@ namespace MonitorInfo.Windows
             double dpi = TryGetDpiFromDeviceCaps(displayDeviceName);
 
             ConnectedMonitor result = new ConnectedMonitor();
+            result.Id = displayDeviceName;
             result.Name = displayDeviceName;
             //result.MonitorDeviceName = monitorDevice == null ? null : monitorDevice.DeviceName;
             //result.MonitorFriendlyName = monitorDevice == null ? null : monitorDevice.DeviceString;
@@ -65,20 +66,21 @@ namespace MonitorInfo.Windows
             result.Bounds = new Rectangle(
                 info.rcMonitor.left,
                 info.rcMonitor.top,
-                info.rcMonitor.right,
-                info.rcMonitor.bottom);
+                info.rcMonitor.right - info.rcMonitor.left,
+                info.rcMonitor.bottom - info.rcMonitor.top);
 
             result.WorkArea = new Rectangle(
                 info.rcWork.left,
                 info.rcWork.top,
-                info.rcWork.right,
-                info.rcWork.bottom);
+                info.rcWork.right - info.rcWork.left,
+                info.rcWork.bottom - info.rcWork.top);
 
             result.IsPrimary = (info.dwFlags & NativeMethods.MONITORINFOF_PRIMARY) != 0;
 
             result.Dpi = dpi;
             result.PhysWidthMM = wmm;
             result.PhysHeightMM = hmm;
+            result.NativeDeviceId = monitorDevice == null ? null : monitorDevice.DeviceID;
 
             return result;
         }
