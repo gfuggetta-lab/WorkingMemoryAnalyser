@@ -15,6 +15,10 @@ run/main_scene="uid://tskq6f1usuqp"
 config/features=PackedStringArray("4.6", "C#", "GL Compatibility")
 config/icon="res://icon.svg"
 
+[autoload]
+
+ExperimentShared="*res://Scripts/ExperimentShared.cs"
+
 [dotnet]
 
 project/assembly_name="godot"

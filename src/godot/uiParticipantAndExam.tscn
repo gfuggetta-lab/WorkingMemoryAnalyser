@@ -1,6 +1,8 @@
-[gd_scene format=3]
+[gd_scene load_steps=2 format=3]
 
-[node name="uiParticipantAndExam" type="Control"]
+[ext_resource type="Script" path="res://Scripts/ParticipantAndExamDataBinder.cs" id="1_lxf75"]
+
+[node name="uiParticipantAndExam" type="Control" node_paths=PackedStringArray("ageInput", "sexInput", "handednessInput", "displayTypeInput", "overviewText")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -8,6 +10,12 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 custom_minimum_size = Vector2(836, 503)
+script = ExtResource("1_lxf75")
+ageInput = NodePath("FormPanel/ComboBox3")
+sexInput = NodePath("FormPanel/ComboBox13")
+handednessInput = NodePath("FormPanel/ComboBox14")
+displayTypeInput = NodePath("FormPanel/RadioGroup4/Option1")
+overviewText = NodePath("FormPanel/Memo1")
 
 [node name="FormPanel" type="Panel" parent="."]
 layout_mode = 1

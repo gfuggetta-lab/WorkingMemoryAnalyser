@@ -18,6 +18,9 @@ public partial class ParticipantIDStoreAndPermit : Node
 	{
 		if (check == null) return;
 		var isValid = check.IsValid();
+		if (isValid && check.BuildID(out var participantId))
+			ExperimentShared.data.ParticipantId = participantId;
+
 		if (enableButton != null)
 			enableButton.Disabled = !isValid;
 
