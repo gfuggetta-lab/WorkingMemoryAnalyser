@@ -165,6 +165,9 @@ namespace WMAFiles
 
         public static void LoadConfig(this Configuration dst, ConfigFile src)
         {
+            dst.ExperimentName = src.StringLine("Experiment:", "");
+            dst.ExperimentName = dst.ExperimentName.Trim();
+
             dst.distanceCm = src.FloatNonZero("Monitor_distance_cm:", distance_DEFAULT);
 
             dst.Placeholder_diameter_deg = src.Float("Placeholder_diameter_deg:");

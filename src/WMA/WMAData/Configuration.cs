@@ -18,6 +18,8 @@ namespace WMAData
         private double width_cm;
         private double height_cm;
 
+        // the name of the experiment
+        public string ExperimentName;
 
         // the expacted distance from the monitor
         public double distanceCm;
