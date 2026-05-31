@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://db2mels6ojsyr" path="res://Scripts/ParticipantAndExamDataBinder.cs" id="1_lxf75"]
 
-[node name="uiParticipantAndExam" type="Control" unique_id=1922825012 node_paths=PackedStringArray("ageInput", "sexInput", "handednessInput", "displayTypeInput", "overviewText", "enableButton", "selectExperimentButton", "experimentDirectoryDialog")]
+[node name="uiParticipantAndExam" type="Control" unique_id=1922825012 node_paths=PackedStringArray("ageInput", "sexInput", "handednessInput", "monitorsGroup", "overviewText", "enableButton", "selectExperimentButton", "experimentDirectoryDialog")]
 custom_minimum_size = Vector2(836, 503)
 layout_mode = 3
 anchors_preset = 15
@@ -14,7 +14,7 @@ script = ExtResource("1_lxf75")
 ageInput = NodePath("FormPanel/ComboBox3")
 sexInput = NodePath("FormPanel/ComboBox13")
 handednessInput = NodePath("FormPanel/ComboBox14")
-displayTypeInput = NodePath("FormPanel/grpMonitors/Option1")
+monitorsGroup = NodePath("FormPanel/grpMonitors")
 overviewText = NodePath("FormPanel/textOverview")
 enableButton = NodePath("FormPanel/btnBegin")
 selectExperimentButton = NodePath("FormPanel/btnSelectExperiment")
@@ -2547,7 +2547,7 @@ layout_mode = 0
 offset_left = 8.0
 offset_right = 352.0
 offset_bottom = 22.0
-text = "Display type (Must match Windows Display Settings!)"
+text = "Monitor (Must match Windows Display Settings!)"
 
 [node name="Option1" type="CheckBox" parent="FormPanel/grpMonitors" unique_id=1862952052]
 layout_mode = 0
@@ -2556,7 +2556,7 @@ offset_top = 24.0
 offset_right = 352.0
 offset_bottom = 48.0
 button_pressed = true
-text = "1: Default"
+text = "Loading monitors..."
 
 [node name="Label12" type="Label" parent="FormPanel" unique_id=1643971722]
 visible = false
