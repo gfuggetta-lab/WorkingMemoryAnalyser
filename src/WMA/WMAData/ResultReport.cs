@@ -10,17 +10,30 @@ namespace WMAData
 
         private int constant_error_time;
 
-        public string experimentName;
-        public string currentDate;
-        public string currentTime;
-        public int trialOrderFileNo;
-        public string participantID;
-        public string age;
-        public string sex;
-        public string handedness;
-        public string displayType;
+        public string experimentName = "";
+        public string currentDate = "";
+        public string currentTime = "";
+        public int trialOrderFileNo = 0;
+        public string participantID = "";
+        public string age = "";
+        public string sex = "";
+        public string handedness = "";
+        public string displayType = "";
         // Added for WriteTrial: Pascal writes observerNo from a global variable.
         public int observerNo;
+
+
+        public void SetExperiment(ExperimentData exp)
+        {
+            experimentName = exp.ExperimentName;
+            //currentDate = exp.cu
+            //currentTime;
+            //trialOrderFileNo = exp.tria
+            participantID = exp.ParticipantId;
+            age = exp.Age;
+            sex = exp.Sex;
+            handedness = exp.Handedness;
+        }
 
         public void SetConfig(Configuration cfg)
         {

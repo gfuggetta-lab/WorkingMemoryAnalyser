@@ -12,6 +12,7 @@ namespace WMAData
         // Write Age
         // Write Gender
 
+        void SetExperiment(ExperimentData exp);
         void SetConfig(Configuration cfg);
         void WriteTrial(TrialOrder trial, TrialResults res);
     }
