@@ -657,6 +657,18 @@ namespace WMAData
 
         }
 
+        private void SchedulePostPause(PlayList dst)
+        {
+            double duration = 2.0f;
+            int i = dst.items.Count;
+            ScheduleBackground(dst);
+            SchedulePlaceholders4(dst, 0, duration);
+
+            // mark all freshly added items as on "Pause" condition
+            for (; i < dst.items.Count; i++)
+                dst.items[i].cond = PlayItemCond.PostPause;
+        }
+
         public void Schedule(TrialMonitor tm, List<TrialOrder> trials, List<PauseData> pauses, PlayList dst)
         {
             width_px = tm.widthPx;
@@ -665,6 +677,7 @@ namespace WMAData
             height_cm = tm.heightCm;
 
             SchedulePause(dst);
+            SchedulePostPause(dst);
             ScheduleBackground(dst);
             if (trials != null)
             {

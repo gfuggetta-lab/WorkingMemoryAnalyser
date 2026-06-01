@@ -98,6 +98,9 @@ namespace WMAData
         // items to draw, when paused. If none specified
         // when the last state is drawn
         // Item's duration is ignored as pause is timeless
-        Paused
+        Paused,
+
+        // After pause. it's 2 second delay showing the stuff
+        PostPause
     }
 }
