@@ -646,9 +646,10 @@ namespace WMAData
         {
             int i = dst.items.Count;
             ScheduleBackground(dst);
-            SchedulePlaceholders4(dst, 0, 0);
-            dst.AddText("PAUSED", "Arial.ttf", GetShapeColor(COLOR_WHITE0), 0, 0)
+            SchedulePlaceholders4(dst, 0, -1);
+            var txt = dst.AddText("PAUSED", "Arial.ttf", fontCol, 0, -1)
                 .SetPos(PlayItemPos.Center, 0);
+            txt.fontSizePx = (int)Math.Round(2.0 * (width_px / width_cm) * (distanceCm / 57));
 
             // mark all freshly added items as on "Pause" condition
             for (; i < dst.items.Count; i++)
@@ -663,6 +664,7 @@ namespace WMAData
             width_cm = tm.widthCm;
             height_cm = tm.heightCm;
 
+            SchedulePause(dst);
             ScheduleBackground(dst);
             if (trials != null)
             {
