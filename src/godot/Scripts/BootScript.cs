@@ -151,6 +151,8 @@ public partial class BootScript : Node2D
 		curTrialIdx = -1; // needed to handle TrialStart properly
 
 		timeOfExperimentStart = Time.GetTicksMsec();
+		if (ExperimentShared.data != null)
+	        report.SetExperiment(ExperimentShared.data);
 		report.SetConfig(exam);
 
 		drawItems.Clear();
