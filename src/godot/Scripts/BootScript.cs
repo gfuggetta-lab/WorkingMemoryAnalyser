@@ -49,7 +49,9 @@ public partial class BootScript : Node2D
 
 	public bool isWaitingResponse = false;
 	public bool isDrawPause = false;
-	public ResponseButton trialResponse = ResponseButton.NotGiven;
+	public bool isDrawPostPause = false;
+	public double postPauseTime = 0.0;
+    public ResponseButton trialResponse = ResponseButton.NotGiven;
 	// the condition evaluated based on the response.
 	// it's populated at CheckResponse, based on the actual response given
 	public PlayItemCond currentCond = PlayItemCond.None;
@@ -289,9 +291,18 @@ public partial class BootScript : Node2D
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
-		
-		// don't count, time because we wait for input
-		if (isWaitInput > 0) return;
+		if (postPauseTime > 0)
+		{
+			postPauseTime -= delta;
+			if (postPauseTime <= 0)
+				postPauseTime = 0;
+			isDrawPostPause = false;
+            RebuildDrawNodes();
+            return;
+        }
+
+        // don't count, time because we wait for input
+        if (isWaitInput > 0) return;
 
 		List<PlayItem> eff = new List<PlayItem>();
 		List<PlayItem> trigAndOff = new List<PlayItem>();
@@ -415,6 +426,15 @@ public partial class BootScript : Node2D
 		}
 	}
 
+	public double GetMaxDuration(List<PlayItem> items)
+	{
+		double result = 0;
+		foreach(var im in items)
+		{
+			result = Math.Max(result, im.startMs + im.durationMs);
+		}
+		return result;
+	}
 	private void GatherByCond(List<PlayItem> items, List<PlayItem> dstList, PlayItemCond cnd)
 	{
 		foreach(var itm in items)
@@ -617,7 +637,9 @@ public partial class BootScript : Node2D
 
 	private void RebuildDrawNodes()
 	{
-		if (isDrawPause)
+		if (isDrawPostPause)
+			RebuildDrawNodes(postPauseList, PlayItemCond.PostPause);
+		else if (isDrawPause)
 			RebuildDrawNodes(pauseList, PlayItemCond.Paused);
 		else
 			RebuildDrawNodes(drawItems, currentCond);
@@ -791,13 +813,17 @@ public partial class BootScript : Node2D
 		if (isDrawPause)
 		{
 			isWaitInput++;
-			// mark the trial as ruined
-			if (result.isRuinedTrial == 0)
+			isDrawPostPause = false;
+            // mark the trial as ruined
+            if (result.isRuinedTrial == 0)
 				result.isRuinedTrial = 1;
 		}
 		else
 		{
-			isWaitInput--;
+			postPauseTime = GetMaxDuration(postPauseList);
+			if (postPauseTime > 0)
+				isDrawPostPause = true;
+            isWaitInput--;
 			isWaitInput = Math.Max(isWaitInput, 0);
 		}
 		RebuildDrawNodes();
