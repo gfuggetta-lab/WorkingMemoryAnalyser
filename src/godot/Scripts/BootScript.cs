@@ -626,15 +626,15 @@ public partial class BootScript : Node2D
 
 		ClearDrawNodes();
 		var cpos = GetViewportRect().Size / 2.0f;
-		foreach (var itm in drawItems)
+		foreach (var itm in itemsList)
 		{
 			if (itm == null) continue;
 			if (itm.cond != PlayItemCond.None)
 			{
-				log($"condition check: {itm.cond}; needed {currentCond}");
+				//log($"condition check: {itm.cond}; needed {currentCond}");
 				if (!IsCondMet(itm, checkCond))
 				{
-					log("failed");
+					//log("failed");
 					continue;
 				}
 			}
