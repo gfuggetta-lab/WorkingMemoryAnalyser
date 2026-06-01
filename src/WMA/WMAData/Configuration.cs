@@ -657,9 +657,10 @@ namespace WMAData
 
         }
 
+        public const double PostPauseDelay = 2.0;
         private void SchedulePostPause(PlayList dst)
         {
-            double duration = 2.0f;
+            double duration = PostPauseDelay;
             int i = dst.items.Count;
             ScheduleBackground(dst);
             SchedulePlaceholders4(dst, 0, duration);
