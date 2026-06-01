@@ -808,13 +808,21 @@ public partial class BootScript : Node2D
 			CancelTrial();
 			return;
 		}
+
 		if (ev.IsActionPressed(Pause))
 		{
 			TogglePause();
 			return;
 		}
 
-		if (isWaitInput > 0)
+		if (isDrawPause)
+		{
+			// The pause is in effect. Thus we ignore any input
+			return;
+		}
+
+
+        if (isWaitInput > 0)
 		{
 			if (ev is InputEventMouseButton)
 				isWaitInput--;
