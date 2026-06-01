@@ -791,6 +791,9 @@ public partial class BootScript : Node2D
 		if (isDrawPause)
 		{
 			isWaitInput++;
+			// mark the trial as ruined
+			if (result.isRuinedTrial == 0)
+				result.isRuinedTrial = 1;
 		}
 		else
 		{
