@@ -275,10 +275,18 @@ namespace WMAData
 
         }
 
+        public static string GenerateOutputFileName(DateTime dt, string participantId, int trialNo, int sessionNo)
+        {
+            return $"OutputData_{dt.Year}_{dt.Month}_{dt.Day}_{dt.Hour}_{dt.Minute}_{dt.Second}_{trialNo}_{sessionNo}_{participantId}.txt";
+        }
+
         public static string GenerateOutputFileName(string participantId, int trialNo, int sessionNo)
         {
-            DateTime dt = DateTime.Now;
-            return $"OutputData_{dt.Year}_{dt.Month}_{dt.Day}_{dt.Hour}_{dt.Minute}_{dt.Second}_{trialNo}_{sessionNo}_{participantId}.txt";
+            return GenerateOutputFileName(DateTime.Now, participantId, trialNo, sessionNo);
+        }
+        public static string GenerateOutputFileName(ExperimentData data)
+        {
+            return GenerateOutputFileName(data.TimeStamp, data.ParticipantId, data.TrialOrderNum, data.SessionNum);
         }
     }
 }

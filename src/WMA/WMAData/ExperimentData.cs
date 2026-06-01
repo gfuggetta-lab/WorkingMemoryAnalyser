@@ -17,6 +17,9 @@ namespace WMAData
         // the X in InputData_X file name that was used to run the experiment
         public int TrialOrderNum;
 
+        // the session number. Ususally it's 1
+        public int SessionNum;
+
         public ExperimentData()
         {
 
