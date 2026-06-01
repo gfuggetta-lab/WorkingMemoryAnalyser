@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 namespace WMAData
 {
     public class ResultReport : IResultReport
     {
+        // For the consistency of the format and backwards compatibility
+        // with the origin, United Kingdom date format is used.
+        public static CultureInfo UK_Format = new CultureInfo("en-GB");
+
         public StringBuilder text = new StringBuilder();
 
         private int constant_error_time;
@@ -30,8 +35,8 @@ namespace WMAData
         public void SetExperiment(ExperimentData exp)
         {
             experimentName = exp.ExperimentName;
-            //currentDate = exp.cu
-            //currentTime;
+            currentDate = exp.TimeStamp.ToString(UK_Format.DateTimeFormat.ShortDatePattern, UK_Format.DateTimeFormat);
+            currentTime = exp.TimeStamp.ToString(UK_Format.DateTimeFormat.ShortTimePattern, UK_Format.DateTimeFormat);
             //trialOrderFileNo = exp.tria
             participantID = exp.ParticipantId;
             age = exp.Age;
