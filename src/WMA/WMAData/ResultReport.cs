@@ -13,7 +13,11 @@ namespace WMAData
         public string experimentName = "";
         public string currentDate = "";
         public string currentTime = "";
+
+        // The selected Trial Order number (X from the "InputData_X" file name)
+        // <= 0 - means okay to randomly select the proper one!
         public int trialOrderFileNo = 0;
+
         public string participantID = "";
         public string age = "";
         public string sex = "";
@@ -33,6 +37,7 @@ namespace WMAData
             age = exp.Age;
             sex = exp.Sex;
             handedness = exp.Handedness;
+            trialOrderFileNo = exp.TrialOrderNum;
         }
 
         public void SetConfig(Configuration cfg)
@@ -268,6 +273,12 @@ namespace WMAData
             text.Append(value);
             text.Append('\t');
 
+        }
+
+        public static string GenerateOutputFileName(string participantId, int trialNo, int sessionNo)
+        {
+            DateTime dt = DateTime.Now;
+            return $"OutputData_{dt.Year}_{dt.Month}_{dt.Day}_{dt.Hour}_{dt.Minute}_{dt.Second}_{trialNo}_{sessionNo}_{participantId}.txt";
         }
     }
 }

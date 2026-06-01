@@ -14,6 +14,9 @@ namespace WMAData
         public string Handedness;
         public string DisplayType;
 
+        // the X in InputData_X file name that was used to run the experiment
+        public int TrialOrderNum;
+
         public ExperimentData()
         {
 
