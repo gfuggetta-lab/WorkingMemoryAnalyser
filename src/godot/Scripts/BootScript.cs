@@ -37,7 +37,8 @@ public partial class BootScript : Node2D
 	PlayListTracker plrTrack;
 	List<PlayItem> drawItems = new List<PlayItem>();
 	List<PlayItem> pauseList = new List<PlayItem>();
-	PlayItem currentSection;
+	List<PlayItem> postPauseList = new List<PlayItem>();
+    PlayItem currentSection;
 	double currentSectionEndMs = -1.0;
 	Node2D drawRoot;
 	readonly List<Node> drawNodes = new List<Node>();
@@ -168,9 +169,11 @@ public partial class BootScript : Node2D
 		PlaySoundIfAny(drawItems);
 
 		pauseList.Clear();
-		GatherPause(drawItems, pauseList);
-	
-		UpdateSectionInfo();
+		GatherByCond(drawItems, pauseList, PlayItemCond.Paused);
+		postPauseList.Clear();
+        GatherByCond(drawItems, postPauseList, PlayItemCond.PostPause);
+
+        UpdateSectionInfo();
 	}
 
 	private void Preload(Configuration exam, string expDir, List<TrialOrder> list)
@@ -412,12 +415,12 @@ public partial class BootScript : Node2D
 		}
 	}
 
-	private void GatherPause(List<PlayItem> items, List<PlayItem> dstList)
+	private void GatherByCond(List<PlayItem> items, List<PlayItem> dstList, PlayItemCond cnd)
 	{
 		foreach(var itm in items)
 		{
 			if (itm == null) continue;
-			if (itm.cond == PlayItemCond.Paused)
+			if (itm.cond == cnd)
 				dstList.Add(itm);
 		}
 	}
