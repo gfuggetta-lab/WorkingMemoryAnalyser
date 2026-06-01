@@ -12,9 +12,6 @@ public partial class ExperimentShared : Node
     // The monitor selected
     public static string SelectedMonitorID = "";
 
-    // Wanted trial number. If 0 or less, then random number is selected
-    public static int WantedTrialNumber = 0;
-
     // the flag is set to true, if we pass all the screens as expected
     // the flag would be false, if launched some scene via Godot editor
     public static bool IsInitialized = false;

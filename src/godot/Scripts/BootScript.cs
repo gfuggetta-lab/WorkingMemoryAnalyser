@@ -88,7 +88,7 @@ public partial class BootScript : Node2D
 
 	protected int GetWantedTrial()
 	{
-		var result = ExperimentShared.WantedTrialNumber;
+		var result = ExperimentShared.data.TrialOrderNum;
 		if (result == 0)
 			result = 1;
 		return result;
@@ -725,12 +725,19 @@ public partial class BootScript : Node2D
 
 	private void EndTrial()
 	{
-		var rr = report.text.ToString();
-		File.WriteAllText(@"C:\FPC_Laz\WorkingMemoryAnalyser_pas\Experiments library\TestExp\Input data\InputData_1.report", rr);
 
+		string fn = ResultReport.GenerateOutputFileName(ExperimentShared.data);
+		fn = Path.Combine(ExperimentShared.SourcePath, "Output Data", fn);
 
-		// we're done with al all the trials
-		GetTree().Quit();
+		string d = Path.GetDirectoryName(fn);
+		if (!Directory.Exists(d))
+			Directory.CreateDirectory(d); ;
+
+        var repText = report.text.ToString();
+        File.WriteAllText(fn, repText);
+
+        // we're done with al all the trials
+        GetTree().Quit();
 	}
 
 	private void CancelTrial()

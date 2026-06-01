@@ -44,10 +44,10 @@ namespace godot.Scripts
 
 			ExperimentShared.data.ExperimentName = exam.ExperimentName;
 
-			if (ExperimentShared.WantedTrialNumber == 0)
-				ExperimentShared.WantedTrialNumber = 1;
+			if (ExperimentShared.data.TrialOrderNum == 0)
+				ExperimentShared.data.TrialOrderNum = 1;
 
-			bool isOdd = (ExperimentShared.WantedTrialNumber & 1) != 0;
+			bool isOdd = (ExperimentShared.data.TrialOrderNum & 1) != 0;
 
 			string imgFn;
 			string audio;
