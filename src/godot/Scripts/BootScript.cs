@@ -64,7 +64,7 @@ public partial class BootScript : Node2D
 	private ulong timeOfExperimentStart;
 	private ulong s4start;
 
-	private bool isWaitInput;
+	private int isWaitInput = 0;
 	private bool isWaitMouseOnly;
 
 
@@ -286,7 +286,7 @@ public partial class BootScript : Node2D
 	{
 		
 		// don't count, time because we wait for input
-		if (isWaitInput) return;
+		if (isWaitInput > 0) return;
 
 		List<PlayItem> eff = new List<PlayItem>();
 		List<PlayItem> trigAndOff = new List<PlayItem>();
@@ -507,7 +507,7 @@ public partial class BootScript : Node2D
 				case PlayItemType.WaitForMouse:
 				case PlayItemType.WaitForInput:
 					log($"waiting for input: {itm.itemType}");
-					isWaitInput = true;
+					isWaitInput++;
 					isWaitMouseOnly = itm.itemType == PlayItemType.WaitForMouse;
 					break;
 
@@ -773,6 +773,21 @@ public partial class BootScript : Node2D
 		result.response_onsetTime = (int)(Time.GetTicksMsec() - timeOfExperimentStart);
 	}
 
+	public void TogglePause()
+	{
+		isDrawPause = !isDrawPause;
+		if (isDrawPause)
+		{
+			isWaitInput++;
+		}
+		else
+		{
+			isWaitInput--;
+			isWaitInput = Math.Max(isWaitInput, 0);
+		}
+		RebuildDrawNodes();
+	}
+
 
 	public override void _Input(InputEvent ev)
 	{
@@ -781,13 +796,19 @@ public partial class BootScript : Node2D
 			CancelTrial();
 			return;
 		}
+		if (ev.IsActionPressed(Pause))
+		{
+			TogglePause();
+			return;
+		}
 
-		if (isWaitInput)
+		if (isWaitInput > 0)
 		{
 			if (ev is InputEventMouseButton)
-				isWaitInput = false;
-			else if ((ev is InputEventKey)&& (!isWaitMouseOnly))
-				isWaitInput = false;
+				isWaitInput--;
+			else if ((ev is InputEventKey) && (!isWaitMouseOnly))
+				isWaitInput--;
+
 		}
 
 		if (!isWaitingResponse)

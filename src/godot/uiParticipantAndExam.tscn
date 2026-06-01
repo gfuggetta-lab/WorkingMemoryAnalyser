@@ -3258,6 +3258,7 @@ grow_vertical = 0
 text = "LUFA USB serial device COM port number"
 
 [node name="ScrollBar1" type="HScrollBar" parent="FormPanel" unique_id=250656963]
+visible = false
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
