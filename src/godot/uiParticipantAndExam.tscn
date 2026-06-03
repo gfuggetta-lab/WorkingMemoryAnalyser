@@ -14,9 +14,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_lxf75")
-ageInput = NodePath("FormPanel/ComboBox3")
-sexInput = NodePath("FormPanel/ComboBox13")
-handednessInput = NodePath("FormPanel/ComboBox14")
+ageInput = NodePath("FormPanel/cmbAge")
+sexInput = NodePath("FormPanel/cmbGender")
+handednessInput = NodePath("FormPanel/cmbHandedness")
 monitorsGroup = NodePath("FormPanel/grpMonitors")
 overviewText = NodePath("FormPanel/textOverview")
 enableButton = NodePath("FormPanel/btnBegin")
@@ -120,7 +120,7 @@ offset_right = 309.0
 offset_bottom = 693.0
 text = "INITIALS"
 
-[node name="ComboBox1" type="OptionButton" parent="FormPanel" unique_id=1631605131]
+[node name="cmbInputFile" type="OptionButton" parent="FormPanel" unique_id=1631605131]
 layout_mode = 0
 offset_left = 16.0
 offset_top = 120.0
@@ -735,7 +735,7 @@ popup/item_301/id = 301
 popup/item_302/text = "1002"
 popup/item_302/id = 302
 
-[node name="ComboBox2" type="OptionButton" parent="FormPanel" unique_id=773242744]
+[node name="cmbSession" type="OptionButton" parent="FormPanel" unique_id=773242744]
 layout_mode = 0
 offset_left = 144.0
 offset_top = 120.0
@@ -783,7 +783,7 @@ popup/item_18/id = 18
 popup/item_19/text = "20"
 popup/item_19/id = 19
 
-[node name="ComboBox3" type="OptionButton" parent="FormPanel" unique_id=634769870]
+[node name="cmbAge" type="OptionButton" parent="FormPanel" unique_id=634769870]
 layout_mode = 0
 offset_left = 16.0
 offset_top = 40.0
@@ -2660,7 +2660,7 @@ offset_right = 149.0
 offset_bottom = 210.0
 text = "Select experiment"
 
-[node name="ComboBox13" type="OptionButton" parent="FormPanel" unique_id=755311192]
+[node name="cmbGender" type="OptionButton" parent="FormPanel" unique_id=755311192]
 layout_mode = 0
 offset_left = 145.0
 offset_top = 40.0
@@ -2672,7 +2672,7 @@ popup/item_0/id = 0
 popup/item_1/text = "Female"
 popup/item_1/id = 1
 
-[node name="ComboBox14" type="OptionButton" parent="FormPanel" unique_id=1677412909]
+[node name="cmbHandedness" type="OptionButton" parent="FormPanel" unique_id=1677412909]
 layout_mode = 0
 offset_left = 273.0
 offset_top = 40.0
