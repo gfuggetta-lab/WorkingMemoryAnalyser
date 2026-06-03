@@ -1,20 +1,15 @@
 using System;
 using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Godot;
 using WMAData;
 using WMAFiles;
-using static godot.WMAUtils;
 using ConfigFile = WMAFiles.ConfigFile;
 
 namespace godot.Scripts
 {
 	public partial class InstructionsShow : Node
 	{
-		[Export] 
+		[Export]
 		public TextureRect instructionsImage;
 
 		// Instructions play button
@@ -23,8 +18,16 @@ namespace godot.Scripts
 		[Export]
 		public Button stopButton;
 
+		public string audio = "";
+
+		private AudioStreamPlayer audioPlayer;
+		private AudioStream audioStream;
+
 		public override void _Ready()
 		{
+			audioPlayer = new AudioStreamPlayer();
+			AddChild(audioPlayer);
+
 			string cfgFn = "";
 			string dir = ExperimentShared.SourcePath;
 			if (!string.IsNullOrWhiteSpace(dir))
@@ -38,19 +41,60 @@ namespace godot.Scripts
 
 			if (stopButton != null)
 				stopButton.Pressed += StopAudio;
-
-        }
+		}
 
 		public void PlayAudio()
 		{
+			if (string.IsNullOrWhiteSpace(audio))
+				return;
 
+			if (audioPlayer == null)
+			{
+				audioPlayer = new AudioStreamPlayer();
+				AddChild(audioPlayer);
+			}
+
+			if (audioStream == null)
+				audioStream = LoadAudioStream(audio);
+			if (audioStream == null)
+				return;
+
+			if (audioPlayer.Playing)
+				audioPlayer.Stop();
+
+			audioPlayer.Stream = audioStream;
+			audioPlayer.Play();
 		}
 
 		public void StopAudio()
-		{ 
-
+		{
+			if ((audioPlayer != null) && audioPlayer.Playing)
+				audioPlayer.Stop();
 		}
 
+		private static AudioStream LoadAudioStream(string fileName)
+		{
+			try
+			{
+				switch (Path.GetExtension(fileName).ToLowerInvariant())
+				{
+					case ".wav":
+						return AudioStreamWav.LoadFromFile(fileName);
+					case ".mp3":
+						return AudioStreamMP3.LoadFromFile(fileName);
+					case ".ogg":
+						return AudioStreamOggVorbis.LoadFromFile(fileName);
+					default:
+						GD.Print($"unsupported instructions audio file: {fileName}");
+						return null;
+				}
+			}
+			catch (Exception x)
+			{
+				GD.Print($"failed to read audio: {fileName}; {x.Message}");
+				return null;
+			}
+		}
 
 		public void LoadConfig(string configFileName)
 		{
@@ -67,19 +111,18 @@ namespace godot.Scripts
 			bool isOdd = (ExperimentShared.data.TrialOrderNum & 1) != 0;
 
 			string imgFn;
-			string audio;
-			if (isOdd) 
+			if (isOdd)
 			{
 				imgFn = exam.Instructions_ODD_participants;
 				audio = exam.Audio_Instructions_ODD_participants;
-			} 
+			}
 			else
 			{
 				imgFn = exam.Instructions_EVEN_participants;
-                audio = exam.Audio_Instructions_EVEN_participants;
-            }
+				audio = exam.Audio_Instructions_EVEN_participants;
+			}
 
-            imgFn = Path.Combine(dir, imgFn);
+			imgFn = Path.Combine(dir, imgFn);
 			if (instructionsImage != null)
 			{
 				instructionsImage.Texture = null;
@@ -92,22 +135,24 @@ namespace godot.Scripts
 						var _tex = ImageTexture.CreateFromImage(m);
 						instructionsImage.Texture = _tex;
 					}
-				} 
-				catch(Exception x)
+				}
+				catch (Exception x)
 				{
 					GD.Print($"failed to read: {imgFn}; {x.Message}");
 				}
 			}
-        
+
+			StopAudio();
+			audioStream = null;
 			audio = Path.Combine(dir, audio);
 			if (!File.Exists(audio))
 			{
 				audio = "";
-            }
+			}
 			if (playButton != null)
-	            playButton.Visible = !string.IsNullOrWhiteSpace(audio);
-            if (stopButton != null)
-                stopButton.Visible = !string.IsNullOrWhiteSpace(audio);
-        }
-    }
+				playButton.Visible = !string.IsNullOrWhiteSpace(audio);
+			if (stopButton != null)
+				stopButton.Visible = !string.IsNullOrWhiteSpace(audio);
+		}
+	}
 }

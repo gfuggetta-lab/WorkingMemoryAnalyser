@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://ri8ujbhpth3d" path="res://Scripts/QuitApp.cs" id="2_g1uyt"]
 [ext_resource type="PackedScene" uid="uid://kfxkun5kasfk" path="res://experiment.tscn" id="3_ellux"]
 
-[node name="uiInstructions" type="Control" unique_id=130860802 node_paths=PackedStringArray("instructionsImage")]
+[node name="uiInstructions" type="Control" unique_id=130860802 node_paths=PackedStringArray("instructionsImage", "playButton", "stopButton")]
 custom_minimum_size = Vector2(800, 541)
 layout_mode = 3
 anchors_preset = 15
@@ -15,6 +15,8 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_jsu0n")
 instructionsImage = NodePath("FormPanel/Image1")
+playButton = NodePath("FormPanel/btnPlay")
+stopButton = NodePath("FormPanel/btnStop")
 
 [node name="DoQuit" type="Node" parent="." unique_id=386563136]
 script = ExtResource("2_g1uyt")
