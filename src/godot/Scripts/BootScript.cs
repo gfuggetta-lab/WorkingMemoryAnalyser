@@ -43,6 +43,7 @@ public partial class BootScript : Node2D
 	Node2D drawRoot;
 	readonly List<Node> drawNodes = new List<Node>();
 	Dictionary<string, Texture2D> texs = new Dictionary<string, Texture2D>(StringComparer.OrdinalIgnoreCase);
+	Dictionary<string, VideoStream> videos = new Dictionary<string, VideoStream>(StringComparer.OrdinalIgnoreCase);
 	Dictionary<string, Font> fonts = new Dictionary<string, Font>(StringComparer.OrdinalIgnoreCase);
 	Dictionary<string, AudioStream> sounds = new Dictionary<string, AudioStream>(StringComparer.OrdinalIgnoreCase);
 
@@ -183,6 +184,7 @@ public partial class BootScript : Node2D
         List<string> tryExt = new List<string>();
         tryExt.Add(".png");
         tryExt.Add(".bmp");
+        tryExt.Add(".ogv");
         foreach (var nm in resNames)
         {
             string ext = Path.GetExtension(nm);
@@ -213,6 +215,15 @@ public partial class BootScript : Node2D
             }
 
 
+            string foundExt = Path.GetExtension(bmpFn);
+            if (IsVideoExtension(foundExt))
+            {
+                var video = PreloadVideo(bmpFn);
+                if (video != null)
+                    videos[nm] = video;
+                continue;
+            }
+
             Image img = new Image();
             try
             {
@@ -241,6 +252,29 @@ public partial class BootScript : Node2D
         if (texs.TryGetValue("correct", out var ci))
         {
             texs[Consts.IMAGEID_CORRECT.ToString()] = ci;
+        }
+    }
+
+    private static bool IsVideoExtension(string ext)
+    {
+        return string.Compare(ext, ".ogv", true) == 0;
+    }
+
+    private VideoStream PreloadVideo(string fileName)
+    {
+        try
+        {
+            var video = new VideoStreamTheora
+            {
+                File = fileName
+            };
+            GD.Print($"loaded video: {Path.GetFileName(fileName)}");
+            return video;
+        }
+        catch (Exception x)
+        {
+            log($"loading video from {fileName} failed: {x.Message}");
+            return null;
         }
     }
 
