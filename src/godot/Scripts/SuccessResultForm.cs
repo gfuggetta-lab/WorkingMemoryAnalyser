@@ -30,7 +30,7 @@ public partial class SuccessResultForm : Window
 		if (questionnaireLink != null)
 			questionnaireLink.Pressed += OpenQuestionnaireUrl;
 
-		CloseRequested += QueueFree;
+		CloseRequested += CloseApplication;
 		ApplyVisibility();
 	}
 
@@ -108,6 +108,11 @@ public partial class SuccessResultForm : Window
 	private void OpenQuestionnaireUrl()
 	{
 		OpenUrl(QuestionnaireUrl);
+	}
+
+	private void CloseApplication()
+	{
+		GetTree().Quit();
 	}
 
 	private static void OpenUrl(string url)
