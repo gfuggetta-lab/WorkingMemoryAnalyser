@@ -33,7 +33,24 @@ namespace godot.Scripts
 			}
 			if (!string.IsNullOrWhiteSpace(cfgFn))
 				LoadConfig(cfgFn);
+			if (playButton != null)
+				playButton.Pressed += PlayAudio;
+
+			if (stopButton != null)
+				stopButton.Pressed += StopAudio;
+
+        }
+
+		public void PlayAudio()
+		{
+
 		}
+
+		public void StopAudio()
+		{ 
+
+		}
+
 
 		public void LoadConfig(string configFileName)
 		{
@@ -54,13 +71,15 @@ namespace godot.Scripts
 			if (isOdd) 
 			{
 				imgFn = exam.Instructions_ODD_participants;
+				audio = exam.Audio_Instructions_ODD_participants;
 			} 
 			else
 			{
 				imgFn = exam.Instructions_EVEN_participants;
-			}
+                audio = exam.Audio_Instructions_EVEN_participants;
+            }
 
-			imgFn = Path.Combine(dir, imgFn);
+            imgFn = Path.Combine(dir, imgFn);
 			if (instructionsImage != null)
 			{
 				instructionsImage.Texture = null;
@@ -79,6 +98,16 @@ namespace godot.Scripts
 					GD.Print($"failed to read: {imgFn}; {x.Message}");
 				}
 			}
-		}
-	}
+        
+			audio = Path.Combine(dir, audio);
+			if (!File.Exists(audio))
+			{
+				audio = "";
+            }
+			if (playButton != null)
+	            playButton.Visible = !string.IsNullOrWhiteSpace(audio);
+            if (stopButton != null)
+                stopButton.Visible = !string.IsNullOrWhiteSpace(audio);
+        }
+    }
 }
