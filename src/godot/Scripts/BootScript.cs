@@ -38,7 +38,7 @@ public partial class BootScript : Node2D
 	List<PlayItem> drawItems = new List<PlayItem>();
 	List<PlayItem> pauseList = new List<PlayItem>();
 	List<PlayItem> postPauseList = new List<PlayItem>();
-    PlayItem currentSection;
+	PlayItem currentSection;
 	double currentSectionEndMs = -1.0;
 	Node2D drawRoot;
 	readonly List<Node> drawNodes = new List<Node>();
@@ -51,7 +51,7 @@ public partial class BootScript : Node2D
 	public bool isDrawPause = false;
 	public bool isDrawPostPause = false;
 	public double postPauseTime = 0.0;
-    public ResponseButton trialResponse = ResponseButton.NotGiven;
+	public ResponseButton trialResponse = ResponseButton.NotGiven;
 	// the condition evaluated based on the response.
 	// it's populated at CheckResponse, based on the actual response given
 	public PlayItemCond currentCond = PlayItemCond.None;
@@ -155,7 +155,7 @@ public partial class BootScript : Node2D
 
 		timeOfExperimentStart = Time.GetTicksMsec();
 		if (ExperimentShared.data != null)
-	        report.SetExperiment(ExperimentShared.data);
+			report.SetExperiment(ExperimentShared.data);
 		report.SetConfig(exam);
 
 		drawItems.Clear();
@@ -173,9 +173,9 @@ public partial class BootScript : Node2D
 		pauseList.Clear();
 		GatherByCond(drawItems, pauseList, PlayItemCond.Paused);
 		postPauseList.Clear();
-        GatherByCond(drawItems, postPauseList, PlayItemCond.PostPause);
+		GatherByCond(drawItems, postPauseList, PlayItemCond.PostPause);
 
-        UpdateSectionInfo();
+		UpdateSectionInfo();
 	}
 
 	private void Preload(Configuration exam, string expDir, List<TrialOrder> list)
@@ -297,12 +297,12 @@ public partial class BootScript : Node2D
 			if (postPauseTime <= 0)
 				postPauseTime = 0;
 			isDrawPostPause = false;
-            RebuildDrawNodes();
-            return;
-        }
+			RebuildDrawNodes();
+			return;
+		}
 
-        // don't count, time because we wait for input
-        if (isWaitInput > 0) return;
+		// don't count, time because we wait for input
+		if (isWaitInput > 0) return;
 
 		List<PlayItem> eff = new List<PlayItem>();
 		List<PlayItem> trigAndOff = new List<PlayItem>();
@@ -751,18 +751,17 @@ public partial class BootScript : Node2D
 	private void EndTrial()
 	{
 
-		string fn = ResultReport.GenerateOutputFileName(ExperimentShared.data);
-		fn = Path.Combine(ExperimentShared.SourcePath, "Output Data", fn);
+		string resultFileName = ResultReport.GenerateOutputFileName(ExperimentShared.data);
+		string fn = Path.Combine(ExperimentShared.SourcePath, "Output Data", resultFileName);
 
 		string d = Path.GetDirectoryName(fn);
 		if (!Directory.Exists(d))
 			Directory.CreateDirectory(d); ;
 
-        var repText = report.text.ToString();
-        File.WriteAllText(fn, repText);
+		var repText = report.text.ToString();
+		File.WriteAllText(fn, repText);
 
-        // we're done with al all the trials
-        GetTree().Quit();
+		SuccessResultForm.ShowSuccessForm(this, d, resultFileName);
 	}
 
 	private void CancelTrial()
@@ -814,8 +813,8 @@ public partial class BootScript : Node2D
 		{
 			isWaitInput++;
 			isDrawPostPause = false;
-            // mark the trial as ruined
-            if (result.isRuinedTrial == 0)
+			// mark the trial as ruined
+			if (result.isRuinedTrial == 0)
 				result.isRuinedTrial = 1;
 		}
 		else
@@ -823,7 +822,7 @@ public partial class BootScript : Node2D
 			postPauseTime = GetMaxDuration(postPauseList);
 			if (postPauseTime > 0)
 				isDrawPostPause = true;
-            isWaitInput--;
+			isWaitInput--;
 			isWaitInput = Math.Max(isWaitInput, 0);
 		}
 		RebuildDrawNodes();
@@ -851,7 +850,7 @@ public partial class BootScript : Node2D
 		}
 
 
-        if (isWaitInput > 0)
+		if (isWaitInput > 0)
 		{
 			if (ev is InputEventMouseButton)
 				isWaitInput--;
