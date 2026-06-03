@@ -71,6 +71,8 @@ public partial class BootScript : Node2D
 	private int isWaitInput = 0;
 	private bool isWaitMouseOnly;
 
+	private static Shader videoCircleMaskShader;
+
 
 	protected string GetConfigFileName()
 	{
@@ -402,6 +404,48 @@ public partial class BootScript : Node2D
 
 	}
 
+	private static Shader GetVideoCircleMaskShader()
+	{
+		if (videoCircleMaskShader != null)
+			return videoCircleMaskShader;
+
+		videoCircleMaskShader = new Shader
+		{
+			Code = @"shader_type canvas_item;
+void fragment() {
+	vec2 centered_uv = UV - vec2(0.5);
+	if (dot(centered_uv, centered_uv) > 0.25) {
+		discard;
+	}
+}"
+		};
+		return videoCircleMaskShader;
+	}
+
+	private Node2D CreateVideoNode(VideoStream video, Vector2 pos, float sizePx)
+	{
+		var root = new Node2D
+		{
+			Name = "Video",
+			Position = pos
+		};
+
+		var player = new VideoStreamPlayer
+		{
+			Name = "VideoStreamPlayer",
+			Stream = video,
+			Autoplay = true,
+			Expand = true,
+			Size = new Vector2(sizePx, sizePx),
+			Position = new Vector2(-sizePx / 2.0f, -sizePx / 2.0f),
+			Material = new ShaderMaterial
+			{
+				Shader = GetVideoCircleMaskShader()
+			}
+		};
+		root.AddChild(player);
+		return root;
+	}
 	protected virtual Node2D CreateTextNode(
 		// the item of text
 		PlayItem itm, 
@@ -722,13 +766,17 @@ public partial class BootScript : Node2D
 				case PlayItemType.ImageById:
 					string n;
 					n = itm.imageId.ToString();
-					if (texs.TryGetValue(n, out var tt))
+					float w = (float)(itm.sizeCm * cmToPix);
+					if (videos.TryGetValue(n, out var video))
 					{
-						float w = (float)(itm.sizeCm * cmToPix);
+						node = CreateVideoNode(video, pos, w);
+					}
+					else if (texs.TryGetValue(n, out var tt))
+					{
 						node = CreateImageNode(tt, pos, w);
 					}
 					else
-						log($"image not found: {n}; {itm.imageId}");
+						log($"image/video not found: {n}; {itm.imageId}");
 					break;
 
 				case PlayItemType.CircleFilled:
