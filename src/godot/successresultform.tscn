@@ -1,0 +1,53 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://Scripts/SuccessResultForm.cs" id="1_l8arh"]
+
+[node name="SuccessForm" type="Window" node_paths=PackedStringArray("openResultsFolderButton", "uploadOutputFileLink", "questionnaireLink")]
+title = "Experiment Completed"
+initial_position = 2
+size = Vector2i(667, 274)
+script = ExtResource("1_l8arh")
+openResultsFolderButton = NodePath("Button1")
+uploadOutputFileLink = NodePath("Label3")
+questionnaireLink = NodePath("Label4")
+
+[node name="Label1" type="Label" parent="."]
+offset_left = 88.0
+offset_top = 16.0
+offset_right = 591.0
+offset_bottom = 61.0
+theme_override_font_sizes/font_size = 32
+text = "Experiment Successfully terminated"
+
+[node name="Label2" type="Label" parent="."]
+offset_left = 179.0
+offset_top = 71.0
+offset_right = 499.0
+offset_bottom = 101.0
+theme_override_font_sizes/font_size = 21
+text = "Many thanks for your participation"
+
+[node name="Label3" type="LinkButton" parent="."]
+offset_left = 198.0
+offset_top = 121.0
+offset_right = 481.0
+offset_bottom = 142.0
+mouse_default_cursor_shape = 2
+theme_override_font_sizes/font_size = 16
+text = "Upload your output data (*.txt) file online"
+
+[node name="Button1" type="Button" parent="."]
+offset_left = 274.0
+offset_top = 152.0
+offset_right = 405.0
+offset_bottom = 177.0
+text = "Open Results Folder"
+
+[node name="Label4" type="LinkButton" parent="."]
+offset_left = 220.0
+offset_top = 197.0
+offset_right = 459.0
+offset_bottom = 218.0
+mouse_default_cursor_shape = 2
+theme_override_font_sizes/font_size = 16
+text = "Complete the questionnaire online"
