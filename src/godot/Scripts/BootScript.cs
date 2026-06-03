@@ -183,104 +183,104 @@ public partial class BootScript : Node2D
 
 	private void PreloadTextures(IEnumerable<string> resNames, string imgDir)
 	{
-        List<string> tryExt = new List<string>();
-        tryExt.Add(".png");
-        tryExt.Add(".bmp");
-        tryExt.Add(".ogv");
-        foreach (var nm in resNames)
-        {
-            string ext = Path.GetExtension(nm);
-            bool doTryExt = string.IsNullOrEmpty(ext);
+		List<string> tryExt = new List<string>();
+		tryExt.Add(".png");
+		tryExt.Add(".bmp");
+		tryExt.Add(".ogv");
+		foreach (var nm in resNames)
+		{
+			string ext = Path.GetExtension(nm);
+			bool doTryExt = string.IsNullOrEmpty(ext);
 
-            string bmpFn = Path.Combine(imgDir, nm);
-            bool exists = File.Exists(bmpFn);
+			string bmpFn = Path.Combine(imgDir, nm);
+			bool exists = File.Exists(bmpFn);
 
-            if (!exists && doTryExt)
-            {
-                foreach (var x in tryExt)
-                {
-                    string newfn = Path.ChangeExtension(bmpFn, x);
-                    if (File.Exists(newfn))
-                    {
-                        bmpFn = newfn;
-                        exists = true;
+			if (!exists && doTryExt)
+			{
+				foreach (var x in tryExt)
+				{
+					string newfn = Path.ChangeExtension(bmpFn, x);
+					if (File.Exists(newfn))
+					{
+						bmpFn = newfn;
+						exists = true;
 
-                        break;
-                    }
-                }
-            }
+						break;
+					}
+				}
+			}
 
-            if (!exists)
-            {
-                log($"the file image from {bmpFn} doesn't exist");
-                continue;
-            }
+			if (!exists)
+			{
+				log($"the file image from {bmpFn} doesn't exist");
+				continue;
+			}
 
 
-            string foundExt = Path.GetExtension(bmpFn);
-            if (IsVideoExtension(foundExt))
-            {
-                var video = PreloadVideo(bmpFn);
-                if (video != null)
-                    videos[nm] = video;
-                continue;
-            }
+			string foundExt = Path.GetExtension(bmpFn);
+			if (IsVideoExtension(foundExt))
+			{
+				var video = PreloadVideo(bmpFn);
+				if (video != null)
+					videos[nm] = video;
+				continue;
+			}
 
-            Image img = new Image();
-            try
-            {
-                var err = img.Load(bmpFn);
-                if (err != 0)
-                {
-                    log($"loading image from {bmpFn} failed: {err}");
-                    continue;
-                }
-                var _tex = ImageTexture.CreateFromImage(img);
-                GD.Print($"loaded: {Path.GetFileName(bmpFn)}");
-                texs[nm] = _tex;
-            }
-            catch (Exception x)
-            {
-                log($"loading image from {bmpFn} failed: {x.Message}");
-            }
-        }
-        // for compatibility with the "integer" based images
-        // the response images are reported as "int" with 100 for correct 
-        // and 101 for incorrect image
-        if (texs.TryGetValue("incorrect", out var inci))
-        {
-            texs[Consts.IMAGEID_INCORRECT.ToString()] = inci;
-        }
-        if (texs.TryGetValue("correct", out var ci))
-        {
-            texs[Consts.IMAGEID_CORRECT.ToString()] = ci;
-        }
-    }
+			Image img = new Image();
+			try
+			{
+				var err = img.Load(bmpFn);
+				if (err != 0)
+				{
+					log($"loading image from {bmpFn} failed: {err}");
+					continue;
+				}
+				var _tex = ImageTexture.CreateFromImage(img);
+				GD.Print($"loaded: {Path.GetFileName(bmpFn)}");
+				texs[nm] = _tex;
+			}
+			catch (Exception x)
+			{
+				log($"loading image from {bmpFn} failed: {x.Message}");
+			}
+		}
+		// for compatibility with the "integer" based images
+		// the response images are reported as "int" with 100 for correct 
+		// and 101 for incorrect image
+		if (texs.TryGetValue("incorrect", out var inci))
+		{
+			texs[Consts.IMAGEID_INCORRECT.ToString()] = inci;
+		}
+		if (texs.TryGetValue("correct", out var ci))
+		{
+			texs[Consts.IMAGEID_CORRECT.ToString()] = ci;
+		}
+	}
 
-    private static bool IsVideoExtension(string ext)
-    {
-        return string.Compare(ext, ".ogv", true) == 0;
-    }
+	private static bool IsVideoExtension(string ext)
+	{
+		return string.Compare(ext, ".ogv", true) == 0;
+	}
 
-    private VideoStream PreloadVideo(string fileName)
-    {
-        try
-        {
-            var video = new VideoStreamTheora
-            {
-                File = fileName
-            };
-            GD.Print($"loaded video: {Path.GetFileName(fileName)}");
-            return video;
-        }
-        catch (Exception x)
-        {
-            log($"loading video from {fileName} failed: {x.Message}");
-            return null;
-        }
-    }
+	private VideoStream PreloadVideo(string fileName)
+	{
+		try
+		{
+			var video = new VideoStreamTheora
+			{
+				File = fileName
+			};
+			GD.Print($"loaded video: {Path.GetFileName(fileName)}");
+			return video;
+		}
+		catch (Exception x)
+		{
+			log($"loading video from {fileName} failed: {x.Message}");
+			return null;
+		}
+	}
 
-    private void Preload(Configuration exam, string expDir, List<TrialOrder> list)
+	private void Preload(Configuration exam, string expDir, List<TrialOrder> list)
 	{
 		List<string> resNames = new List<string>();
 		
@@ -288,8 +288,8 @@ public partial class BootScript : Node2D
 		resNames.Add("correct");
 		resNames.Add("incorrect");
 
-        string imgDir = Path.Combine(expDir, "Stimulus images");
-        PreloadTextures(resNames, imgDir);
+		string imgDir = Path.Combine(expDir, "Stimulus images");
+		PreloadTextures(resNames, imgDir);
 
 		// loading fonts
 		resNames.Clear();
