@@ -178,78 +178,82 @@ public partial class BootScript : Node2D
 		UpdateSectionInfo();
 	}
 
-	private void Preload(Configuration exam, string expDir, List<TrialOrder> list)
+	private void PreloadTextures(IEnumerable<string> resNames, string imgDir)
 	{
-		string imgDir = Path.Combine(expDir, "Stimulus images");
-		
+        List<string> tryExt = new List<string>();
+        tryExt.Add(".png");
+        tryExt.Add(".bmp");
+        foreach (var nm in resNames)
+        {
+            string ext = Path.GetExtension(nm);
+            bool doTryExt = string.IsNullOrEmpty(ext);
+
+            string bmpFn = Path.Combine(imgDir, nm);
+            bool exists = File.Exists(bmpFn);
+
+            if (!exists && doTryExt)
+            {
+                foreach (var x in tryExt)
+                {
+                    string newfn = Path.ChangeExtension(bmpFn, x);
+                    if (File.Exists(newfn))
+                    {
+                        bmpFn = newfn;
+                        exists = true;
+
+                        break;
+                    }
+                }
+            }
+
+            if (!exists)
+            {
+                log($"the file image from {bmpFn} doesn't exist");
+                continue;
+            }
+
+
+            Image img = new Image();
+            try
+            {
+                var err = img.Load(bmpFn);
+                if (err != 0)
+                {
+                    log($"loading image from {bmpFn} failed: {err}");
+                    continue;
+                }
+                var _tex = ImageTexture.CreateFromImage(img);
+                GD.Print($"loaded: {Path.GetFileName(bmpFn)}");
+                texs[nm] = _tex;
+            }
+            catch (Exception x)
+            {
+                log($"loading image from {bmpFn} failed: {x.Message}");
+            }
+        }
+        // for compatibility with the "integer" based images
+        // the response images are reported as "int" with 100 for correct 
+        // and 101 for incorrect image
+        if (texs.TryGetValue("incorrect", out var inci))
+        {
+            texs[Consts.IMAGEID_INCORRECT.ToString()] = inci;
+        }
+        if (texs.TryGetValue("correct", out var ci))
+        {
+            texs[Consts.IMAGEID_CORRECT.ToString()] = ci;
+        }
+    }
+
+    private void Preload(Configuration exam, string expDir, List<TrialOrder> list)
+	{
 		List<string> resNames = new List<string>();
 		
 		exam.GetPreloadImages(list, resNames);
 		resNames.Add("correct");
 		resNames.Add("incorrect");
 
-		List<string> tryExt = new List<string>();
-		tryExt.Add(".png");
-		tryExt.Add(".bmp");
-		foreach (var nm in resNames)
-		{
-			string ext = Path.GetExtension(nm);
-			bool doTryExt = string.IsNullOrEmpty(ext);
-
-			string bmpFn = Path.Combine(imgDir, nm);
-			bool exists = File.Exists(bmpFn);
-
-			if (!exists && doTryExt)
-			{
-				foreach (var x in tryExt)
-				{
-					string newfn = Path.ChangeExtension(bmpFn, x);
-					if (File.Exists(newfn))
-					{
-						bmpFn = newfn;
-						exists = true;
-
-						break;
-					}
-				}
-			}
-
-			if (!exists)
-			{
-				log($"the file image from {bmpFn} doesn't exist");
-				continue;
-			}
-
-
-			Image img = new Image();
-			try
-			{
-				var err = img.Load(bmpFn);
-				if (err != 0)
-				{
-					log($"loading image from {bmpFn} failed: {err}");
-					continue;
-				}
-				var _tex = ImageTexture.CreateFromImage(img);
-				GD.Print($"loaded: {Path.GetFileName(bmpFn)}");
-				texs[nm] = _tex;
-			} 
-			catch(Exception x)
-			{
-				log($"loading image from {bmpFn} failed: {x.Message}");
-			}
-		}
-		// for compatibility with the "integer" based images
-		// the response images are reported as "int" with 100 for correct 
-		// and 101 for incorrect image
-		if (texs.TryGetValue("incorrect", out var inci))
-		{
-			texs[Consts.IMAGEID_INCORRECT.ToString()] = inci;
-		}
-		if (texs.TryGetValue("correct", out var ci))
-		{
-			texs[Consts.IMAGEID_CORRECT.ToString()] = ci;
-		}
+        string imgDir = Path.Combine(expDir, "Stimulus images");
+        PreloadTextures(resNames, imgDir);
 
 		// loading fonts
 		resNames.Clear();
