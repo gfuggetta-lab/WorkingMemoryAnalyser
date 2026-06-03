@@ -57,7 +57,9 @@ namespace WMAData
         public int N_trials_before_pause_main;
 
         public string Instructions_ODD_participants;
+        public string Audio_Instructions_ODD_participants;
         public string Instructions_EVEN_participants;
+        public string Audio_Instructions_EVEN_participants;
 
         // Stimulus font_1 and Stimulus_font_2
         public FontData font_1 = new FontData();

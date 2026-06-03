@@ -181,6 +181,8 @@ namespace WMAFiles
             
             dst.Instructions_ODD_participants = src.String("Instructions_ODD_participants:");
             dst.Instructions_EVEN_participants = src.String("Instructions_EVEN_participants:");
+            dst.Audio_Instructions_ODD_participants = src.String("Audio_Instructions_ODD_participants:");
+            dst.Audio_Instructions_EVEN_participants = src.String("Audio_Instructions_EVEN_participants:");
 
             dst.font_1.name = src.String("Stimulus_font_1:");
             dst.font_1.size = src.Float("Stimulus_font_1_size:");
