@@ -12,6 +12,9 @@ public partial class ConsentCheck : Node
 	[Export]
 	public CheckBox[] mustBeChecked;
 
+	[Export]
+	public RichTextLabel[] richTextLabelsWithLinks;
+
 	public void CheckConsent()
 	{
 		int total = 0;
@@ -32,10 +35,30 @@ public partial class ConsentCheck : Node
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
+		if (richTextLabelsWithLinks == null)
+			return;
+
+		foreach (var richTextLabel in richTextLabelsWithLinks)
+		{
+			if (richTextLabel != null)
+				richTextLabel.MetaClicked += OpenMetaLink;
+		}
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
+	}
+
+	private static void OpenMetaLink(Variant meta)
+	{
+		var target = meta.AsString();
+		if (string.IsNullOrWhiteSpace(target))
+			return;
+
+		if (!target.Contains("://") && target.Contains("@"))
+			target = "mailto:" + target;
+
+		OS.ShellOpen(target);
 	}
 }

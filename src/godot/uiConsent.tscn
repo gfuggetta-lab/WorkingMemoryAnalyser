@@ -21,9 +21,10 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ConsentCheck" type="Node" parent="ParticipantConsentForm" unique_id=1623414593 node_paths=PackedStringArray("mustBeChecked")]
+[node name="ConsentCheck" type="Node" parent="ParticipantConsentForm" unique_id=1623414593 node_paths=PackedStringArray("mustBeChecked", "richTextLabelsWithLinks")]
 script = ExtResource("1_me1bm")
 mustBeChecked = [NodePath("../VBoxContainer/chkIRead"), NodePath("../VBoxContainer/chkEscAware"), NodePath("../VBoxContainer/chkDataRemoval")]
+richTextLabelsWithLinks = [NodePath("../VBoxContainer/ConsentMargin/Consent")]
 
 [node name="SwitchNext" type="Node" parent="ParticipantConsentForm" unique_id=1396160189 node_paths=PackedStringArray("target")]
 script = ExtResource("2_aug0a")
