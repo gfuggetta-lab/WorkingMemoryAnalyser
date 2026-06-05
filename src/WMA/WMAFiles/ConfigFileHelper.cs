@@ -265,6 +265,11 @@ namespace WMAFiles
             // default is "a,f", but it's usually assigned to "a,d" in the config file
             dst.keyboards = src.StringLine("Keyboard_keys_used_to_respond:", "a,f");
 
+
+            dst.s2_set_size = src.Integer("S2_set_size:", dst.s2_set_size);
+            dst.s3_set_size = src.Integer("S3_set_size:", dst.s3_set_size);
+            dst.s4_set_size = src.Integer("S4_set_size:", dst.s4_set_size);
+
             dst.CalculateCmFromDeg();
         }
     }

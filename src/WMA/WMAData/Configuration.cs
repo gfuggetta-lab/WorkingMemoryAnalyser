@@ -106,6 +106,10 @@ namespace WMAData
         public double S2_sample_diameter_deg;
         public double s2_sample_diameter_cm;
 
+        // Number of the placeholders that need to be drawn
+        // while the stage is effective.
+        // It doesn't affect the "blank" transition screens 
+        // that shown when switching the staget to stage
         public int s2_set_size = 4;
         public int s3_set_size = 16;
         public int s4_set_size = 4;
