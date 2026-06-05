@@ -19,6 +19,10 @@ config/icon="res://icon.svg"
 
 ExperimentShared="*res://Scripts/ExperimentShared.cs"
 
+[display]
+
+window/size/mode=3
+
 [dotnet]
 
 project/assembly_name="godot"
