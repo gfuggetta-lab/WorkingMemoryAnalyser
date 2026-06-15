@@ -1,3 +1,9 @@
 [gd_resource type="Theme" format=3 uid="uid://cn7rry7kupxvw"]
 
+[ext_resource type="Texture2D" uid="uid://b7pk3swack2lg" path="res://Sprites/transparent.png" id="1_1nwru"]
+
 [resource]
+PopupMenu/icons/radio_checked = ExtResource("1_1nwru")
+PopupMenu/icons/radio_checked_disabled = ExtResource("1_1nwru")
+PopupMenu/icons/radio_unchecked = ExtResource("1_1nwru")
+PopupMenu/icons/radio_unchecked_disabled = ExtResource("1_1nwru")
