@@ -19,6 +19,13 @@ public partial class ParticipantAndExamDataBinder : Control
 	[Export] public AcceptDialog aboutDialog;
 	[Export] public SceneLoad nextSceneLoader;
 
+
+	[Export]
+    // Normally this would be set to "Random" (the value of zero)
+	// However, we still keep it for the "debugging" purposes.
+	// The list of items would be repopulated when loading the experiment.
+    public OptionButton trialNumber;
+
 	private readonly ButtonGroup monitorButtonGroup = new ButtonGroup();
 	private readonly Dictionary<BaseButton, ConnectedMonitor> monitorByButton = new Dictionary<BaseButton, ConnectedMonitor>();
 	private ConnectedMonitor selectedMonitor;

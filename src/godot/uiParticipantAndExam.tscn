@@ -15,9 +15,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_lxf75")
-ageInput = NodePath("FormPanel/cmbAge")
-sexInput = NodePath("FormPanel/cmbGender")
-handednessInput = NodePath("FormPanel/cmbHandedness")
+ageInput = NodePath("FormPanel/MarginContainer/vboxPersonAndExam/hboxPerson/vboxAge/cmbAge")
+sexInput = NodePath("FormPanel/MarginContainer/vboxPersonAndExam/hboxPerson/vboxGender/cmbGender")
+handednessInput = NodePath("FormPanel/MarginContainer/vboxPersonAndExam/hboxPerson/vboxHand/cmbHandedness")
 monitorsGroup = NodePath("FormPanel/grpMonitors")
 overviewText = NodePath("FormPanel/textOverview")
 enableButton = NodePath("FormPanel/btnBegin")
@@ -52,82 +52,231 @@ offset_right = 416.0
 offset_bottom = 693.0
 text = "Participant's initials"
 
-[node name="Label2" type="Label" parent="FormPanel" unique_id=1719001517]
+[node name="MarginContainer" type="MarginContainer" parent="FormPanel" unique_id=580400125]
 layout_mode = 0
-offset_left = 16.0
-offset_top = 96.0
-offset_right = 94.0
-offset_bottom = 109.0
-text = "Input file number"
+offset_right = 40.0
+offset_bottom = 40.0
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
 
-[node name="Label3" type="Label" parent="FormPanel" unique_id=598464123]
-layout_mode = 0
-offset_left = 144.0
-offset_top = 96.0
-offset_right = 219.0
-offset_bottom = 109.0
-text = "Session number"
+[node name="vboxPersonAndExam" type="VBoxContainer" parent="FormPanel/MarginContainer" unique_id=716960671]
+layout_mode = 2
+theme_override_constants/separation = 30
 
-[node name="Label4" type="Label" parent="FormPanel" unique_id=685233157]
-layout_mode = 0
-offset_left = 17.0
-offset_top = 16.0
-offset_right = 36.0
-offset_bottom = 29.0
+[node name="hboxPerson" type="HBoxContainer" parent="FormPanel/MarginContainer/vboxPersonAndExam" unique_id=992250164]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="vboxAge" type="VBoxContainer" parent="FormPanel/MarginContainer/vboxPersonAndExam/hboxPerson" unique_id=1115270346]
+layout_mode = 2
+
+[node name="Label4" type="Label" parent="FormPanel/MarginContainer/vboxPersonAndExam/hboxPerson/vboxAge" unique_id=685233157]
+layout_mode = 2
 text = "Age"
 
-[node name="Label6" type="Label" parent="FormPanel" unique_id=30920418]
-visible = false
-layout_mode = 0
-offset_left = 400.0
-offset_top = 640.0
-offset_right = 653.0
-offset_bottom = 653.0
-text = "It is essential to select correct values for the following:"
+[node name="cmbAge" type="OptionButton" parent="FormPanel/MarginContainer/vboxPersonAndExam/hboxPerson/vboxAge" unique_id=634769870]
+custom_minimum_size = Vector2(140, 0)
+layout_mode = 2
+item_count = 75
+popup/item_0/text = "6"
+popup/item_0/id = 0
+popup/item_1/text = "7"
+popup/item_1/id = 1
+popup/item_2/text = "8"
+popup/item_2/id = 2
+popup/item_3/text = "9"
+popup/item_3/id = 3
+popup/item_4/text = "10"
+popup/item_4/id = 4
+popup/item_5/text = "11"
+popup/item_5/id = 5
+popup/item_6/text = "12"
+popup/item_6/id = 6
+popup/item_7/text = "13"
+popup/item_7/id = 7
+popup/item_8/text = "14"
+popup/item_8/id = 8
+popup/item_9/text = "15"
+popup/item_9/id = 9
+popup/item_10/text = "16"
+popup/item_10/id = 10
+popup/item_11/text = "17"
+popup/item_11/id = 11
+popup/item_12/text = "18"
+popup/item_12/id = 12
+popup/item_13/text = "19"
+popup/item_13/id = 13
+popup/item_14/text = "20"
+popup/item_14/id = 14
+popup/item_15/text = "21"
+popup/item_15/id = 15
+popup/item_16/text = "22"
+popup/item_16/id = 16
+popup/item_17/text = "23"
+popup/item_17/id = 17
+popup/item_18/text = "24"
+popup/item_18/id = 18
+popup/item_19/text = "25"
+popup/item_19/id = 19
+popup/item_20/text = "26"
+popup/item_20/id = 20
+popup/item_21/text = "27"
+popup/item_21/id = 21
+popup/item_22/text = "28"
+popup/item_22/id = 22
+popup/item_23/text = "29"
+popup/item_23/id = 23
+popup/item_24/text = "30"
+popup/item_24/id = 24
+popup/item_25/text = "31"
+popup/item_25/id = 25
+popup/item_26/text = "32"
+popup/item_26/id = 26
+popup/item_27/text = "33"
+popup/item_27/id = 27
+popup/item_28/text = "34"
+popup/item_28/id = 28
+popup/item_29/text = "35"
+popup/item_29/id = 29
+popup/item_30/text = "36"
+popup/item_30/id = 30
+popup/item_31/text = "37"
+popup/item_31/id = 31
+popup/item_32/text = "38"
+popup/item_32/id = 32
+popup/item_33/text = "39"
+popup/item_33/id = 33
+popup/item_34/text = "40"
+popup/item_34/id = 34
+popup/item_35/text = "41"
+popup/item_35/id = 35
+popup/item_36/text = "42"
+popup/item_36/id = 36
+popup/item_37/text = "43"
+popup/item_37/id = 37
+popup/item_38/text = "44"
+popup/item_38/id = 38
+popup/item_39/text = "45"
+popup/item_39/id = 39
+popup/item_40/text = "46"
+popup/item_40/id = 40
+popup/item_41/text = "47"
+popup/item_41/id = 41
+popup/item_42/text = "48"
+popup/item_42/id = 42
+popup/item_43/text = "49"
+popup/item_43/id = 43
+popup/item_44/text = "50"
+popup/item_44/id = 44
+popup/item_45/text = "51"
+popup/item_45/id = 45
+popup/item_46/text = "52"
+popup/item_46/id = 46
+popup/item_47/text = "53"
+popup/item_47/id = 47
+popup/item_48/text = "54"
+popup/item_48/id = 48
+popup/item_49/text = "55"
+popup/item_49/id = 49
+popup/item_50/text = "56"
+popup/item_50/id = 50
+popup/item_51/text = "57"
+popup/item_51/id = 51
+popup/item_52/text = "58"
+popup/item_52/id = 52
+popup/item_53/text = "59"
+popup/item_53/id = 53
+popup/item_54/text = "60"
+popup/item_54/id = 54
+popup/item_55/text = "61"
+popup/item_55/id = 55
+popup/item_56/text = "62"
+popup/item_56/id = 56
+popup/item_57/text = "63"
+popup/item_57/id = 57
+popup/item_58/text = "64"
+popup/item_58/id = 58
+popup/item_59/text = "65"
+popup/item_59/id = 59
+popup/item_60/text = "66"
+popup/item_60/id = 60
+popup/item_61/text = "67"
+popup/item_61/id = 61
+popup/item_62/text = "68"
+popup/item_62/id = 62
+popup/item_63/text = "69"
+popup/item_63/id = 63
+popup/item_64/text = "70"
+popup/item_64/id = 64
+popup/item_65/text = "71"
+popup/item_65/id = 65
+popup/item_66/text = "72"
+popup/item_66/id = 66
+popup/item_67/text = "73"
+popup/item_67/id = 67
+popup/item_68/text = "74"
+popup/item_68/id = 68
+popup/item_69/text = "75"
+popup/item_69/id = 69
+popup/item_70/text = "76"
+popup/item_70/id = 70
+popup/item_71/text = "77"
+popup/item_71/id = 71
+popup/item_72/text = "78"
+popup/item_72/id = 72
+popup/item_73/text = "79"
+popup/item_73/id = 73
+popup/item_74/text = "80"
+popup/item_74/id = 74
+script = ExtResource("5_7pu50")
+MaxHeight = 300
 
-[node name="btnBegin" type="Button" parent="FormPanel" unique_id=25630888]
-layout_mode = 1
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -155.0
-offset_top = -55.0
-offset_right = -32.0
-offset_bottom = -19.0
-grow_horizontal = 0
-grow_vertical = 0
-disabled = true
-text = "Begin"
+[node name="vboxGender" type="VBoxContainer" parent="FormPanel/MarginContainer/vboxPersonAndExam/hboxPerson" unique_id=1353395385]
+layout_mode = 2
 
-[node name="btnQuit" type="Button" parent="FormPanel" unique_id=1743685519]
-layout_mode = 1
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = 18.0
-offset_top = -55.0
-offset_right = 141.0
-offset_bottom = -19.0
-grow_vertical = 0
-text = "Quit"
+[node name="Label14" type="Label" parent="FormPanel/MarginContainer/vboxPersonAndExam/hboxPerson/vboxGender" unique_id=1694528992]
+layout_mode = 2
+text = "Sex"
 
-[node name="Edit1" type="LineEdit" parent="FormPanel" unique_id=331990037]
-visible = false
-layout_mode = 0
-offset_left = 208.0
-offset_top = 672.0
-offset_right = 309.0
-offset_bottom = 693.0
-text = "INITIALS"
+[node name="cmbGender" type="OptionButton" parent="FormPanel/MarginContainer/vboxPersonAndExam/hboxPerson/vboxGender" unique_id=755311192]
+custom_minimum_size = Vector2(140, 0)
+layout_mode = 2
+item_count = 2
+popup/item_0/text = "Male"
+popup/item_0/id = 0
+popup/item_1/text = "Female"
+popup/item_1/id = 1
 
-[node name="cmbInputFile" type="OptionButton" parent="FormPanel" unique_id=1631605131]
-layout_mode = 0
-offset_left = 16.0
-offset_top = 120.0
-offset_right = 114.0
-offset_bottom = 141.0
+[node name="vboxHand" type="VBoxContainer" parent="FormPanel/MarginContainer/vboxPersonAndExam/hboxPerson" unique_id=627411840]
+layout_mode = 2
+
+[node name="Label15" type="Label" parent="FormPanel/MarginContainer/vboxPersonAndExam/hboxPerson/vboxHand" unique_id=1401424338]
+layout_mode = 2
+text = "Handedness"
+
+[node name="cmbHandedness" type="OptionButton" parent="FormPanel/MarginContainer/vboxPersonAndExam/hboxPerson/vboxHand" unique_id=1677412909]
+custom_minimum_size = Vector2(140, 0)
+layout_mode = 2
+item_count = 2
+popup/item_0/text = "Left"
+popup/item_0/id = 0
+popup/item_1/text = "Right"
+popup/item_1/id = 1
+
+[node name="hboxExamTrialSess" type="HBoxContainer" parent="FormPanel/MarginContainer/vboxPersonAndExam" unique_id=1780936324]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="vboxTrialNum" type="VBoxContainer" parent="FormPanel/MarginContainer/vboxPersonAndExam/hboxExamTrialSess" unique_id=938436216]
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="FormPanel/MarginContainer/vboxPersonAndExam/hboxExamTrialSess/vboxTrialNum" unique_id=1719001517]
+layout_mode = 2
+text = "Input file number"
+
+[node name="cmbInputFile" type="OptionButton" parent="FormPanel/MarginContainer/vboxPersonAndExam/hboxExamTrialSess/vboxTrialNum" unique_id=1631605131]
+custom_minimum_size = Vector2(140, 0)
+layout_mode = 2
 selected = 0
 item_count = 303
 popup/item_0/text = "Random"
@@ -739,12 +888,16 @@ popup/item_302/id = 302
 script = ExtResource("5_7pu50")
 MaxHeight = 300
 
-[node name="cmbSession" type="OptionButton" parent="FormPanel" unique_id=773242744]
-layout_mode = 0
-offset_left = 144.0
-offset_top = 120.0
-offset_right = 232.0
-offset_bottom = 141.0
+[node name="vboxSession" type="VBoxContainer" parent="FormPanel/MarginContainer/vboxPersonAndExam/hboxExamTrialSess" unique_id=561806976]
+layout_mode = 2
+
+[node name="Label3" type="Label" parent="FormPanel/MarginContainer/vboxPersonAndExam/hboxExamTrialSess/vboxSession" unique_id=598464123]
+layout_mode = 2
+text = "Session number"
+
+[node name="cmbSession" type="OptionButton" parent="FormPanel/MarginContainer/vboxPersonAndExam/hboxExamTrialSess/vboxSession" unique_id=773242744]
+custom_minimum_size = Vector2(140, 0)
+layout_mode = 2
 item_count = 20
 popup/item_0/text = "1"
 popup/item_0/id = 0
@@ -787,165 +940,51 @@ popup/item_18/id = 18
 popup/item_19/text = "20"
 popup/item_19/id = 19
 
-[node name="cmbAge" type="OptionButton" parent="FormPanel" unique_id=634769870]
+[node name="Label6" type="Label" parent="FormPanel" unique_id=30920418]
+visible = false
 layout_mode = 0
-offset_left = 16.0
-offset_top = 40.0
-offset_right = 113.0
-offset_bottom = 61.0
-item_count = 75
-popup/item_0/text = "6"
-popup/item_0/id = 0
-popup/item_1/text = "7"
-popup/item_1/id = 1
-popup/item_2/text = "8"
-popup/item_2/id = 2
-popup/item_3/text = "9"
-popup/item_3/id = 3
-popup/item_4/text = "10"
-popup/item_4/id = 4
-popup/item_5/text = "11"
-popup/item_5/id = 5
-popup/item_6/text = "12"
-popup/item_6/id = 6
-popup/item_7/text = "13"
-popup/item_7/id = 7
-popup/item_8/text = "14"
-popup/item_8/id = 8
-popup/item_9/text = "15"
-popup/item_9/id = 9
-popup/item_10/text = "16"
-popup/item_10/id = 10
-popup/item_11/text = "17"
-popup/item_11/id = 11
-popup/item_12/text = "18"
-popup/item_12/id = 12
-popup/item_13/text = "19"
-popup/item_13/id = 13
-popup/item_14/text = "20"
-popup/item_14/id = 14
-popup/item_15/text = "21"
-popup/item_15/id = 15
-popup/item_16/text = "22"
-popup/item_16/id = 16
-popup/item_17/text = "23"
-popup/item_17/id = 17
-popup/item_18/text = "24"
-popup/item_18/id = 18
-popup/item_19/text = "25"
-popup/item_19/id = 19
-popup/item_20/text = "26"
-popup/item_20/id = 20
-popup/item_21/text = "27"
-popup/item_21/id = 21
-popup/item_22/text = "28"
-popup/item_22/id = 22
-popup/item_23/text = "29"
-popup/item_23/id = 23
-popup/item_24/text = "30"
-popup/item_24/id = 24
-popup/item_25/text = "31"
-popup/item_25/id = 25
-popup/item_26/text = "32"
-popup/item_26/id = 26
-popup/item_27/text = "33"
-popup/item_27/id = 27
-popup/item_28/text = "34"
-popup/item_28/id = 28
-popup/item_29/text = "35"
-popup/item_29/id = 29
-popup/item_30/text = "36"
-popup/item_30/id = 30
-popup/item_31/text = "37"
-popup/item_31/id = 31
-popup/item_32/text = "38"
-popup/item_32/id = 32
-popup/item_33/text = "39"
-popup/item_33/id = 33
-popup/item_34/text = "40"
-popup/item_34/id = 34
-popup/item_35/text = "41"
-popup/item_35/id = 35
-popup/item_36/text = "42"
-popup/item_36/id = 36
-popup/item_37/text = "43"
-popup/item_37/id = 37
-popup/item_38/text = "44"
-popup/item_38/id = 38
-popup/item_39/text = "45"
-popup/item_39/id = 39
-popup/item_40/text = "46"
-popup/item_40/id = 40
-popup/item_41/text = "47"
-popup/item_41/id = 41
-popup/item_42/text = "48"
-popup/item_42/id = 42
-popup/item_43/text = "49"
-popup/item_43/id = 43
-popup/item_44/text = "50"
-popup/item_44/id = 44
-popup/item_45/text = "51"
-popup/item_45/id = 45
-popup/item_46/text = "52"
-popup/item_46/id = 46
-popup/item_47/text = "53"
-popup/item_47/id = 47
-popup/item_48/text = "54"
-popup/item_48/id = 48
-popup/item_49/text = "55"
-popup/item_49/id = 49
-popup/item_50/text = "56"
-popup/item_50/id = 50
-popup/item_51/text = "57"
-popup/item_51/id = 51
-popup/item_52/text = "58"
-popup/item_52/id = 52
-popup/item_53/text = "59"
-popup/item_53/id = 53
-popup/item_54/text = "60"
-popup/item_54/id = 54
-popup/item_55/text = "61"
-popup/item_55/id = 55
-popup/item_56/text = "62"
-popup/item_56/id = 56
-popup/item_57/text = "63"
-popup/item_57/id = 57
-popup/item_58/text = "64"
-popup/item_58/id = 58
-popup/item_59/text = "65"
-popup/item_59/id = 59
-popup/item_60/text = "66"
-popup/item_60/id = 60
-popup/item_61/text = "67"
-popup/item_61/id = 61
-popup/item_62/text = "68"
-popup/item_62/id = 62
-popup/item_63/text = "69"
-popup/item_63/id = 63
-popup/item_64/text = "70"
-popup/item_64/id = 64
-popup/item_65/text = "71"
-popup/item_65/id = 65
-popup/item_66/text = "72"
-popup/item_66/id = 66
-popup/item_67/text = "73"
-popup/item_67/id = 67
-popup/item_68/text = "74"
-popup/item_68/id = 68
-popup/item_69/text = "75"
-popup/item_69/id = 69
-popup/item_70/text = "76"
-popup/item_70/id = 70
-popup/item_71/text = "77"
-popup/item_71/id = 71
-popup/item_72/text = "78"
-popup/item_72/id = 72
-popup/item_73/text = "79"
-popup/item_73/id = 73
-popup/item_74/text = "80"
-popup/item_74/id = 74
-script = ExtResource("5_7pu50")
-MaxHeight = 300
+offset_left = 400.0
+offset_top = 640.0
+offset_right = 653.0
+offset_bottom = 653.0
+text = "It is essential to select correct values for the following:"
+
+[node name="btnBegin" type="Button" parent="FormPanel" unique_id=25630888]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -155.0
+offset_top = -55.0
+offset_right = -32.0
+offset_bottom = -19.0
+grow_horizontal = 0
+grow_vertical = 0
+disabled = true
+text = "Begin"
+
+[node name="btnQuit" type="Button" parent="FormPanel" unique_id=1743685519]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 18.0
+offset_top = -55.0
+offset_right = 141.0
+offset_bottom = -19.0
+grow_vertical = 0
+text = "Quit"
+
+[node name="Edit1" type="LineEdit" parent="FormPanel" unique_id=331990037]
+visible = false
+layout_mode = 0
+offset_left = 208.0
+offset_top = 672.0
+offset_right = 309.0
+offset_bottom = 693.0
+text = "INITIALS"
 
 [node name="ComboBox5" type="OptionButton" parent="FormPanel" unique_id=874241447]
 visible = false
@@ -2665,46 +2704,6 @@ offset_top = 169.0
 offset_right = 149.0
 offset_bottom = 210.0
 text = "Select experiment"
-
-[node name="cmbGender" type="OptionButton" parent="FormPanel" unique_id=755311192]
-layout_mode = 0
-offset_left = 145.0
-offset_top = 40.0
-offset_right = 245.0
-offset_bottom = 61.0
-item_count = 2
-popup/item_0/text = "Male"
-popup/item_0/id = 0
-popup/item_1/text = "Female"
-popup/item_1/id = 1
-
-[node name="cmbHandedness" type="OptionButton" parent="FormPanel" unique_id=1677412909]
-layout_mode = 0
-offset_left = 273.0
-offset_top = 40.0
-offset_right = 373.0
-offset_bottom = 61.0
-item_count = 2
-popup/item_0/text = "Left"
-popup/item_0/id = 0
-popup/item_1/text = "Right"
-popup/item_1/id = 1
-
-[node name="Label14" type="Label" parent="FormPanel" unique_id=1694528992]
-layout_mode = 0
-offset_left = 145.0
-offset_top = 16.0
-offset_right = 163.0
-offset_bottom = 29.0
-text = "Sex"
-
-[node name="Label15" type="Label" parent="FormPanel" unique_id=1401424338]
-layout_mode = 0
-offset_left = 273.0
-offset_top = 16.0
-offset_right = 333.0
-offset_bottom = 29.0
-text = "Handedness"
 
 [node name="btnAbout" type="Button" parent="FormPanel" unique_id=391105848]
 layout_mode = 1
