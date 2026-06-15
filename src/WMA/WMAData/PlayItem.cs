@@ -48,6 +48,9 @@ namespace WMAData
         // it's usually used for sucess of failure feedback
         // audio and visual
         public PlayItemCond cond = PlayItemCond.None;
+
+        // for NotifySx PlayItemType, the marker to send to the notifier
+        public int NotifyMarker; 
     }
 
     public enum PlayItemPos
@@ -83,6 +86,15 @@ namespace WMAData
 
         WaitForMouse, // mouse click
         WaitForInput, // key or mouse click
+
+        // Used for IAsyncExperimentNotifier
+        NotifyStart,
+        NotifyS1,
+        NotifyS2,
+        NotifyS3,
+        NotifyS4,
+        NotifyFeedbackCorrect,
+        NotifyFeedbackIncorrect,
     }
 
     public enum PlayItemCond
