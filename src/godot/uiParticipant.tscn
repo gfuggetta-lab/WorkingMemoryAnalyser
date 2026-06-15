@@ -4,7 +4,8 @@
 [ext_resource type="Script" uid="uid://ri8ujbhpth3d" path="res://Scripts/QuitApp.cs" id="1_q0dcj"]
 [ext_resource type="Script" uid="uid://cf26l0sax4o7o" path="res://Scripts/ParticipantIDStoreAndPermit.cs" id="2_86hwc"]
 [ext_resource type="Script" uid="uid://cuucqman7g4fq" path="res://Scripts/SceneLoad.cs" id="4_70xtq"]
-[ext_resource type="PackedScene" path="res://uiParticipantAndExam.tscn" id="4_nhahw"]
+[ext_resource type="PackedScene" uid="uid://ty3n27ms4gr8" path="res://uiParticipantAndExam.tscn" id="4_nhahw"]
+[ext_resource type="Script" uid="uid://bh06wj3r701oh" path="res://Scripts/PopupSizeLimit.cs" id="6_jo23d"]
 
 [node name="Control" type="Control" unique_id=1479967369]
 layout_mode = 3
@@ -121,6 +122,8 @@ popup/item_24/text = "Y"
 popup/item_24/id = 24
 popup/item_25/text = "Z"
 popup/item_25/id = 25
+script = ExtResource("6_jo23d")
+MaxHeight = 300
 
 [node name="MomInitBox" type="HBoxContainer" parent="VBoxContainer" unique_id=1853252482]
 layout_mode = 2
@@ -187,6 +190,8 @@ popup/item_24/text = "Y"
 popup/item_24/id = 24
 popup/item_25/text = "Z"
 popup/item_25/id = 25
+script = ExtResource("6_jo23d")
+MaxHeight = 300
 
 [node name="DadInitBox" type="HBoxContainer" parent="VBoxContainer" unique_id=122742692]
 layout_mode = 2
@@ -253,6 +258,8 @@ popup/item_24/text = "Y"
 popup/item_24/id = 24
 popup/item_25/text = "Z"
 popup/item_25/id = 25
+script = ExtResource("6_jo23d")
+MaxHeight = 300
 
 [node name="BDay" type="HBoxContainer" parent="VBoxContainer" unique_id=1699960899]
 layout_mode = 2
@@ -329,6 +336,8 @@ popup/item_29/text = "30"
 popup/item_29/id = 30
 popup/item_30/text = "31"
 popup/item_30/id = 31
+script = ExtResource("6_jo23d")
+MaxHeight = 300
 
 [node name="BMonth" type="HBoxContainer" parent="VBoxContainer" unique_id=1457448830]
 layout_mode = 2

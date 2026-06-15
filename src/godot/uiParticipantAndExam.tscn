@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://cuucqman7g4fq" path="res://Scripts/SceneLoad.cs" id="2_3n5jo"]
 [ext_resource type="Script" uid="uid://ri8ujbhpth3d" path="res://Scripts/QuitApp.cs" id="2_a4yq7"]
 [ext_resource type="PackedScene" uid="uid://b61tfka4qu14w" path="res://uiInstructions.tscn" id="3_7pu50"]
+[ext_resource type="Script" uid="uid://bh06wj3r701oh" path="res://Scripts/PopupSizeLimit.cs" id="5_7pu50"]
 
 [node name="uiParticipantAndExam" type="Control" unique_id=1922825012 node_paths=PackedStringArray("ageInput", "sexInput", "handednessInput", "monitorsGroup", "overviewText", "enableButton", "selectExperimentButton", "experimentDirectoryDialog", "aboutButton", "aboutDialog", "nextSceneLoader")]
 custom_minimum_size = Vector2(836, 503)
@@ -735,6 +736,8 @@ popup/item_301/text = "1001"
 popup/item_301/id = 301
 popup/item_302/text = "1002"
 popup/item_302/id = 302
+script = ExtResource("5_7pu50")
+MaxHeight = 300
 
 [node name="cmbSession" type="OptionButton" parent="FormPanel" unique_id=773242744]
 layout_mode = 0
@@ -941,6 +944,8 @@ popup/item_73/text = "79"
 popup/item_73/id = 73
 popup/item_74/text = "80"
 popup/item_74/id = 74
+script = ExtResource("5_7pu50")
+MaxHeight = 300
 
 [node name="ComboBox5" type="OptionButton" parent="FormPanel" unique_id=874241447]
 visible = false
