@@ -6,7 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://b61tfka4qu14w" path="res://uiInstructions.tscn" id="3_7pu50"]
 [ext_resource type="Script" uid="uid://bh06wj3r701oh" path="res://Scripts/PopupSizeLimit.cs" id="5_7pu50"]
 
-[node name="uiParticipantAndExam" type="Control" unique_id=1922825012 node_paths=PackedStringArray("ageInput", "sexInput", "handednessInput", "monitorsGroup", "overviewText", "enableButton", "selectExperimentButton", "experimentDirectoryDialog", "aboutButton", "aboutDialog", "nextSceneLoader")]
+[node name="uiParticipantAndExam" type="Control" unique_id=1922825012 node_paths=PackedStringArray("ageInput", "sexInput", "handednessInput", "monitorsGroup", "overviewText", "enableButton", "selectExperimentButton", "experimentDirectoryDialog", "aboutButton", "aboutDialog", "nextSceneLoader", "trialNumber")]
 custom_minimum_size = Vector2(836, 503)
 layout_mode = 3
 anchors_preset = 15
@@ -26,6 +26,7 @@ experimentDirectoryDialog = NodePath("ExperimentDirectoryDialog")
 aboutButton = NodePath("FormPanel/btnAbout")
 aboutDialog = NodePath("AboutDialog")
 nextSceneLoader = NodePath("ToInstructions")
+trialNumber = NodePath("FormPanel/MarginContainer/vboxPersonAndExam/hboxExamTrialSess/vboxTrialNum/cmbInputFile")
 
 [node name="ToInstructions" type="Node" parent="." unique_id=2006041667]
 script = ExtResource("2_3n5jo")

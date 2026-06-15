@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using WMAFiles;
 
 public partial class ParticipantAndExamDataBinder : Control
 {
@@ -186,7 +187,25 @@ public partial class ParticipantAndExamDataBinder : Control
 		if (overviewText != null)
 			overviewText.Text = File.ReadAllText(overviewPath);
 
-		UpdateData();
+		if (trialNumber != null)
+		{
+
+			trialNumber.Visible = true;
+
+            // todo: store and restore the previously selected value
+            trialNumber.Clear();
+			trialNumber.AddItem("Random", 0);
+			var list = InputDataReader.GetTrialNumberFilesFromExperimentDir(ExperimentShared.SourcePath);
+
+            foreach(var i in list)
+			{
+				if (i == 0) continue; // do not override "Random" 
+                trialNumber.AddItem(i.ToString(), i);
+			}
+			trialNumber.Selected = 0;
+        }
+
+        UpdateData();
 	}
 
 	private void ShowAboutDialog()
