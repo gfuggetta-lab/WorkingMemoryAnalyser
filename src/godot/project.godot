@@ -27,6 +27,10 @@ window/size/mode=3
 
 project/assembly_name="godot"
 
+[gui]
+
+theme/custom="uid://cn7rry7kupxvw"
+
 [input]
 
 CloseTrial={
