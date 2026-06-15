@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Text;
 
@@ -117,6 +118,31 @@ namespace WMAFiles
         {
             var idx = GetNameIdx(name);
             return TryGetVal(idx, out val);
+        }
+
+
+        // "dir" is the directory where the Overview.txt file is stored
+        // the input files would be searched at "dir/Input data"
+        public static IEnumerable<int> GetTrialNumberFilesFromExperimentDir(string dir)
+        {
+            const string InputData_ = "InputData_";
+
+            List<int> result = new List<int>();
+            string srchDir = Path.Combine(dir, "Input data");
+            foreach(var fullPath in Directory.EnumerateFiles(srchDir, "*.txt"))
+            {
+                string fn = Path.GetFileNameWithoutExtension(fullPath);
+                if (fn.StartsWith(InputData_, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    string numPart = fn.Substring(InputData_.Length);
+                    if (int.TryParse(numPart, out var num))
+                    {
+                        result.Add(num);
+                    }
+                }
+            }
+            result.Sort();
+            return result;
         }
     }
 }
