@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://ri8ujbhpth3d" path="res://Scripts/QuitApp.cs" id="2_a4yq7"]
 [ext_resource type="PackedScene" uid="uid://b61tfka4qu14w" path="res://uiInstructions.tscn" id="3_7pu50"]
 
-[node name="uiParticipantAndExam" type="Control" unique_id=1922825012 node_paths=PackedStringArray("ageInput", "sexInput", "handednessInput", "monitorsGroup", "overviewText", "enableButton", "selectExperimentButton", "experimentDirectoryDialog", "aboutButton", "aboutDialog")]
+[node name="uiParticipantAndExam" type="Control" unique_id=1922825012 node_paths=PackedStringArray("ageInput", "sexInput", "handednessInput", "monitorsGroup", "overviewText", "enableButton", "selectExperimentButton", "experimentDirectoryDialog", "aboutButton", "aboutDialog", "nextSceneLoader")]
 custom_minimum_size = Vector2(836, 503)
 layout_mode = 3
 anchors_preset = 15
@@ -24,6 +24,7 @@ selectExperimentButton = NodePath("FormPanel/btnSelectExperiment")
 experimentDirectoryDialog = NodePath("ExperimentDirectoryDialog")
 aboutButton = NodePath("FormPanel/btnAbout")
 aboutDialog = NodePath("AboutDialog")
+nextSceneLoader = NodePath("ToInstructions")
 
 [node name="ToInstructions" type="Node" parent="." unique_id=2006041667]
 script = ExtResource("2_3n5jo")
@@ -3332,5 +3333,5 @@ This program is free software: you can redistribute it and/or modify it under th
 editable = false
 wrap_mode = 1
 
-[connection signal="pressed" from="FormPanel/btnBegin" to="ToInstructions" method="LoadScene"]
+[connection signal="pressed" from="FormPanel/btnBegin" to="." method="BeginExperiment"]
 [connection signal="pressed" from="FormPanel/btnQuit" to="QuitApp" method="DoQuit"]

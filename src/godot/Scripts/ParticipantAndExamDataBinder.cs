@@ -17,6 +17,7 @@ public partial class ParticipantAndExamDataBinder : Control
 	[Export] public FileDialog experimentDirectoryDialog;
 	[Export] public Button aboutButton;
 	[Export] public AcceptDialog aboutDialog;
+	[Export] public SceneLoad nextSceneLoader;
 
 	private readonly ButtonGroup monitorButtonGroup = new ButtonGroup();
 	private readonly Dictionary<BaseButton, ConnectedMonitor> monitorByButton = new Dictionary<BaseButton, ConnectedMonitor>();
@@ -122,6 +123,43 @@ public partial class ParticipantAndExamDataBinder : Control
 			EmitSignal(SignalName.dataIncomplete);
 	}
 
+	public void BeginExperiment()
+	{
+		if (!UpdateDataAndVerify())
+		{
+			EmitSignal(SignalName.dataIncomplete);
+			return;
+		}
+
+		MoveWindowToSelectedMonitor();
+		EmitSignal(SignalName.dataReceived);
+		nextSceneLoader?.LoadScene();
+	}
+
+	private void MoveWindowToSelectedMonitor()
+	{
+		if (selectedMonitor == null)
+			return;
+
+		var bounds = selectedMonitor.Bounds;
+		int screen = FindGodotScreenForMonitor(selectedMonitor);
+		try
+		{
+            // todo: maybe use (DisplayServer.WindowMode.FullScreen screen instead ?
+            // don't use Exclusive. It's heavy weight of no use
+            DisplayServer.WindowSetMode(DisplayServer.WindowMode.Windowed);
+			if (screen >= 0)
+				DisplayServer.WindowSetCurrentScreen(screen);
+
+			DisplayServer.WindowSetPosition(new Vector2I(bounds.Left, bounds.Top));
+			DisplayServer.WindowSetSize(new Vector2I(bounds.Width, bounds.Height));
+			DisplayServer.WindowSetMode(DisplayServer.WindowMode.Fullscreen);
+		}
+		catch (Exception ex)
+		{
+			GD.PushWarning($"Unable to move window to selected monitor: {ex.Message}");
+		}
+	}
 	private void SelectExperiment()
 	{
 		if (experimentDirectoryDialog == null)
@@ -258,6 +296,45 @@ public partial class ParticipantAndExamDataBinder : Control
 		return monitor.Name ?? string.Empty;
 	}
 
+	private static int FindGodotScreenForMonitor(ConnectedMonitor monitor)
+	{
+		if (monitor == null)
+			return -1;
+
+		Rectangle bounds = monitor.Bounds;
+		int bestScreen = -1;
+		long bestScore = long.MinValue;
+		int screenCount = DisplayServer.GetScreenCount();
+		for (int i = 0; i < screenCount; i++)
+		{
+			var screenRect = new Rect2I(
+				DisplayServer.ScreenGetPosition(i),
+				DisplayServer.ScreenGetSize(i));
+
+			long score = GetIntersectionArea(
+				bounds.Left,
+				bounds.Top,
+				bounds.Right,
+				bounds.Bottom,
+				screenRect.Position.X,
+				screenRect.Position.Y,
+				screenRect.End.X,
+				screenRect.End.Y);
+
+			if (bounds.X == screenRect.Position.X && bounds.Y == screenRect.Position.Y)
+				score += 10_000_000_000L;
+			if (bounds.Width == screenRect.Size.X && bounds.Height == screenRect.Size.Y)
+				score += 1_000_000_000L;
+
+			if (score > bestScore)
+			{
+				bestScore = score;
+				bestScreen = i;
+			}
+		}
+
+		return bestScreen;
+	}
 	private static ConnectedMonitor FindMonitorForCurrentGodotScreen(IReadOnlyList<ConnectedMonitor> monitors)
 	{
 		var currentScreen = DisplayServer.WindowGetCurrentScreen();
