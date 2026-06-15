@@ -92,11 +92,23 @@ public partial class BootScript : Node2D
 		return result;
 	}
 
+	// returns the exact TrialOrderNum
 	protected int GetWantedTrial()
 	{
 		var result = ExperimentShared.data.TrialOrderNum;
-		if (result == 0)
-			result = 1;
+		if (result > 0)
+			return result;
+		
+		var trials = InputDataReader.GetTrialNumberFilesFromExperimentDir(ExperimentShared.SourcePath);
+        if (trials == null)
+            return 1;
+
+        List<int> vals = new List<int>();
+		vals.AddRange(trials);
+        var rng = new RandomNumberGenerator();
+		rng.Randomize();
+		var idx = rng.RandiRange(0, vals.Count-1);
+        result = vals[idx];
 		return result;
 	}
 	// Called when the node enters the scene tree for the first time.

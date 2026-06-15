@@ -43,8 +43,9 @@ public partial class ParticipantAndExamDataBinder : Control
 		ConnectOption(ageInput);
 		ConnectOption(sexInput);
 		ConnectOption(handednessInput);
+        ConnectOption(trialNumber);
 
-		PopulateMonitorButtons();
+        PopulateMonitorButtons();
 
 		if (selectExperimentButton != null)
 			selectExperimentButton.Pressed += OpenSelectExperimentDialog;
@@ -55,13 +56,13 @@ public partial class ParticipantAndExamDataBinder : Control
 		if (aboutButton != null)
 			aboutButton.Pressed += ShowAboutDialog;
 
-		UpdateData();
+        UpdateData();
 	}
 
 	private void ConnectOption(OptionButton option)
 	{
-		if (option != null)
-			option.ItemSelected += _ => UpdateData();
+		if (option == null) return;
+		option.ItemSelected += _ => UpdateData();
 	}
 
 	private bool UpdateDataAndVerify()
@@ -88,7 +89,16 @@ public partial class ParticipantAndExamDataBinder : Control
 			string path = Path.Combine(ExperimentShared.SourcePath, "Configuration.txt");
 			hasExperiment = File.Exists(path);
 		}
-		return hasParticipandData && hasExperiment;
+		if (trialNumber != null)
+		{
+			var idx = trialNumber.Selected;
+            if (idx >= 0)
+				ExperimentShared.data.TrialOrderNum = trialNumber.GetItemId(idx);
+			else
+				ExperimentShared.data.TrialOrderNum = 0;
+		}
+
+        return hasParticipandData && hasExperiment;
 	}
 	private void UpdateData()
 	{
@@ -203,6 +213,7 @@ public partial class ParticipantAndExamDataBinder : Control
                 trialNumber.AddItem(i.ToString(), i);
 			}
 			trialNumber.Selected = 0;
+			ExperimentShared.data.TrialOrderNum = 0;
         }
 
         UpdateData();

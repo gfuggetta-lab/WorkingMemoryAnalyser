@@ -2086,9 +2086,9 @@ wrap_mode = 1
 [node name="Label13" type="Label" parent="FormPanel/textOverview" unique_id=1449459462]
 layout_mode = 0
 offset_left = 1.0
-offset_top = -24.0
+offset_top = -33.0
 offset_right = 74.0
-offset_bottom = -1.0
+offset_bottom = -10.0
 text = "Overview"
 
 [node name="btnSelectExperiment" type="Button" parent="FormPanel" unique_id=883845903]
