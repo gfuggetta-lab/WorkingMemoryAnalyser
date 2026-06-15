@@ -38,11 +38,8 @@ public partial class ParticipantAndExamDataBinder : Control
 
 		PopulateMonitorButtons();
 
-		if (overviewText != null)
-			overviewText.TextChanged += UpdateData;
-
 		if (selectExperimentButton != null)
-			selectExperimentButton.Pressed += SelectExperiment;
+			selectExperimentButton.Pressed += OpenSelectExperimentDialog;
 
 		if (experimentDirectoryDialog != null)
 			experimentDirectoryDialog.DirSelected += OnExperimentDirectorySelected;
@@ -160,7 +157,7 @@ public partial class ParticipantAndExamDataBinder : Control
 			GD.PushWarning($"Unable to move window to selected monitor: {ex.Message}");
 		}
 	}
-	private void SelectExperiment()
+	private void OpenSelectExperimentDialog()
 	{
 		if (experimentDirectoryDialog == null)
 			return;
