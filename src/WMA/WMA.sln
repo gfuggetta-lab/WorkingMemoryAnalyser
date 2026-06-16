@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.14.36811.4 d17.14
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.33328.57
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WMAFiles", "WMAFiles\WMAFiles.csproj", "{8A5D0609-D678-464B-B648-E279CBD77D35}"
 EndProject
@@ -9,15 +9,21 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "testFiles", "testFiles\test
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WMAData", "WMAData\WMAData.csproj", "{C165B768-2CDC-40B6-AA58-C69DAD5E26F3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "testExp", "testExp\testExp.csproj", "{979D433F-D34E-412D-9ACB-38F74E5977A1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "testExp", "testExp\testExp.csproj", "{979D433F-D34E-412D-9ACB-38F74E5977A1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "testMonitors", "testMonitors\testMonitors.csproj", "{7A71FBB0-4841-4BD3-8BF2-CA87D1057F3C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "testMonitors", "testMonitors\testMonitors.csproj", "{7A71FBB0-4841-4BD3-8BF2-CA87D1057F3C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonitorInfo.Abstractions", "MonitorInfo.Abstractions\MonitorInfo.Abstractions.csproj", "{3B90E562-01E2-023F-8BDE-F4C1740453C3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonitorInfo.Abstractions", "MonitorInfo.Abstractions\MonitorInfo.Abstractions.csproj", "{3B90E562-01E2-023F-8BDE-F4C1740453C3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonitorInfo.Windows", "MonitorInfo.Windows\MonitorInfo.Windows.csproj", "{E2684F42-CE28-0D63-B3F6-31FF4D3EA11A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonitorInfo.Windows", "MonitorInfo.Windows\MonitorInfo.Windows.csproj", "{E2684F42-CE28-0D63-B3F6-31FF4D3EA11A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonitorInfo", "MonitorInfo\MonitorInfo.csproj", "{BCCE5D6F-5D4C-37E5-F28A-1A312567350F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonitorInfo", "MonitorInfo\MonitorInfo.csproj", "{BCCE5D6F-5D4C-37E5-F28A-1A312567350F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlockSerial", "..\BlockSerial\BlockSerial.csproj", "{1082BA3B-D60E-4F30-B636-62A1C9A3E7C5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LufaUSB", "..\LufaUSB\LufaUSB.csproj", "{03A2DA4D-8CD2-4A95-B05C-6F23E9478603}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "testLufa", "testLufa\testLufa.csproj", "{A87E333E-4E04-4A63-A1B4-5F24A8569B7E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +63,18 @@ Global
 		{BCCE5D6F-5D4C-37E5-F28A-1A312567350F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BCCE5D6F-5D4C-37E5-F28A-1A312567350F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BCCE5D6F-5D4C-37E5-F28A-1A312567350F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1082BA3B-D60E-4F30-B636-62A1C9A3E7C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1082BA3B-D60E-4F30-B636-62A1C9A3E7C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1082BA3B-D60E-4F30-B636-62A1C9A3E7C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1082BA3B-D60E-4F30-B636-62A1C9A3E7C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{03A2DA4D-8CD2-4A95-B05C-6F23E9478603}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03A2DA4D-8CD2-4A95-B05C-6F23E9478603}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03A2DA4D-8CD2-4A95-B05C-6F23E9478603}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03A2DA4D-8CD2-4A95-B05C-6F23E9478603}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A87E333E-4E04-4A63-A1B4-5F24A8569B7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A87E333E-4E04-4A63-A1B4-5F24A8569B7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A87E333E-4E04-4A63-A1B4-5F24A8569B7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A87E333E-4E04-4A63-A1B4-5F24A8569B7E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

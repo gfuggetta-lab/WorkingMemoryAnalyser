@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO.Ports;
 using System.Threading;
 using System.Threading.Tasks;
 using BlockSerial;
@@ -9,6 +10,8 @@ namespace LufaUSB
     public class LufaNotifier : IAsyncExperimentNotifier, IDisposable
     {
         BlockSerialAsync serial;
+
+        public Action<string> Logger;
 
         public bool logResponse = false;
         public string dead_time_photodiode_ms;
@@ -23,6 +26,18 @@ namespace LufaUSB
             serial = null;
         }
         
+        public LufaNotifier()
+        {
+
+        }
+
+        public LufaNotifier(string serialPort)
+        {
+            SerialPort sp = new SerialPort(serialPort, 115200, Parity.None, 8, StopBits.One);
+            sp.Open();
+            serial = new BlockSerialAsync(sp, System.Text.Encoding.ASCII, true);
+        }
+
         private async Task write(string s, CancellationToken cancel, int timeoutMs = 5)
         {
             await serial.SendString($"{s}\r\n", cancel);
@@ -35,7 +50,7 @@ namespace LufaUSB
 
         private void log(string s)
         {
-
+            Logger?.Invoke(s);
         }
 
         public async Task StartTrial(CancellationToken cancel)
@@ -85,29 +100,29 @@ namespace LufaUSB
         }
         public async Task MarkerS4(int marker, CancellationToken cancel)
         {
-            log("");
+            //log("");
             //log("TrialNo = ' + inttostr(TrialNo) + '. S4');
-            log("1.......");
+            //log("1.......");
             await write($"M 1 I {PhotodiodeInput} 0 P {marker}", cancel);
 
             // one-shot mapping. Photodiode, falling edge -> Digital output 4, 1000ms
-            log("2.......");
+            //log("2.......");
             // one-shot mapping. Photodiode, falling edge -> Digital output 0, 5ms
             await write($"M 1 I {PhotodiodeInput} 0 O 0 0 1 5", cancel);
 
-            log("3.......");
+            //log("3.......");
             // set up one-shot IO mapping :Input 2 falling edge -> parallel port 252
             await write($"M 1 I 2 0 P 252", cancel);
 
-            log("4.......");
+            //log("4.......");
             // one-shot mapping. Input 2 falling edge -> Digital output 5, 1000ms
             await write("M 1 I 2 0 O 0 0 4 5", cancel);
 
-            log("5.......");
+            //log("5.......");
             // set up one-shot IO mapping :Input 3 falling edge -> parallel port 253
             await write("M 1 I 3 0 P 253", cancel);
 
-            log("6.......");
+            //log("6.......");
             // one-shot mapping. Input 2 falling edge -> Digital output 2, 1000ms
             await write("M 1 I 3 0 O 0 0 8 5", cancel);
 
@@ -118,8 +133,8 @@ namespace LufaUSB
             {
                 // set up one-shot IO mapping :photodiode  falling edge -> parallel triggerStationData
                 // lufaUSBserial.sendstring( 'M 1 I '+inttostr(lufaUSBserialPhotodiodeInput)+' 0 P 254' );
-                log("");
-                log("TrialNo = ' + inttostr(TrialNo) + '. Feedback correct");
+                //log("");
+                //log("TrialNo = ' + inttostr(TrialNo) + '. Feedback correct");
                 //lufaUSBserial.flush;
                 //lufaUSBserial.purge;
                 // one-shot mapping. Photodiode, falling edge -> Parallel port correct
@@ -133,8 +148,8 @@ namespace LufaUSB
                 // set up one-shot IO mapping :photodiode  falling edge -> parallel triggerStationData
                 //lufaUSBserial.sendstring( 'M 1 I '+inttostr(lufaUSBserialPhotodiodeInput)+' 0 P 255' );
 
-                log("");
-                log("TrialNo = ' + inttostr(TrialNo) + '. Feedback incorrect");
+                //log("");
+                //log("TrialNo = ' + inttostr(TrialNo) + '. Feedback incorrect");
                 //lufaUSBserial.flush;
                 //lufaUSBserial.purge;
                 // one-shot mapping. Photodiode, falling edge -> Parallel port incorrect

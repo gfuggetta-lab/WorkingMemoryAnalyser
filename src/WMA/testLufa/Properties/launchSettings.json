@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "testLufa": {
+      "commandName": "Project",
+      "commandLineArgs": "1321313"
+    }
+  }
+}
