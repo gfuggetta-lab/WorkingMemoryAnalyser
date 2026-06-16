@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using BlockSerial;
 using WMAData;
@@ -22,12 +23,12 @@ namespace LufaUSB
             serial = null;
         }
         
-        private async Task write(string s, int timeoutMs = 5)
+        private async Task write(string s, CancellationToken cancel, int timeoutMs = 5)
         {
-            await serial.SendString($"{s}\r\n");
+            await serial.SendString($"{s}\r\n", cancel);
             if (logResponse)
             {
-                string rcv = await serial.RecvString(timeoutMs);
+                string rcv = await serial.RecvString(timeoutMs, cancel);
                 log(rcv);
             }
         }
@@ -37,15 +38,15 @@ namespace LufaUSB
 
         }
 
-        public async Task StartExperiment()
+        public async Task StartTrial(CancellationToken cancel)
         {
-            await write($"X");
-            await write($"D I 0 {dead_time_photodiode_ms}");
-            await write($"D I 1 {dead_time_photodiode_ms}");
-            await write($"D I 2 {dead_time_button_ms}");
-            await write($"D I 3 {dead_time_button_ms}");
+            await write($"X", cancel);
+            await write($"D I 0 {dead_time_photodiode_ms}", cancel);
+            await write($"D I 1 {dead_time_photodiode_ms}", cancel);
+            await write($"D I 2 {dead_time_button_ms}", cancel);
+            await write($"D I 3 {dead_time_button_ms}", cancel);
         }
-        public async Task MarkerS1(int marker)
+        public async Task MarkerS1(int marker, CancellationToken cancel)
         {
             // if LUFA USB serial device is present, load it with trigger data
             // i.e. send it a photodiode input-parallel port output mapping.
@@ -54,64 +55,64 @@ namespace LufaUSB
 
             //Left photodiode
             // one-shot mapping. Photodiode, falling edge -> Parallel port s1_marker
-            await write($"M 1 I {PhotodiodeInput} 0 P {marker}");
+            await write($"M 1 I {PhotodiodeInput} 0 P {marker}", cancel);
             // one-shot mapping. Photodiode, falling edge -> Digital output 0, 5ms
-            await write($"M 1 I {PhotodiodeInput} 0 O 0 0 1 5");
+            await write($"M 1 I {PhotodiodeInput} 0 O 0 0 1 5", cancel);
 
             //Right photodiode
             // one-shot mapping. Photodiode, falling edge -> Parallel port 251
-            await write("M 1 I 1 0 P 251");
+            await write("M 1 I 1 0 P 251", cancel);
 
             // one-shot mapping. Photodiode, falling edge -> Digital output 1, 1000ms
-            await write("M 1 I 1 0 O 0 0 2 5");
+            await write("M 1 I 1 0 O 0 0 2 5", cancel);
         }
 
-        public async Task MarkerS2(int marker)
+        public async Task MarkerS2(int marker, CancellationToken cancel)
         {
             // one-shot mapping. Photodiode, falling edge -> Parallel port s1_marker
-            await write($"M 1 I {PhotodiodeInput} 0 P {marker}");
+            await write($"M 1 I {PhotodiodeInput} 0 P {marker}", cancel);
             // one-shot mapping. Photodiode, falling edge -> Digital output 0, 5ms
-            await write($"M 1 I {PhotodiodeInput} 0 O 0 0 1 5");
+            await write($"M 1 I {PhotodiodeInput} 0 O 0 0 1 5", cancel);
 
         }
 
-        public async Task MarkerS3(int marker)
+        public async Task MarkerS3(int marker, CancellationToken cancel)
         {
             // one-shot mapping. Photodiode, falling edge -> Parallel port s1_marker
-            await write("M 1 I {PhotodiodeInput} 0 P {marker}");
+            await write("M 1 I {PhotodiodeInput} 0 P {marker}", cancel);
             // one-shot mapping. Photodiode, falling edge -> Digital output 0, 5ms
-            await write("M 1 I {PhotodiodeInput} 0 O 0 0 1 5");
+            await write("M 1 I {PhotodiodeInput} 0 O 0 0 1 5", cancel);
         }
-        public async Task MarkerS4(int marker)
+        public async Task MarkerS4(int marker, CancellationToken cancel)
         {
             log("");
             //log("TrialNo = ' + inttostr(TrialNo) + '. S4');
             log("1.......");
-            await write("M 1 I {PhotodiodeInput} 0 P {marker}");
+            await write($"M 1 I {PhotodiodeInput} 0 P {marker}", cancel);
 
             // one-shot mapping. Photodiode, falling edge -> Digital output 4, 1000ms
             log("2.......");
             // one-shot mapping. Photodiode, falling edge -> Digital output 0, 5ms
-            await write("M 1 I {PhotodiodeInput} 0 O 0 0 1 5");
+            await write($"M 1 I {PhotodiodeInput} 0 O 0 0 1 5", cancel);
 
             log("3.......");
             // set up one-shot IO mapping :Input 2 falling edge -> parallel port 252
-            await write("M 1 I 2 0 P 252");
+            await write($"M 1 I 2 0 P 252", cancel);
 
             log("4.......");
             // one-shot mapping. Input 2 falling edge -> Digital output 5, 1000ms
-            await write("M 1 I 2 0 O 0 0 4 5");
+            await write("M 1 I 2 0 O 0 0 4 5", cancel);
 
             log("5.......");
             // set up one-shot IO mapping :Input 3 falling edge -> parallel port 253
-            await write("M 1 I 3 0 P 253");
+            await write("M 1 I 3 0 P 253", cancel);
 
             log("6.......");
             // one-shot mapping. Input 2 falling edge -> Digital output 2, 1000ms
-            await write("M 1 I 3 0 O 0 0 8 5");
+            await write("M 1 I 3 0 O 0 0 8 5", cancel);
 
         }
-        public async Task Feedback(bool isCorrect)
+        public async Task Feedback(bool isCorrect, CancellationToken cancel)
         {
             if (isCorrect)
             {
@@ -122,10 +123,10 @@ namespace LufaUSB
                 //lufaUSBserial.flush;
                 //lufaUSBserial.purge;
                 // one-shot mapping. Photodiode, falling edge -> Parallel port correct
-                await write($"M 1 I {PhotodiodeInput} 0 P 254");
+                await write($"M 1 I {PhotodiodeInput} 0 P 254", cancel);
 
                 // one-shot mapping. Photodiode, falling edge -> digital out 4, 5ms
-                await write($"M 1 I {PhotodiodeInput} 0 O 0 0 16 5");
+                await write($"M 1 I {PhotodiodeInput} 0 O 0 0 16 5", cancel);
             }
             else
             {
@@ -137,10 +138,10 @@ namespace LufaUSB
                 //lufaUSBserial.flush;
                 //lufaUSBserial.purge;
                 // one-shot mapping. Photodiode, falling edge -> Parallel port incorrect
-                await write($"M 1 I {PhotodiodeInput} 0 P 255");
+                await write($"M 1 I {PhotodiodeInput} 0 P 255", cancel);
 
                 // one-shot mapping. Photodiode, falling edge -> digital out 5, 5ms
-                await write($"M 1 I {PhotodiodeInput} 0 O 0 0 32 5");
+                await write($"M 1 I {PhotodiodeInput} 0 O 0 0 32 5", cancel);
             }
         }
     }
