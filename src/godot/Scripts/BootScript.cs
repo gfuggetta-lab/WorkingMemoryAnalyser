@@ -119,7 +119,7 @@ public partial class BootScript : Node2D
 	}
 
 	// Called when the node enters the scene tree for the first time.
-	public override void _Ready()
+	public override async void _Ready()
 	{
 		notifier = PrepareNotifier();
 
@@ -201,7 +201,10 @@ public partial class BootScript : Node2D
 		GatherByCond(drawItems, postPauseList, PlayItemCond.PostPause);
 
 		UpdateSectionInfo();
-	}
+
+		// Notify Async should be the last step
+		await NotifyAsync(drawItems);
+    }
 
 	private void PreloadTextures(IEnumerable<string> resNames, string imgDir)
 	{
@@ -351,7 +354,7 @@ public partial class BootScript : Node2D
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
+	public override async void _Process(double delta)
 	{
 		if (postPauseTime > 0)
 		{
@@ -388,7 +391,10 @@ public partial class BootScript : Node2D
 		PlaySoundIfAny(trigAndOff);
 		StopReadResponse(offList);
 		StopReadResponse(trigAndOff);
-	}
+        
+		// Notify Async should be the last step
+        await NotifyAsync(trigAndOff);
+    }
 
 	public static Vector2 GetPos(PlayItemPos pos, Vector2 center, double distance, int posVal, int posCount)
 	{
