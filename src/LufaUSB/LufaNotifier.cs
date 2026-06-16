@@ -40,7 +40,7 @@ namespace LufaUSB
 
         private async Task write(string s, CancellationToken cancel, int timeoutMs = 5)
         {
-            await serial.SendString($"{s}\r\n", cancel);
+            await serial.SendString($"{s}", cancel);
             if (logResponse)
             {
                 string rcv = await serial.RecvString(timeoutMs, cancel);
