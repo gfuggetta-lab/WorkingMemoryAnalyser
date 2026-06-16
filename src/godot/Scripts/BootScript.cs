@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using System.Threading;
+using System.Threading.Tasks;
 using WMAData;
 using WMAFiles;
 using static godot.WMAUtils;
@@ -64,8 +64,9 @@ public partial class BootScript : Node2D
 	public TrialOrder curTrial = null;
 	public TrialResults result = new TrialResults();
 	public ResultReport report = new ResultReport();
-	
-	private ulong timeOfExperimentStart;
+	public IAsyncExperimentNotifier notifier = null;
+
+    private ulong timeOfExperimentStart;
 	private ulong s4start;
 
 	private int isWaitInput = 0;
@@ -111,9 +112,18 @@ public partial class BootScript : Node2D
         result = vals[idx];
 		return result;
 	}
+
+	private IAsyncExperimentNotifier PrepareNotifier()
+	{
+		return new NothingNotifier();
+	}
+
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
+		notifier = PrepareNotifier();
+
+
 		exam = new Configuration(new GodotMSLogger());
 
 		// there's no configuration for the clear color
@@ -538,7 +548,41 @@ void fragment() {
 				dstList.Add(itm);
 		}
 	}
-	private void PlaySoundIfAny(List<PlayItem> items)
+    public async Task NotifyAsync(List<PlayItem> items)
+	{
+		if (notifier == null)
+			return;
+
+		foreach (var itm in items)
+		{
+			switch (itm.itemType)
+			{
+				case PlayItemType.NotifyStart:
+					await notifier.StartTrial();
+					break;
+                case PlayItemType.NotifyS1:
+                    await notifier.MarkerS1(itm.markerValue);
+                    break;
+                case PlayItemType.NotifyS2:
+                    await notifier.MarkerS2(itm.markerValue);
+                    break;
+                case PlayItemType.NotifyS3:
+                    await notifier.MarkerS3(itm.markerValue);
+                    break;
+                case PlayItemType.NotifyS4:
+                    await notifier.MarkerS4(itm.markerValue);
+                    break;
+                case PlayItemType.NotifyFeedbackCorrect:
+                case PlayItemType.NotifyFeedbackIncorrect:
+					bool isCorr = itm.itemType == PlayItemType.NotifyFeedbackCorrect;
+                    await notifier.Feedback(isCorr);
+                    break;
+            }
+        }
+
+	}
+
+    private void PlaySoundIfAny(List<PlayItem> items)
 	{
 		if (soundPlayer == null) return;
 
