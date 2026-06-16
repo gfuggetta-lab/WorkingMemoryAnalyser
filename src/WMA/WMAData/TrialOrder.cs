@@ -8,7 +8,7 @@ namespace WMAData
     {
         // Markers are used only for the Serial device reporting.
         // Those are not reflect on the screen in any way?
-        public int Markers;
+        public int Marker;
 
         // see SHAPE_ constants. 
         // For S2, the value isn't used, use ShapePos_XX instead

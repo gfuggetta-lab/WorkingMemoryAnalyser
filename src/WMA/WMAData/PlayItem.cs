@@ -50,7 +50,7 @@ namespace WMAData
         public PlayItemCond cond = PlayItemCond.None;
 
         // for NotifySx PlayItemType, the marker to send to the notifier
-        public int NotifyMarker; 
+        public int markerValue; 
     }
 
     public enum PlayItemPos

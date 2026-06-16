@@ -192,10 +192,10 @@ namespace WMAData
             AppendField(displayType);
             AppendField(observerNo);
             AppendField(trial.session_number);
-            AppendField(trial.S1.Markers);
-            AppendField(trial.S2.Markers);
-            AppendField(trial.S3.Markers);
-            AppendField(trial.S4.Markers);
+            AppendField(trial.S1.Marker);
+            AppendField(trial.S2.Marker);
+            AppendField(trial.S3.Marker);
+            AppendField(trial.S4.Marker);
             AppendField(trial.S1.Shape);
             AppendField(trial.S1.Sound);
             AppendField(trial.S1.Position);

@@ -490,6 +490,10 @@ namespace WMAData
                 res = dst.AddSound("correct.wav", ofsTime);
                 res.cond = PlayItemCond.Correct;
 
+                res = dst.AddNotify(ofsTime, PlayItemType.NotifyFeedbackCorrect);
+                res.cond = PlayItemCond.Correct;
+
+
                 // The incorrect feedback
                 res = null;
                 if ((tr.Feedback_shape >= SHAPE_DIAMOND) && (tr.Feedback_shape <= SHAPE_STAR))
@@ -502,6 +506,9 @@ namespace WMAData
                     res.cond = PlayItemCond.Incorrect;
 
                 res = dst.AddSound("incorrect.wav", ofsTime);
+                res.cond = PlayItemCond.Incorrect;
+
+                res = dst.AddNotify(ofsTime, PlayItemType.NotifyFeedbackIncorrect);
                 res.cond = PlayItemCond.Incorrect;
             }
 
@@ -551,6 +558,9 @@ namespace WMAData
             if (show_s1)
             {
                 ScheduleS1_Focus(tr, dst, ref ofsTime);
+                
+                dst.AddNotify(ofsTime, PlayItemType.NotifyS2, tr.S2.Marker);
+
                 ScheduleS1_S2(tr, dst, ref ofsTime);
             }
 
@@ -562,6 +572,9 @@ namespace WMAData
             if (show_s2)
             {
                 ScheduleS2_Info(tr, dst, ref ofsTime);
+
+                dst.AddNotify(ofsTime, PlayItemType.NotifyS3, tr.S3.Marker);
+
                 ScheduleS2_S3(tr, dst, ref ofsTime);
             }
 
@@ -575,6 +588,9 @@ namespace WMAData
             if (show_s3)
             {
                 ScheduleS3_Distract(tr, dst, trialOfs, ref ofsTime);
+
+                dst.AddNotify(ofsTime, PlayItemType.NotifyS4, tr.S4.Marker);
+
                 ScheduleS3_S4(tr, dst, ref ofsTime);
             }
 
@@ -598,16 +614,27 @@ namespace WMAData
             int pidx = 0;
             for (int i = 0, trNum = 1; i < trials.Count; i++, trNum++)
             {
+
+                var tr = trials[i];
+                // S1 marker is scheduled before the pause
+                dst.AddNotify(ofsTime, PlayItemType.NotifyS1, tr.S1.Marker);
+
                 while ((pidx < pauseSorted.Count) &&(pauseSorted[pidx].trial_no <= trNum))
                 {
                     var pd = pauseSorted[pidx];
+
+                    //----------------------------------------------------------------------------
+                    // A mouse button down event triggers the first trial (only).
+                    // wait for user to begin
+                    // Pause every N_trials_before_pause trials
+                    // The first pause occurs after N_trials_before_pause_training trials
+                    // Subsequent pauses occur after each N_trials_before_pause_main trials
                     double dur = ScheduleWaitInput(dst, GetMessage(pd.message_no), ofsTime, pidx == 0);
                     ofsTime += dur;
 
                     pidx++;
                 }
 
-                var tr = trials[i];
                 Schedule2SecDelay(dst, ref ofsTime);
                 ScheduleTrial(tr, dst, ref ofsTime);
             }
@@ -648,6 +675,12 @@ namespace WMAData
             return duration;
         }
 
+        // The elements that are shown during the pause.
+        // Since the pause can be shown at any time,
+        // the actual "content" needs to be hidde, w/o letting the person
+        // to "read" the screen. 
+        //
+        // Thus we would only show the placeholders and "pause" verbiage
         private void SchedulePause(PlayList dst)
         {
             int i = dst.items.Count;
@@ -664,6 +697,13 @@ namespace WMAData
         }
 
         public const double PostPauseDelay = 2.0;
+
+        // Scheduling the elements that should be shown during pause removal.
+        // The experiment doesn't restore immediately, but with the 2 seconds.
+        // delay.
+        //
+        // However the word "pause" is removed immediately.
+        // (as an indicator that unpause key recognized)
         private void SchedulePostPause(PlayList dst)
         {
             double duration = PostPauseDelay;

@@ -315,5 +315,15 @@ namespace WMAData
             itm.itemType = PlayItemType.WaitForInput;
             return itm;
         }
+
+        public static PlayItem AddNotify(this PlayList list, double ofsMs, PlayItemType mode, int marker = 0)
+        {
+            if (list == null) return null;
+            var pt = list.Add(ofsMs);
+            pt.itemType = mode;
+            pt.markerValue = marker;
+            return pt;
+        }
+
     }
 }

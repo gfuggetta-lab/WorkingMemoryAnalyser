@@ -32,10 +32,10 @@ namespace WMAFiles
             if (dst == null) return false;
 
             dst.session_number = rdr.GetInt("session_number", dst.session_number);
-            dst.S1.Markers = rdr.GetInt("S1_Markers", dst.S1.Markers);
-            dst.S2.Markers = rdr.GetInt("S2_Markers", dst.S2.Markers);
-            dst.S3.Markers = rdr.GetInt("S3_Markers", dst.S3.Markers);
-            dst.S4.Markers = rdr.GetInt("S4_Markers", dst.S4.Markers);
+            dst.S1.Marker = rdr.GetInt("S1_Markers", dst.S1.Marker);
+            dst.S2.Marker = rdr.GetInt("S2_Markers", dst.S2.Marker);
+            dst.S3.Marker = rdr.GetInt("S3_Markers", dst.S3.Marker);
+            dst.S4.Marker = rdr.GetInt("S4_Markers", dst.S4.Marker);
             dst.S1.Shape = rdr.GetInt("S1_Shape", dst.S1.Shape);
             dst.S1.Sound = rdr.GetInt("S1_Sound", dst.S1.Sound);
             dst.S1.Position = rdr.GetInt("S1_Position", dst.S1.Position);
