@@ -7,11 +7,11 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup Condition="('$(TargetPlatformIdentifier)' == '') Or ('$(TargetPlatformIdentifier)' == 'windows')">
+  <ItemGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
     <ProjectReference Include="..\MonitorInfo.Windows\MonitorInfo.Windows.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetPlatformIdentifier)' == 'macos'">
+  <ItemGroup Condition="$([MSBuild]::IsOSPlatform('OSX'))">
     <ProjectReference Include="..\MonitorInfo.macOS\MonitorInfo.macOS.csproj" />
   </ItemGroup>
 
