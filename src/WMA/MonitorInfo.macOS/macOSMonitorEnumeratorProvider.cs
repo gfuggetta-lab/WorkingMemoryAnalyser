@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MonitorInfo.macOS
 {
-    public class macOSMonitorEnumeratorProvided : IMonitorEnumeratorProvider
+    public class macOSMonitorEnumeratorProvider : IMonitorEnumeratorProvider
     {
         public bool IsSupported()
         {

@@ -82,8 +82,8 @@ namespace MonitorInfo
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
-                assemblyName = "MonitorInfo.Mac";
-                providerTypeName = "MonitorInfo.Mac.MacMonitorEnumeratorProvider";
+                assemblyName = "MonitorInfo.macOS";
+                providerTypeName = "MonitorInfo.macOS.macOSMonitorEnumeratorProvider";
             }
             else
             {
