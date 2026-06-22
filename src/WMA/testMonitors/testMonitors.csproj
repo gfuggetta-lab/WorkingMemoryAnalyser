@@ -7,8 +7,15 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="('$(TargetPlatformIdentifier)' == '') Or ('$(TargetPlatformIdentifier)' == 'windows')">
     <ProjectReference Include="..\MonitorInfo.Windows\MonitorInfo.Windows.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetPlatformIdentifier)' == 'macos'">
+    <ProjectReference Include="..\MonitorInfo.macOS\MonitorInfo.macOS.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\MonitorInfo\MonitorInfo.csproj" />
   </ItemGroup>
 
