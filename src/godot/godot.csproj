@@ -7,9 +7,14 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.8" />
   </ItemGroup>
+  <ItemGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
+    <ProjectReference Include="..\WMA\MonitorInfo.Windows\MonitorInfo.Windows.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition="$([MSBuild]::IsOSPlatform('OSX'))">
+    <ProjectReference Include="..\WMA\MonitorInfo.macOS\MonitorInfo.macOS.csproj" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\WMA\MonitorInfo.Abstractions\MonitorInfo.Abstractions.csproj" />
-    <ProjectReference Include="..\WMA\MonitorInfo.Windows\MonitorInfo.Windows.csproj" />
     <ProjectReference Include="..\WMA\MonitorInfo\MonitorInfo.csproj" />
     <ProjectReference Include="..\WMA\WMAData\WMAData.csproj" />
     <ProjectReference Include="..\WMA\WMAFiles\WMAFiles.csproj" />
