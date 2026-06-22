@@ -122,7 +122,7 @@ namespace MonitorInfo.macOS
 
             try
             {
-                service = IOServicePortFromCGDisplayID(displayId);
+                service = CGDisplayIOServicePort(displayId);
                 if (service == 0)
                     return null;
 
@@ -160,9 +160,7 @@ namespace MonitorInfo.macOS
 
                 if (key != IntPtr.Zero)
                     CFRelease(key);
-
-                if (service != 0)
-                    IOObjectRelease(service);
+      
             }
         }
 

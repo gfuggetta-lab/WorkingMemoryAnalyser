@@ -48,8 +48,8 @@ namespace MonitorInfo.macOS
         [DllImport(CoreGraphics)]
         public static extern uint CGDisplaySerialNumber(uint display);
 
-        [DllImport(IOKit)]
-        public static extern uint IOServicePortFromCGDisplayID(uint displayID);
+        [DllImport(CoreGraphics)]
+        public static extern uint CGDisplayIOServicePort(uint display);
 
         [DllImport(IOKit)]
         public static extern int IOObjectRelease(uint obj);
