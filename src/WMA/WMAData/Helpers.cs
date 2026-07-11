@@ -9,7 +9,7 @@ namespace WMAData
 {
     public static class Helpers
     {
-        public static void FillShapes(StageData src, List<int> dst)
+        public static void FillShapes(StimuliData src, List<int> dst)
         {
             dst.Add(src.Shape);
             dst.Add(src.ShapePos1_NW);
