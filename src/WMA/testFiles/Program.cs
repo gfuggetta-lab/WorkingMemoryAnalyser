@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using WMAData;
 using WMAFiles;
+using WMAExcel;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,7 +14,8 @@ namespace testFiles
 
         static IDataProvider[] provs = new IDataProvider[]
         {
-            new TextFilesProvider()
+            new TextFilesProvider(),
+            new ExcelFileProvider()
         };
 
         static async Task<IDataProvider> GetProv(string fn)
