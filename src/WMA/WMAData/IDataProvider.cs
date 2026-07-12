@@ -10,7 +10,10 @@ namespace WMAData
     // to the experiment information and resources
     public interface IDataProvider
     {
+        // returns true, if the file can be used for reading the configuration
         Task<bool> IsConfigureFile(string filename);
+
+        // allocating the configuration reader, for the specified file
         IConfigReader GetReader(string filename);
     }
 }

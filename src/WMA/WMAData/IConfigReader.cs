@@ -9,6 +9,7 @@ namespace WMAData
     // The interface to implement the configuration reader
     public interface IConfigReader
     {
+        // populates the configuration class
         Task<bool> ReadConfig(Configuration cfg, CancellationToken cancel);
     }
 }
