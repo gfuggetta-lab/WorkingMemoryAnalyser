@@ -9,10 +9,17 @@ namespace WMAData
     public class TrialOrder
     {
         public int session_number;
-        public StimuliData S1 = new StimuliData(); // fixation
-        public StimuliData S2 = new StimuliData(); 
-        public StimuliData S3 = new StimuliData();
-        public StimuliData S4 = new StimuliData();
+        public Dictionary<string, StimuliData> slk = new Dictionary<string, StimuliData>(StringComparer.OrdinalIgnoreCase);
+
+        public StimuliData ForceStimuli(string nm)
+        {
+            return GetStimuli(nm, true);
+        }
+
+        public StimuliData S1 => ForceStimuli("S1");
+        public StimuliData S2 => ForceStimuli("S2");
+        public StimuliData S3 => ForceStimuli("S3");
+        public StimuliData S4 => ForceStimuli("S4");
 
         public int Feedback_shape; // see SHAPE_ constants
 
@@ -32,6 +39,18 @@ namespace WMAData
 
         public List<string> Factors = new List<string>();
         public Dictionary<string, string> FactorLk = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
+
+        public StimuliData GetStimuli(string nm, bool forced = false)
+        {
+            if (!slk.TryGetValue(nm, out var result))
+            {
+                if (!forced)
+                    return null;
+                result = new StimuliData();
+                slk[nm] = result;
+            }
+            return result;
+        }
     }
 }
  
