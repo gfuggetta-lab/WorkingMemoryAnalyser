@@ -6,6 +6,8 @@ namespace WMAExcel
 {
     public class ExcelInputData
     {
+        public int Index;
+
         public string Experiment;
         public string Reference_Number;
         public string Version;

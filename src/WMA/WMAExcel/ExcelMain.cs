@@ -31,14 +31,17 @@ namespace WMAExcel
 
                 if ((cfg == null) &&(IsConfigSheet(sh.SheetName)))
                 {
-                    Console.WriteLine("parsing config");
+                    //Console.WriteLine("parsing config");
                     cfg = new ExcelConfig();
                     ParseConfig(sh, cfg);
-                    //ParseSheet
                 } 
                 else if (IsInputDataSheet(sh.SheetName, out var inpIdx))
                 {
-                    // ParseInput data
+                    //Console.WriteLine("parsing input data");
+                    var data = new ExcelInputData();
+                    data.Index = inpIdx;
+                    ParseInputData(sh, data);
+                    inputData.Add(data);
                 }
             }
 
@@ -132,6 +135,33 @@ namespace WMAExcel
                     over.AppendLine(v);
                     inOverview = true;
                 }
+            }
+        }
+
+        public static void ParseInputData(ISheet source, ExcelInputData dst)
+        {
+            SheetReader rdr = new SheetReader(source);
+            while (rdr.ReadNext())
+            {
+                Console.WriteLine($"name:  {rdr.Name}");
+                Console.WriteLine($"value: {rdr.Value}");
+                var v = rdr.Value;
+
+                if (rdr.Name.StartsWith("// Start trial sequence"))
+                    break;
+
+                if (rdr.Name.StartsWith("Background_Type"))
+                    dst.Background_Type = v;
+                else if (rdr.Name.StartsWith("Background_Object"))
+                    dst.Background_Object = v;
+                else if (rdr.Name.StartsWith("Background_diameter_deg"))
+                    dst.Background_diameter_deg = v;
+                else if (rdr.Name.StartsWith("Background_sound"))
+                    dst.Background_sound = v;
+                else if (rdr.Name.StartsWith("Number_of_events_on_a_trial"))
+                    dst.Number_of_events_on_a_trial = v;
+                else if (rdr.Name.StartsWith("Sequence_of_Events_of_a_trial"))
+                    dst.Sequence_of_Events_of_a_trial = v;
             }
         }
 
