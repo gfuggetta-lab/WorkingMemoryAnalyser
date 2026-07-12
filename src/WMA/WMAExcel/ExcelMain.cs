@@ -75,6 +75,16 @@ namespace WMAExcel
                         }
                     }
                 }
+                else if (rdr.Name.StartsWith("Shapes_text_colour_"))
+                {
+                    if (TryGetNumber(rdr.Name, "Shapes_text_colour_", out var n))
+                    {
+                        if (!string.IsNullOrEmpty(v))
+                        {
+                            dst.Shapes_text_colour[n] = v;
+                        }
+                    }
+                }
                 else if (rdr.Name.StartsWith("Experiment"))
                     dst.Experiment = v;
                 else if (rdr.Name.StartsWith("Reference_Number"))
