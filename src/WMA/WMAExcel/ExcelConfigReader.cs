@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using WMAData;
+using static WMAExcel.ExcelToWMA;
 
 namespace WMAExcel
 {
@@ -29,11 +30,13 @@ namespace WMAExcel
         }
 
 
-        public Task<bool> ReadConfig(Configuration cfg, CancellationToken cancel)
+        public Task<bool> ReadConfig(Configuration dstCfg, CancellationToken cancel)
         {
             AssureXlsMain();
             if (xlsmain.cfg == null)
                 return Task.FromResult(false);
+
+            ExcelToCfg(xlsmain.cfg, dstCfg);
 
             return Task.FromResult(true);
         }
