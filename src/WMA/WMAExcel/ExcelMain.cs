@@ -148,7 +148,16 @@ namespace WMAExcel
                 var v = rdr.Value;
 
                 if (rdr.Name.StartsWith("// Start trial sequence"))
+                {
+                    ParseTrialSequence(source, rdr.row, dst);
                     break;
+                }
+
+                if (rdr.Name.EndsWith("_marker", StringComparison.OrdinalIgnoreCase))
+                {
+                    ParseTrialSequence(source, rdr.row - 1, dst);
+                    break;
+                }
 
                 if (rdr.Name.StartsWith("Background_Type"))
                     dst.Background_Type = v;
@@ -164,6 +173,53 @@ namespace WMAExcel
                     dst.Sequence_of_Events_of_a_trial = v;
                 else
                     ParseInputEvent(rdr.Name, v, dst);
+            }
+        }
+
+        private static void ParseTrialSequence(ISheet source, int headerRowIndex, ExcelInputData dst)
+        {
+            IRow headerRow = source.GetRow(headerRowIndex);
+            if (headerRow == null)
+                return;
+
+            List<int> columns = new List<int>();
+            List<string> names = new List<string>();
+            for (int c = headerRow.FirstCellNum; c < headerRow.LastCellNum; c++)
+            {
+                if (c < 0)
+                    continue;
+
+                var name = headerRow.GetCell(c).ValueAsStr().Trim();
+                if (string.IsNullOrEmpty(name))
+                    continue;
+
+                columns.Add(c);
+                names.Add(name);
+                dst.TrialDataNames.Add(name);
+            }
+
+            for (int r = headerRowIndex + 1; r <= source.LastRowNum; r++)
+            {
+                IRow row = source.GetRow(r);
+                if (row == null)
+                    continue;
+
+                ExcelTrialRow trial = new ExcelTrialRow();
+                bool hasValue = false;
+                for (int i = 0; i < columns.Count; i++)
+                {
+                    int c = columns[i];
+                    string name = names[i];
+                    string value = row.GetCell(c).ValueAsStr().Trim();
+
+                    if (!string.IsNullOrEmpty(value))
+                        hasValue = true;
+
+                    trial.data[name] = value;
+                }
+
+                if (hasValue)
+                    dst.Trials.Add(trial);
             }
         }
 

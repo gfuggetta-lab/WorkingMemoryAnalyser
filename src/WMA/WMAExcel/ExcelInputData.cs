@@ -35,6 +35,8 @@ namespace WMAExcel
 
         public Dictionary<string, ExcelInputEvent> Events = new Dictionary<string, ExcelInputEvent>(StringComparer.OrdinalIgnoreCase);
 
+        public List<string> TrialDataNames = new List<string>();
+
         public List<ExcelTrialRow> Trials = new List<ExcelTrialRow>();
 
     }
