@@ -87,6 +87,8 @@ namespace WMAExcel
                         }
                     }
                 }
+                else if (rdr.Name.StartsWith("LUFA_USB_CDC_Interrupt_"))
+                    ParseLufa(rdr.Name, v, dst);
                 else if (rdr.Name.StartsWith("Font_"))
                     ParseFont(rdr.Name, v, dst);
                 else if (rdr.Name.StartsWith("Experiment"))
@@ -131,6 +133,25 @@ namespace WMAExcel
                     inOverview = true;
                 }
             }
+        }
+
+        private static void ParseLufa(string name, string value, ExcelConfig dst)
+        {
+            if (!TryGetNumber(name, "LUFA_USB_CDC_Interrupt_", out var n))
+                return;
+
+            if (!dst.LUFA_USB_CDC_Interrupt.TryGetValue(n, out var lufa))
+            {
+                lufa = new ExcelLufa();
+                dst.LUFA_USB_CDC_Interrupt[n] = lufa;
+            }
+
+            lufa.index = n;
+
+            if (name.StartsWith($"LUFA_USB_CDC_Interrupt_{n}_mode"))
+                lufa.mode = value;
+            else if (name.StartsWith($"LUFA_USB_CDC_Interrupt_{n}_dead_time_ms"))
+                lufa.dead_ms = value;
         }
 
         private static void ParseFont(string name, string value, ExcelConfig dst)
