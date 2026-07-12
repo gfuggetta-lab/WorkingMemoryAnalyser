@@ -32,7 +32,7 @@ namespace WMAExcel
             suffix = "";
             if (string.IsNullOrWhiteSpace(name))
                 return false;
-            int i = name.Length;
+            int i = name.Length - 1;
             while ((i >= 0) && (name[i] == ':')) 
                 i--;
             if (i < 0)

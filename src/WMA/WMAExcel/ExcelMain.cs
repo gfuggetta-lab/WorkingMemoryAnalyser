@@ -87,10 +87,22 @@ namespace WMAExcel
                     dst.Age_range = v;
                 else if (rdr.Name.StartsWith("Device"))
                     dst.Device = v;
-                else if (rdr.Name.StartsWith("Study"))
-                    dst.Study = v;
                 else if (rdr.Name.StartsWith("Study_Reference_Number"))
                     dst.Study_Reference_Number = v;
+                else if (rdr.Name.StartsWith("Study"))
+                    dst.Study = v;
+                else if (rdr.Name.StartsWith("Minimum_training_accuracy"))
+                    dst.Minimum_training_accuracy = v;
+                else if (rdr.Name.StartsWith("N_trials_before_pause_training"))
+                    dst.N_trials_before_pause_training = v;
+                else if (rdr.Name.StartsWith("Instructions_ODD_participants"))
+                    dst.Instructions_ODD_participants = v;
+                else if (rdr.Name.StartsWith("Instructions_EVEN_participants"))
+                    dst.Instructions_EVEN_participants = v;
+                else if (rdr.Name.StartsWith("Audio_Instructions_ODD_participants"))
+                    dst.Audio_Instructions_ODD_participants = v;
+                else if (rdr.Name.StartsWith("Audio_Instructions_EVEN_participants"))
+                    dst.Audio_Instructions_EVEN_participants = v;
                 else if (rdr.Name.StartsWith("overview"))
                 {
                     if (over == null)
