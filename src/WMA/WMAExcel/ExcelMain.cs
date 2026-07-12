@@ -103,6 +103,12 @@ namespace WMAExcel
                     dst.Audio_Instructions_ODD_participants = v;
                 else if (rdr.Name.StartsWith("Audio_Instructions_EVEN_participants"))
                     dst.Audio_Instructions_EVEN_participants = v;
+                else if (rdr.Name.StartsWith("RT_constant_error_ms"))
+                    dst.RT_constant_error_ms = v;
+                else if (rdr.Name.StartsWith("Pause_background_shape_colour"))
+                    dst.Pause_background_shape_colour = v;
+                else if (rdr.Name.StartsWith("Run_background_shape_colour"))
+                    dst.Run_background_shape_colour = v;
                 else if (rdr.Name.StartsWith("overview"))
                 {
                     if (over == null)
