@@ -11,5 +11,8 @@ namespace WMAData
     {
         // populates the configuration class
         Task<bool> ReadConfig(Configuration cfg, CancellationToken cancel);
+
+        // returns the list of numbers that are available with the configuration
+        int[] GetInputDataListSync();
     }
 }

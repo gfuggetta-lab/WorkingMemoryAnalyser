@@ -17,10 +17,7 @@ namespace WMAFiles
 
         public IConfigReader GetReader(string filename)
         {
-            return new TextFileReader
-            {
-                configFileName = filename
-            };
+            return new TextFileReader(filename);
         }
     }
 }
