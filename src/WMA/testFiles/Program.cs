@@ -3,21 +3,63 @@ using System.Collections.Generic;
 using System.IO;
 using WMAData;
 using WMAFiles;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace testFiles
 {
     class Program
     {
-        static void Main(string[] args)
+
+        static IDataProvider[] provs = new IDataProvider[]
         {
+            new TextFilesProvider()
+        };
+
+        static async Task<IDataProvider> GetProv(string fn)
+        {
+            foreach(var p in provs)
+            {
+                if (await p.IsConfigureFile(fn))
+                    return p;
+            }
+            return null;
+        }
+
+
+        static async Task Main(string[] args)
+        {
+            string fn = "Configuration.txt";
+            if (args.Length  > 0)
+            {
+                fn = args[0]; 
+            }
+            var prov = await GetProv(fn);
+            if (prov == null)
+            {
+                Console.WriteLine($"The file {fn} is not supported.");
+                return;
+            }
+            Console.WriteLine($"config file: {fn}");
+            var rdr = prov.GetReader(fn);
             //if (args.Length == 0)
             //{
             //    Console.WriteLine("please provide the input file name");
             //    return;
             //}
-            ConfigFile cfg = ConfigFile.FromFile("Configuration.txt");
+            //ConfigFile cfg = ConfigFile.FromFile("Configuration.txt");
             Configuration exam = new Configuration();
-            exam.LoadConfig(cfg);
+            await rdr.ReadConfig(exam, CancellationToken.None);
+
+
+            Console.WriteLine("---"); 
+            Console.WriteLine(exam.Overview);
+            Console.WriteLine("---");
+
+
+
+
+            //exam.LoadConfig(cfg);
             List<TrialOrder> trials = new List<TrialOrder>();
             List<PauseData> pauses = new List<PauseData>();
             InputDataHelper.LoadTrials("InputData_1.txt", trials, pauses);
