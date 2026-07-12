@@ -162,6 +162,95 @@ namespace WMAExcel
                     dst.Number_of_events_on_a_trial = v;
                 else if (rdr.Name.StartsWith("Sequence_of_Events_of_a_trial"))
                     dst.Sequence_of_Events_of_a_trial = v;
+                else
+                    ParseInputEvent(rdr.Name, v, dst);
+            }
+        }
+
+        private static void ParseInputEvent(string name, string value, ExcelInputData dst)
+        {
+            if (!ParseName(name,
+                out var stimName,
+                out var stimType,
+                out var stimNum,
+                out var levelName,
+                out var levelNum,
+                out var suffix))
+                return;
+
+            if (string.IsNullOrEmpty(stimType))
+                return;
+
+            var ev = ForceInputEvent(dst, stimName, stimType, stimNum);
+            if (!string.IsNullOrEmpty(levelName))
+            {
+                ParseInputEventLevel(ev, levelName, levelNum, suffix, value);
+                return;
+            }
+
+            if (suffix.StartsWith("Label"))
+                ev.label = value;
+            else if (suffix.StartsWith("link_to_stimulus"))
+                ev.link_to_stimulus = value;
+            else if (suffix.StartsWith("link_to_response"))
+                ev.link_to_response = value;
+            else if (suffix.StartsWith("allowed_keys_to_respond"))
+                ev.allowed_keys_to_respond = value;
+            else if (suffix.StartsWith("Number_of_Layers"))
+                ev.number_of_layers = value;
+        }
+
+        private static ExcelInputEvent ForceInputEvent(
+            ExcelInputData dst,
+            string stimName,
+            string stimType,
+            int stimNum)
+        {
+            if (!dst.Events.TryGetValue(stimName, out var ev))
+            {
+                ev = new ExcelInputEvent
+                {
+                    Name = stimName,
+                    Type = stimType,
+                    Num = stimNum
+                };
+                dst.Events[stimName] = ev;
+            }
+
+            return ev;
+        }
+
+        private static void ParseInputEventLevel(
+            ExcelInputEvent ev,
+            string levelName,
+            int levelNum,
+            string suffix,
+            string value)
+        {
+            if (!ev.levels.TryGetValue(levelNum, out var level))
+            {
+                level = new ExcelInputEvent.Level
+                {
+                    LevelName = levelName,
+                    LevelNum = levelNum
+                };
+                ev.levels[levelNum] = level;
+            }
+
+            if (suffix.StartsWith("No_of_vertices_of_the_virtual_circle"))
+            {
+                if (int.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out var vertCount))
+                    level.VertCount = vertCount;
+            }
+            else if (suffix.StartsWith("Eccentricity_of_the_virtual_circle_deg"))
+            {
+                if (decimal.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out var eccentricityDeg))
+                    level.EccentriciyDeg = eccentricityDeg;
+            }
+            else if (suffix.StartsWith("No_of_Objects"))
+            {
+                if (int.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out var objCount))
+                    level.ObjCount = objCount;
             }
         }
 

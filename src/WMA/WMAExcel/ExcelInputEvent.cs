@@ -8,7 +8,7 @@ namespace WMAExcel
     {
         public class Level
         {
-            // derived from SX_LN_
+            // "LN" derived from SX_LN_value
             public string LevelName;
             // deriver from LevelName
             public int LevelNum;
@@ -18,6 +18,18 @@ namespace WMAExcel
             public int ObjCount;
 
         }
+
+        public string Name;
+        public string Type;
+        public int Num;
+
+        public string label;
+        public string link_to_stimulus;
+        public string link_to_response;
+        public string allowed_keys_to_respond;
+        public string number_of_layers;
+
+        public Dictionary<int, Level> levels = new Dictionary<int, Level>();
 
     }
 }

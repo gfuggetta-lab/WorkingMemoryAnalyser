@@ -33,7 +33,7 @@ namespace WMAExcel
         // and a continuously displayed superimposed stimulus [C]. 
         public string Sequence_of_Events_of_a_trial;
 
-        public List<ExcelInputEvent> Events = new List<ExcelInputEvent>();
+        public Dictionary<string, ExcelInputEvent> Events = new Dictionary<string, ExcelInputEvent>(StringComparer.OrdinalIgnoreCase);
 
         public List<ExcelTrialRow> Trials = new List<ExcelTrialRow>();
 

@@ -15,7 +15,7 @@ namespace WMAExcel
         //   stimNum   = 1
         //   levelName = "L1"
         //   levelNum  = 1
-        //   suffix    = "No_of_vertices_of_the_virtual_circle "
+        //   suffix    = "No_of_vertices_of_the_virtual_circle"
         // If no level is specified returns levelName as ""
         // if no stimuli prefix is specified returns as ""
         public static bool ParseName(string name, 
@@ -57,15 +57,17 @@ namespace WMAExcel
                 suffix = n;
                 return true;
             }
-            stimName = n;
+            stimName = parts[0];
+            stimType = st;
+            stimNum = stNum;
             int sfxOfs = 1;
             if ((IsSpecialNum(parts[1], out var lvlPfx, out var ln)) && (IsValidLevelPfx(lvlPfx)))
             {
-                levelName = parts[1];
+                levelName = parts[sfxOfs];
                 levelNum = ln;
                 sfxOfs++;
             }
-            if (parts.Length > 2)
+            if (parts.Length > sfxOfs)
                 suffix = string.Join("_", parts, sfxOfs, parts.Length - sfxOfs);
             return true;
         }
