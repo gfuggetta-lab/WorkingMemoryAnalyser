@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text;
+using Microsoft.Extensions.Logging;
 using NPOI;
 using NPOI.OOXML;
 using NPOI.SS.UserModel;
@@ -13,31 +14,32 @@ namespace WMAExcel
 {
     public class ExcelMain
     {
+        public ILogger log;
         public ExcelConfig cfg = null;
         public List<ExcelInputData> inputData = new List<ExcelInputData>();
         public bool LoadFromFile(string fn)
         {
             IWorkbook workbook = WorkbookFactory.Create(fn);
             var cnt = workbook.NumberOfSheets;
-            Console.WriteLine($"{workbook.GetType().Name}");
+            log.debug($"{workbook.GetType().Name}");
 
             cfg = null;
             for (int i = 0; i<cnt; i++)
             {
                 var sh = workbook.GetSheetAt(i);
                 
-                Console.WriteLine($"{sh.SheetName} -> {IsConfigSheet(sh.SheetName)}");
+                log.debug($"{sh.SheetName} -> {IsConfigSheet(sh.SheetName)}");
                 
 
                 if ((cfg == null) &&(IsConfigSheet(sh.SheetName)))
                 {
-                    //Console.WriteLine("parsing config");
+                    //log.debug("parsing config");
                     cfg = new ExcelConfig();
                     ParseConfig(sh, cfg);
                 } 
                 else if (IsInputDataSheet(sh.SheetName, out var inpIdx))
                 {
-                    //Console.WriteLine("parsing input data");
+                    //log.debug("parsing input data");
                     var data = new ExcelInputData();
                     data.Index = inpIdx;
                     ParseInputData(sh, data);
@@ -48,15 +50,15 @@ namespace WMAExcel
             return ((cfg != null) || (inputData.Count > 0));
         }
 
-        public static void ParseConfig(ISheet source, ExcelConfig dst)
+        public static void ParseConfig(ISheet source, ExcelConfig dst, ILogger log = null)
         {
             bool inOverview = false;
             StringBuilder over = null;
             SheetReader rdr = new SheetReader(source);
             while (rdr.ReadNext())
             {
-                Console.WriteLine($"name:  {rdr.Name}");
-                Console.WriteLine($"value: {rdr.Value}");
+                log.debug($"name:  {rdr.Name}");
+                log.debug($"value: {rdr.Value}");
                 var v = rdr.Value;
                 if (!string.IsNullOrEmpty(rdr.Name)&&!string.IsNullOrEmpty(v) && inOverview)
                 {
@@ -138,13 +140,13 @@ namespace WMAExcel
             }
         }
 
-        public static void ParseInputData(ISheet source, ExcelInputData dst)
+        public static void ParseInputData(ISheet source, ExcelInputData dst, ILogger log = null)
         {
             SheetReader rdr = new SheetReader(source);
             while (rdr.ReadNext())
             {
-                Console.WriteLine($"name:  {rdr.Name}");
-                Console.WriteLine($"value: {rdr.Value}");
+                log.debug($"name:  {rdr.Name}");
+                log.debug($"value: {rdr.Value}");
                 var v = rdr.Value;
 
                 if (rdr.Name.StartsWith("// Start trial sequence"))
