@@ -56,6 +56,9 @@ namespace testFiles
             Console.WriteLine(exam.Overview);
             Console.WriteLine("---");
 
+            var inpNums = rdr.GetInputDataListSync();
+            Console.WriteLine($"total input data: {inpNums.Length}");
+            return;
 
 
 
