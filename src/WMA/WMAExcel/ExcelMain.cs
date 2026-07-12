@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text;
 using NPOI;
 using NPOI.OOXML;
 using NPOI.SS.UserModel;
+using WMAData;
 using static WMAExcel.Utils;
 
 namespace WMAExcel
@@ -85,6 +87,8 @@ namespace WMAExcel
                         }
                     }
                 }
+                else if (rdr.Name.StartsWith("Font_"))
+                    ParseFont(rdr.Name, v, dst);
                 else if (rdr.Name.StartsWith("Experiment"))
                     dst.Experiment = v;
                 else if (rdr.Name.StartsWith("Reference_Number"))
@@ -127,6 +131,47 @@ namespace WMAExcel
                     inOverview = true;
                 }
             }
+        }
+
+        private static void ParseFont(string name, string value, ExcelConfig dst)
+        {
+            if (!TryGetNumber(name, "Font_", out var n))
+                return;
+
+            if (!dst.Fonts.TryGetValue(n, out var font))
+                font = new FontData();
+
+            if (name.StartsWith($"Font_{n}_size"))
+            {
+                if (double.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out var size))
+                    font.size = size;
+            }
+            else if (name.StartsWith($"Font_{n}_style"))
+            {
+                font.style = ParseFontStyle(value);
+            }
+            else if (name.StartsWith($"Font_{n}"))
+            {
+                font.name = value;
+            }
+
+            dst.Fonts[n] = font;
+        }
+
+        private static string ParseFontStyle(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return "";
+
+            value = value.Trim();
+            int i = 0;
+            while ((i < value.Length) && char.IsLetter(value[i]))
+                i++;
+
+            if (i == 0)
+                return "";
+
+            return value.Substring(0, i);
         }
     }
 }
