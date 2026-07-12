@@ -11,12 +11,25 @@ using static WMAData.Consts;
 
 namespace WMAData
 {
+    // It's the InputData file and an Overview file
     public class Configuration
     {
+        // The experiment overview text
+        public string Overview;
+
         private int width_px;
         private int height_px;
         private double width_cm;
         private double height_cm;
+
+        // this is sequence of the events to be triggered
+        // The default sequence is: S1 S2 S3 S4 R1 FB1 C
+        // Events can be either:
+        //   Stimulus [S] range from 1 to 64,
+        //   Response [R] range from 1 to 64,
+        //   Feedback [FB] range from 1 to 64
+        //   and a continuously displayed superimposed stimulus [C]. 
+        public List<string> Sequence = new List<string>();
 
         // the name of the experiment
         public string ExperimentName;
@@ -716,6 +729,7 @@ namespace WMAData
                 dst.items[i].cond = PlayItemCond.PostPause;
         }
 
+        [Obsolete("ScheduleNew should now be used going forward")]
         public void Schedule(TrialMonitor tm, List<TrialOrder> trials, List<PauseData> pauses, PlayList dst)
         {
             width_px = tm.widthPx;
@@ -732,6 +746,104 @@ namespace WMAData
             }
             dst.Sort();
         }
+
+        private void ScheduleStimuliData(StimuliData sd, string cur, string next, PlayList dst, ref double ofsTime)
+        {
+            double duration = sd.Duration;
+
+            ofsTime += duration;
+
+            // ISI section
+            duration = sd.Next_ISI;
+            if (duration > 0)
+            {
+                dst.StartSection($"{cur}>{next}", ofsTime, duration);
+
+                // todo: this needs tobe replaced by some "default ISI look"
+                ScheduleFixationDot(dst, ofsTime, duration);
+                SchedulePlaceholders4(dst, ofsTime, duration);
+
+                ofsTime += duration;
+            }
+        }
+
+        private void ScheduleTrialNew(TrialOrder tr, PlayList dst, ref double ofsTime)
+        {
+            for(int i = 0; i < Sequence.Count; i++)
+            {
+                string cur = Sequence[i];
+                string nx = "";
+                if (i < Sequence.Count - 1) nx = Sequence[i + 1];
+
+                if (cur.StartsWith("S"))
+                {
+                    var sd = tr.GetStimuli(cur);
+                    if (sd == null) // todo: failed
+                        return;
+                    ScheduleStimuliData(sd, cur, nx, dst, ref ofsTime);
+                }
+                
+            }
+        }
+
+        private void ScheduleTrialsNew(List<TrialOrder> trials, List<PauseData> pauses, PlayList dst)
+        {
+            List<PauseData> pauseSorted = new List<PauseData>();
+            pauseSorted.AddRange(pauses);
+            pauseSorted.Sort((a, b) =>
+            {
+                return a.trial_no.CompareTo(b.trial_no);
+            });
+
+            double ofsTime = 0;
+
+            int pidx = 0;
+            for (int i = 0, trNum = 1; i < trials.Count; i++, trNum++)
+            {
+
+                var tr = trials[i];
+                // S1 marker is scheduled before the pause
+                dst.AddNotify(ofsTime, PlayItemType.NotifyS1, tr.S1.Marker);
+
+                while ((pidx < pauseSorted.Count) && (pauseSorted[pidx].trial_no <= trNum))
+                {
+                    var pd = pauseSorted[pidx];
+
+                    //----------------------------------------------------------------------------
+                    // A mouse button down event triggers the first trial (only).
+                    // wait for user to begin
+                    // Pause every N_trials_before_pause trials
+                    // The first pause occurs after N_trials_before_pause_training trials
+                    // Subsequent pauses occur after each N_trials_before_pause_main trials
+                    double dur = ScheduleWaitInput(dst, GetMessage(pd.message_no), ofsTime, pidx == 0);
+                    ofsTime += dur;
+
+                    pidx++;
+                }
+
+                Schedule2SecDelay(dst, ref ofsTime);
+                ScheduleTrialNew(tr, dst, ref ofsTime);
+            }
+        }
+
+
+        public void ScheduleNew(TrialMonitor tm, List<TrialOrder> trials, List<PauseData> pauses, PlayList dst)
+        {
+            width_px = tm.widthPx;
+            height_px = tm.widthPx;
+            width_cm = tm.widthCm;
+            height_cm = tm.heightCm;
+
+            SchedulePause(dst);
+            SchedulePostPause(dst);
+            ScheduleBackground(dst);
+            if (trials != null)
+            {
+                ScheduleTrialsNew(trials, pauses, dst);
+            }
+            dst.Sort();
+        }
+
 
         public void ProcessResponse(
             ResponseButton btn, 

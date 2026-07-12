@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,6 +16,14 @@ namespace WMAFiles
         {
             ConfigFile file = ConfigFile.FromFile(configFileName);
             cfg.LoadConfig(file);
+
+            // overfiew file must reside at the same directory as config file
+            string ov = Path.Combine(Path.GetDirectoryName(configFileName), "Overview.txt");
+            if (File.Exists(ov))
+                cfg.Overview = File.ReadAllText(ov);
+            else
+                cfg.Overview = "";
+
             return Task.FromResult(true);
         }
     }
