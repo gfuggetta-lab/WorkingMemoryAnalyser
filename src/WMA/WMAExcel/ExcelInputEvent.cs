@@ -19,9 +19,9 @@ namespace WMAExcel
 
         }
 
-        public string Name;
-        public string Type;
-        public int Num;
+        public string Name; // S1
+        public string Type; // S
+        public int Num; // 1
 
         public string label;
         public string link_to_stimulus;

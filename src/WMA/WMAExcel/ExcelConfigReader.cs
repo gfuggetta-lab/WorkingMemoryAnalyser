@@ -57,8 +57,29 @@ namespace WMAExcel
             List<TrialOrder> dstTrials,
             List<PauseData> dstPauses)
         {
-            var result = false;
-            return Task.FromResult(result);
+            AssureXlsMain();
+            ExcelInputData data = null;
+            foreach (var inp in xlsmain.inputData)
+            {
+                if (inp.Index == inputDataNum)
+                {
+                    data = inp;
+                    break;
+                }
+            }
+            if (data == null)
+                return Task.FromResult(false);
+            
+
+            foreach(var srcT in data.Trials)
+            {
+                TrialOrder to = new TrialOrder();
+                dstTrials.Add(to);
+
+                ExcelToTrial(data, srcT, xlsmain.cfg, to);
+            }
+
+            return Task.FromResult(true);
         }
     }
 }

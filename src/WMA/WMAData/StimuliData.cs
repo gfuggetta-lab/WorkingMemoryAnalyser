@@ -6,6 +6,9 @@ namespace WMAData
 {
     public class StimuliData
     {
+        // The Z-order of the stimuli presented
+        public int Level;
+
         // Markers are used only for the Serial device reporting.
         // Those are not reflect on the screen in any way?
         public int Marker;

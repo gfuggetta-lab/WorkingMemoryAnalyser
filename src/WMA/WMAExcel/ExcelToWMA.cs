@@ -1,3 +1,4 @@
+using NPOI.OpenXmlFormats.Dml.Chart;
 using System;
 using System.Globalization;
 using System.Linq;
@@ -141,6 +142,25 @@ namespace WMAExcel
                 return value / 255.0;
 
             return value;
+        }
+        public static void ExcelToTrial(ExcelInputData xD, ExcelTrialRow xT, ExcelConfig xCfg, TrialOrder dst)
+        {
+            foreach(var evNameVal in xD.Events)
+            {
+                string g = evNameVal.Key;
+                var ev = evNameVal.Value;
+                foreach (var l in ev.levels)
+                {
+                    string grpName = ev.Name; // S1
+                    string fullName = $"{ev.Name}_{l.Value.LevelName}"; // S1_L1
+                    // the full name should be present id trials
+
+                    var sd = dst.AddStimuli(fullName, grpName);
+
+                    sd.Level = l.Value.LevelNum;
+                    //sd.Position = xT.st("")
+                }
+            }
         }
     }
 }
