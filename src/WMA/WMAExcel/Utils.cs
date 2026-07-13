@@ -152,7 +152,7 @@ namespace WMAExcel
             return (nm.IndexOf("configuration", StringComparison.OrdinalIgnoreCase) >= 0);
         }
 
-        public static bool StartsWith(this string s, string pattern)
+        public static bool StWith(this string s, string pattern)
         {
             if (s == null) return false;
             return s.IndexOf(pattern, StringComparison.OrdinalIgnoreCase) == 0;

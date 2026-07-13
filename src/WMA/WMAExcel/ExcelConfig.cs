@@ -18,6 +18,7 @@ namespace WMAExcel
         public string Device;
         public string Study;
         public string Study_Reference_Number;
+        public string Overview;
 
         // todo: an array?
         public Dictionary<int, ExcelLufa> LUFA_USB_CDC_Interrupt = new Dictionary<int, ExcelLufa>();

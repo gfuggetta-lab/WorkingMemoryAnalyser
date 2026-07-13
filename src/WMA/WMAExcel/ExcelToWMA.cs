@@ -12,6 +12,7 @@ namespace WMAExcel
             if ((src == null) || (dst == null))
                 return;
 
+            dst.Overview = ConvertOverview(src.Overview);
             dst.ExperimentName = src.Experiment;
 
             if (TryParseDouble(src.Minimum_training_accuracy, out var minimumTrainingAccuracy))
@@ -43,6 +44,19 @@ namespace WMAExcel
             // do not currently have direct fields in WMAData.Configuration.
             // Skipped intentionally: LUFA_USB_CDC_Interrupt is device IO metadata and
             // has no direct WMAData.Configuration target yet.
+        }
+
+        public static string ConvertOverview(string excelOver)
+        {
+            string[] lines = excelOver.Split(new string[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+            for (int i = 0; i < lines.Length; i++)
+            {
+                string s = lines[i].Trim();
+                if (s.EndsWith("@"))
+                    s = s.Substring(0, s.Length - 1);
+                lines[i] = s;
+            }
+            return string.Join("\r\n", lines);
         }
 
         private static void CopyMessages(ExcelConfig src, Configuration dst)

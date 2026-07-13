@@ -71,7 +71,7 @@ namespace WMAExcel
                     continue;
                 }
 
-                if (rdr.Name.StartsWith("Message_"))
+                if (rdr.Name.StWith("Message_"))
                 {
                     if (TryGetNumber(rdr.Name, "message_", out var n))
                     {
@@ -82,7 +82,7 @@ namespace WMAExcel
                         }
                     }
                 }
-                else if (rdr.Name.StartsWith("Shapes_text_colour_"))
+                else if (rdr.Name.StWith("Shapes_text_colour_"))
                 {
                     if (TryGetNumber(rdr.Name, "Shapes_text_colour_", out var n))
                     {
@@ -92,45 +92,49 @@ namespace WMAExcel
                         }
                     }
                 }
-                else if (rdr.Name.StartsWith("LUFA_USB_CDC_Interrupt_"))
+                else if (rdr.Name.StWith("LUFA_USB_CDC_Interrupt_"))
                     ParseLufa(rdr.Name, v, dst);
-                else if (rdr.Name.StartsWith("Font_"))
+                else if (rdr.Name.StWith("Font_"))
                     ParseFont(rdr.Name, v, dst);
-                else if (rdr.Name.StartsWith("Experiment"))
+                else if (rdr.Name.StWith("Experiment"))
                     dst.Experiment = v;
-                else if (rdr.Name.StartsWith("Reference_Number"))
+                else if (rdr.Name.StWith("Reference_Number"))
                     dst.Reference_Number = v;
-                else if (rdr.Name.StartsWith("Version"))
+                else if (rdr.Name.StWith("Version"))
                     dst.Version = v;
-                else if (rdr.Name.StartsWith("Release_date_"))
+                else if (rdr.Name.StWith("Release_date_"))
                     dst.Release_date = v;
-                else if (rdr.Name.StartsWith("Age_range"))
+                else if (rdr.Name.StWith("Author"))
+                    dst.Author = v;
+                else if (rdr.Name.StWith("Member_user_name"))
+                    dst.Member_user_name = v;
+                else if (rdr.Name.StWith("Age_range"))
                     dst.Age_range = v;
-                else if (rdr.Name.StartsWith("Device"))
+                else if (rdr.Name.StWith("Device"))
                     dst.Device = v;
-                else if (rdr.Name.StartsWith("Study_Reference_Number"))
+                else if (rdr.Name.StWith("Study_Reference_Number"))
                     dst.Study_Reference_Number = v;
-                else if (rdr.Name.StartsWith("Study"))
+                else if (rdr.Name.StWith("Study"))
                     dst.Study = v;
-                else if (rdr.Name.StartsWith("Minimum_training_accuracy"))
+                else if (rdr.Name.StWith("Minimum_training_accuracy"))
                     dst.Minimum_training_accuracy = v;
-                else if (rdr.Name.StartsWith("N_trials_before_pause_training"))
+                else if (rdr.Name.StWith("N_trials_before_pause_training"))
                     dst.N_trials_before_pause_training = v;
-                else if (rdr.Name.StartsWith("Instructions_ODD_participants"))
+                else if (rdr.Name.StWith("Instructions_ODD_participants"))
                     dst.Instructions_ODD_participants = v;
-                else if (rdr.Name.StartsWith("Instructions_EVEN_participants"))
+                else if (rdr.Name.StWith("Instructions_EVEN_participants"))
                     dst.Instructions_EVEN_participants = v;
-                else if (rdr.Name.StartsWith("Audio_Instructions_ODD_participants"))
+                else if (rdr.Name.StWith("Audio_Instructions_ODD_participants"))
                     dst.Audio_Instructions_ODD_participants = v;
-                else if (rdr.Name.StartsWith("Audio_Instructions_EVEN_participants"))
+                else if (rdr.Name.StWith("Audio_Instructions_EVEN_participants"))
                     dst.Audio_Instructions_EVEN_participants = v;
-                else if (rdr.Name.StartsWith("RT_constant_error_ms"))
+                else if (rdr.Name.StWith("RT_constant_error_ms"))
                     dst.RT_constant_error_ms = v;
-                else if (rdr.Name.StartsWith("Pause_background_shape_colour"))
+                else if (rdr.Name.StWith("Pause_background_shape_colour"))
                     dst.Pause_background_shape_colour = v;
-                else if (rdr.Name.StartsWith("Run_background_shape_colour"))
+                else if (rdr.Name.StWith("Run_background_shape_colour"))
                     dst.Run_background_shape_colour = v;
-                else if (rdr.Name.StartsWith("overview"))
+                else if (rdr.Name.StWith("overview"))
                 {
                     if (over == null)
                         over = new StringBuilder();
@@ -138,6 +142,10 @@ namespace WMAExcel
                     inOverview = true;
                 }
             }
+            if (over != null)
+                dst.Overview = over.ToString();
+            else
+                dst.Overview = "";
         }
 
         public static void ParseInputData(ISheet source, ExcelInputData dst, ILogger log = null)
@@ -149,7 +157,7 @@ namespace WMAExcel
                 log.debug($"value: {rdr.Value}");
                 var v = rdr.Value;
 
-                if (rdr.Name.StartsWith("// Start trial sequence"))
+                if (rdr.Name.StWith("// Start trial sequence"))
                 {
                     ParseTrialSequence(source, rdr.row, dst);
                     break;
@@ -161,17 +169,17 @@ namespace WMAExcel
                     break;
                 }
 
-                if (rdr.Name.StartsWith("Background_Type"))
+                if (rdr.Name.StWith("Background_Type"))
                     dst.Background_Type = v;
-                else if (rdr.Name.StartsWith("Background_Object"))
+                else if (rdr.Name.StWith("Background_Object"))
                     dst.Background_Object = v;
-                else if (rdr.Name.StartsWith("Background_diameter_deg"))
+                else if (rdr.Name.StWith("Background_diameter_deg"))
                     dst.Background_diameter_deg = v;
-                else if (rdr.Name.StartsWith("Background_sound"))
+                else if (rdr.Name.StWith("Background_sound"))
                     dst.Background_sound = v;
-                else if (rdr.Name.StartsWith("Number_of_events_on_a_trial"))
+                else if (rdr.Name.StWith("Number_of_events_on_a_trial"))
                     dst.Number_of_events_on_a_trial = v;
-                else if (rdr.Name.StartsWith("Sequence_of_Events_of_a_trial"))
+                else if (rdr.Name.StWith("Sequence_of_Events_of_a_trial"))
                     dst.Sequence_of_Events_of_a_trial = v;
                 else
                     ParseInputEvent(rdr.Name, v, dst);
@@ -246,15 +254,15 @@ namespace WMAExcel
                 return;
             }
 
-            if (suffix.StartsWith("Label"))
+            if (suffix.StWith("Label"))
                 ev.label = value;
-            else if (suffix.StartsWith("link_to_stimulus"))
+            else if (suffix.StWith("link_to_stimulus"))
                 ev.link_to_stimulus = value;
-            else if (suffix.StartsWith("link_to_response"))
+            else if (suffix.StWith("link_to_response"))
                 ev.link_to_response = value;
-            else if (suffix.StartsWith("allowed_keys_to_respond"))
+            else if (suffix.StWith("allowed_keys_to_respond"))
                 ev.allowed_keys_to_respond = value;
-            else if (suffix.StartsWith("Number_of_Layers"))
+            else if (suffix.StWith("Number_of_Layers"))
                 ev.number_of_layers = value;
         }
 
@@ -295,17 +303,17 @@ namespace WMAExcel
                 ev.levels[levelNum] = level;
             }
 
-            if (suffix.StartsWith("No_of_vertices_of_the_virtual_circle"))
+            if (suffix.StWith("No_of_vertices_of_the_virtual_circle"))
             {
                 if (int.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out var vertCount))
                     level.VertCount = vertCount;
             }
-            else if (suffix.StartsWith("Eccentricity_of_the_virtual_circle_deg"))
+            else if (suffix.StWith("Eccentricity_of_the_virtual_circle_deg"))
             {
                 if (decimal.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out var eccentricityDeg))
                     level.EccentriciyDeg = eccentricityDeg;
             }
-            else if (suffix.StartsWith("No_of_Objects"))
+            else if (suffix.StWith("No_of_Objects"))
             {
                 if (int.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out var objCount))
                     level.ObjCount = objCount;
@@ -325,9 +333,9 @@ namespace WMAExcel
 
             lufa.index = n;
 
-            if (name.StartsWith($"LUFA_USB_CDC_Interrupt_{n}_mode"))
+            if (name.StWith($"LUFA_USB_CDC_Interrupt_{n}_mode"))
                 lufa.mode = value;
-            else if (name.StartsWith($"LUFA_USB_CDC_Interrupt_{n}_dead_time_ms"))
+            else if (name.StWith($"LUFA_USB_CDC_Interrupt_{n}_dead_time_ms"))
                 lufa.dead_ms = value;
         }
 
@@ -339,16 +347,16 @@ namespace WMAExcel
             if (!dst.Fonts.TryGetValue(n, out var font))
                 font = new FontData();
 
-            if (name.StartsWith($"Font_{n}_size"))
+            if (name.StWith($"Font_{n}_size"))
             {
                 if (double.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out var size))
                     font.size = size;
             }
-            else if (name.StartsWith($"Font_{n}_style"))
+            else if (name.StWith($"Font_{n}_style"))
             {
                 font.style = ParseFontStyle(value);
             }
-            else if (name.StartsWith($"Font_{n}"))
+            else if (name.StWith($"Font_{n}"))
             {
                 font.name = value;
             }
