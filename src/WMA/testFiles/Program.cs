@@ -31,7 +31,7 @@ namespace testFiles
 
         static async Task Main(string[] args)
         {
-            string fn = "Configuration.txt";
+            string fn = "GODOT_Input_Data_1.xlsx";
             if (args.Length  > 0)
             {
                 fn = args[0]; 
@@ -60,14 +60,16 @@ namespace testFiles
 
             var inpNums = rdr.GetInputDataListSync();
             Console.WriteLine($"total input data: {inpNums.Length}");
-            return;
-
+            if (inpNums.Length == 0)
+                return;
+            int n = inpNums[0];
+            Console.WriteLine($"Reading: {n}");
 
 
             //exam.LoadConfig(cfg);
             List<TrialOrder> trials = new List<TrialOrder>();
             List<PauseData> pauses = new List<PauseData>();
-            InputDataHelper.LoadTrials("InputData_1.txt", trials, pauses);
+            await rdr.ReadTrials(n, trials, pauses);
 
 
             PlayList playList = new PlayList();
