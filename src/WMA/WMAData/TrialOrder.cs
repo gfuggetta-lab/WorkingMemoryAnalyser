@@ -10,16 +10,12 @@ namespace WMAData
     {
         public int session_number;
         public Dictionary<string, StimuliData> slk = new Dictionary<string, StimuliData>(StringComparer.OrdinalIgnoreCase);
+        public Dictionary<string, List<StimuliData>> grpLk = new Dictionary<string, List<StimuliData>>(StringComparer.OrdinalIgnoreCase);
 
-        public StimuliData ForceStimuli(string nm)
-        {
-            return GetStimuli(nm, true);
-        }
-
-        public StimuliData S1 => ForceStimuli("S1");
-        public StimuliData S2 => ForceStimuli("S2");
-        public StimuliData S3 => ForceStimuli("S3");
-        public StimuliData S4 => ForceStimuli("S4");
+        public StimuliData S1 => GetStimuli("S1", true);
+        public StimuliData S2 => GetStimuli("S2", true);
+        public StimuliData S3 => GetStimuli("S3", true);
+        public StimuliData S4 => GetStimuli("S4", true);
 
         public int Feedback_shape; // see SHAPE_ constants
 
@@ -40,7 +36,16 @@ namespace WMAData
         public List<string> Factors = new List<string>();
         public Dictionary<string, string> FactorLk = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
 
+        public StimuliData AddStimuli(string nm, string grp)
+        {
+            return GetStimuli(nm, grp, true);
+        }
+
         public StimuliData GetStimuli(string nm, bool forced = false)
+        {
+            return GetStimuli(nm, nm, forced);
+        }
+        public StimuliData GetStimuli(string nm, string grp, bool forced = false)
         {
             if (!slk.TryGetValue(nm, out var result))
             {
@@ -49,6 +54,18 @@ namespace WMAData
                 result = new StimuliData();
                 slk[nm] = result;
             }
+            if (!grpLk.TryGetValue(grp, out var grpList))
+            {
+                grpList = new List<StimuliData>();
+                grpLk[nm] = grpList;
+            }
+            grpList.Add(result);
+            return result;
+        }
+    
+        public List<StimuliData> GetStimuliGroup(string grp)
+        {
+            grpLk.TryGetValue(grp, out var result);
             return result;
         }
     }

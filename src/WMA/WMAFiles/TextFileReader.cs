@@ -24,7 +24,7 @@ namespace WMAFiles
             {
                 if (string.IsNullOrWhiteSpace(dir))
                     dir = Environment.CurrentDirectory;
-                else 
+                else
                     dir = Path.GetFullPath(dir);
             }
         }
@@ -40,6 +40,7 @@ namespace WMAFiles
                 cfg.Overview = File.ReadAllText(ov);
             else
                 cfg.Overview = "";
+            cfg.isLegacySchedule = true;
 
             return Task.FromResult(true);
         }
@@ -51,7 +52,7 @@ namespace WMAFiles
             {
                 var files = Directory.EnumerateFiles(dir, "InputData_*.txt", SearchOption.TopDirectoryOnly);
                 List<int> nums = new List<int>();
-                foreach(var fn in files)
+                foreach (var fn in files)
                 {
                     string n = Path.GetFileNameWithoutExtension(fn);
                     n = n.Substring(pfx.Length);
@@ -61,6 +62,14 @@ namespace WMAFiles
                 inpData = nums.ToArray();
             }
             return inpData;
+        }
+
+        public Task<bool> ReadTrials(int inputDataNum,
+            List<TrialOrder> dstTrials,
+            List<PauseData> dstPauses)
+        {
+            var result = InputDataHelper.LoadTrials($"InputData_{inputDataNum}.txt", dstTrials, dstPauses);
+            return Task.FromResult(result);
         }
     }
 }

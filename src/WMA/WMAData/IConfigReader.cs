@@ -14,5 +14,10 @@ namespace WMAData
 
         // returns the list of numbers that are available with the configuration
         int[] GetInputDataListSync();
+
+        // reading a selected trial 
+        Task<bool> ReadTrials(int inputDataNum,
+            List<TrialOrder> dstTrials,
+            List<PauseData> dstPauses);
     }
 }

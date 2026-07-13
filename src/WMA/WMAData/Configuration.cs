@@ -17,6 +17,10 @@ namespace WMAData
         // The experiment overview text
         public string Overview;
 
+        // should be true for anything  read from .txt file
+        // todo: this is a temporary flag and should not be used for too long
+        public bool isLegacySchedule = false;
+
         private int width_px;
         private int height_px;
         private double width_cm;
@@ -729,9 +733,14 @@ namespace WMAData
                 dst.items[i].cond = PlayItemCond.PostPause;
         }
 
-        [Obsolete("ScheduleNew should now be used going forward")]
         public void Schedule(TrialMonitor tm, List<TrialOrder> trials, List<PauseData> pauses, PlayList dst)
         {
+            if (!isLegacySchedule)
+            {
+                ScheduleNew(tm, trials, pauses, dst);
+                return;
+            }
+
             width_px = tm.widthPx;
             height_px = tm.widthPx;
             width_cm = tm.widthCm;

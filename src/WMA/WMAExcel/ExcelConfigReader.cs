@@ -52,5 +52,13 @@ namespace WMAExcel
             }
             return inputNums;
         }
+
+        public Task<bool> ReadTrials(int inputDataNum,
+            List<TrialOrder> dstTrials,
+            List<PauseData> dstPauses)
+        {
+            var result = false;
+            return Task.FromResult(result);
+        }
     }
 }
