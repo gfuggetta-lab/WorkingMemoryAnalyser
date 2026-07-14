@@ -167,5 +167,39 @@ namespace WMAExcel
             else n = s.Substring(i);
             return int.TryParse(n, out num);
         }
+
+        public static List<string> GetSequenceList(string seq)
+        {
+            List<string> result = new List<string>();
+            if (seq == null) return result;
+
+            seq = seq.Replace(',', ' ');
+            seq = seq.Replace(';', ' ');
+            seq = seq.Replace('.', ' ');
+            seq = seq.Replace('\t', ' ');
+            string[] r = seq.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+            result.AddRange(r);
+            return result;
+        }
+
+        public static bool IsCenterPos(string s)
+        {
+            if (s == null) return false;
+            s = s.Trim();
+            return (string.Compare(s, "center", true) == 0)
+                || (string.Compare(s, "center", true) == 0);
+        }
+
+        public static int ParseVertexPos(string s)
+        {
+            if (string.IsNullOrWhiteSpace(s)) return 0;
+            int i = 0;
+            while ((i < s.Length) && (Char.IsWhiteSpace(s, i))) i++;
+            int j = i;
+            while ((i < s.Length) && (Char.IsDigit(s, i))) i++;
+            string n = s.Substring(j, i - j);
+            int.TryParse(n, out var result);
+            return result;
+        }
     }
 }
