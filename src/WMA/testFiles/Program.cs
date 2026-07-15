@@ -63,7 +63,8 @@ namespace testFiles
             Console.WriteLine($"Reading: {n}");
 
             PlayList playList = new PlayList();
-            exam.SchedulePlaylist(n, TrialMonitor.DefaultMonitor(), playList);
+            exam.SelectInputdata(n);
+            exam.SchedulePlaylist(TrialMonitor.DefaultMonitor(), playList);
 
             var tick = 1000.0 / 60.0;
             PlayListTracker trck = new PlayListTracker(playList);

@@ -8,9 +8,16 @@ namespace WMAData
     {
         string GetOverview();
 
+        // todo: this might need to be async
         int[] GetInputDataListSync();
 
+
+        // inputDataNum must be part of the InputDataList array
+        bool SelectInputdata(int inputDataNum);
+
+
+        // SelectInputdata() must be called prior to calling SchedulePlayList
         // InputData could be external, thus should it be async interface?
-        bool SchedulePlaylist(int inputDataNum, TrialMonitor display, PlayList playList);
+        bool SchedulePlaylist(TrialMonitor display, PlayList playList);
     }
 }

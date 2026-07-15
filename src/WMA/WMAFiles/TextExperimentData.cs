@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using WMAData;
@@ -14,6 +15,8 @@ namespace WMAFiles
         public int[] inputNums;
         public Dictionary<int, string> inputFiles;
 
+        private int inputDataNum = -1;
+
         public string GetOverview()
         {
             return this.Overview;
@@ -24,8 +27,21 @@ namespace WMAFiles
             return inputNums;
         }
 
-        public bool SchedulePlaylist(int inputDataNum, TrialMonitor display, PlayList playList)
+        public bool SelectInputdata(int inputNum)
         {
+            bool result = inputFiles.ContainsKey(inputNum);
+            if (!result)
+                inputDataNum = -1;
+            else
+                inputDataNum = inputNum;
+            return result;
+        }
+
+        public bool SchedulePlaylist(TrialMonitor display, PlayList playList)
+        {
+            if (inputDataNum < 0) 
+                return false;
+
             if (!inputFiles.TryGetValue(inputDataNum, out var fn))
                 return false;
 

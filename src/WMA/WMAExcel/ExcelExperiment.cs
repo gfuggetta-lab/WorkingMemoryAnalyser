@@ -18,6 +18,7 @@ namespace WMAExcel
         public ExcelConfig cfg = null;
         public List<ExcelInputData> inputData = new List<ExcelInputData>();
         public int[] inputNums;
+        int inputDataNum;
         public bool LoadFromFile(string fn)
         {
             IWorkbook workbook = WorkbookFactory.Create(fn);
@@ -66,9 +67,14 @@ namespace WMAExcel
             return inputNums;
         }
 
-
-        public bool SchedulePlaylist(int inputDataNum, TrialMonitor display, PlayList playList)
+        public bool SelectInputdata(int inputNum)
         {
+            inputDataNum = inputNum;
+            return true;
+        }
+        public bool SchedulePlaylist(TrialMonitor display, PlayList playList)
+        {
+            if (inputDataNum <= 0) return false;
             return false;
         }
     }
