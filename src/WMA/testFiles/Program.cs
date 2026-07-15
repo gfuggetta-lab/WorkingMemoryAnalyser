@@ -81,7 +81,35 @@ namespace testFiles
                 int c = trck.Track(tick, pl, nw, fd, null);
                 if (c > 0)
                 {
+                    foreach (var itm in fd)
+                    {
+                        switch (itm.itemType)
+                        {
+                            case PlayItemType.SectionStart:
+                            case PlayItemType.TrialStart:
+                                Console.WriteLine($"{itm.itemType}:{itm.text}");
+                                break;
+                        }
+                    }
+                    foreach (var itm in nw)
+                    {
+                        switch (itm.itemType)
+                        {
+                            case PlayItemType.SectionStart:
+                            case PlayItemType.TrialStart:
+                                Console.WriteLine($"{itm.itemType}:{itm.text}");
+                                break;
+                        }
+                    }
                     Console.WriteLine($"{trck.lastMs}: triggered: {c}; eff: {pl.Count}; on: {nw.Count}; off: {fd.Count}");
+                }
+                else
+                {
+                    if (pl.Count == 0)
+                    {
+                        Console.WriteLine("no more items in effect");
+                        break;
+                    }
                 }
             }
         }
