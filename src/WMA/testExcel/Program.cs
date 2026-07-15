@@ -13,7 +13,7 @@ namespace testExcel
                 return;
             }
             string fn = args[0];
-            ExcelMain excel = new ExcelMain();
+            ExcelExperiment excel = new ExcelExperiment();
             bool result = excel.LoadFromFile(fn);
             Console.WriteLine($"parse result: {result}");
         }

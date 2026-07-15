@@ -12,7 +12,7 @@ using static WMAExcel.Utils;
 
 namespace WMAExcel
 {
-    public class ExcelMain
+    public class ExcelExperiment
     {
         public ILogger log;
         public ExcelConfig cfg = null;

@@ -14,7 +14,7 @@ namespace WMAExcel
     {
         public string fileName;
 
-        ExcelMain xlsmain;
+        ExcelExperiment xlsmain;
         int[] inputNums = null;
 
         public ExcelConfigReader(string excelFile)
@@ -25,7 +25,7 @@ namespace WMAExcel
         private void AssureXlsMain()
         {
             if (xlsmain != null) return;
-            xlsmain = new ExcelMain();
+            xlsmain = new ExcelExperiment();
             xlsmain.LoadFromFile(fileName);
         }
 
