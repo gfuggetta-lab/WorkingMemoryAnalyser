@@ -537,5 +537,20 @@ namespace WMAExcel
             return value.Substring(0, i);
         }
 
+
+        public static double ToDouble(string s, double def = 0)
+        {
+            if (string.IsNullOrWhiteSpace(s)) return def;
+            if (!double.TryParse(s, NumberStyles.Number, CultureInfo.InvariantCulture, out var res))
+                return def;
+            return res;
+        }
+        public static int ToInt(string s, int def = 0)
+        {
+            if (string.IsNullOrWhiteSpace(s)) return def;
+            if (!int.TryParse(s, NumberStyles.Number, CultureInfo.InvariantCulture, out var res))
+                return def;
+            return res;
+        }
     }
 }

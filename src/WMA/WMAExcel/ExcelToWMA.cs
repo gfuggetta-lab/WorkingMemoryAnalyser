@@ -3,50 +3,13 @@ using System;
 using System.Globalization;
 using System.Linq;
 using WMAData;
+using static WMAExcel.Utils;
 
 namespace WMAExcel
 {
-    /*
+    
     public static class ExcelToWMA
     {
-        public static void ExcelToCfg(ExcelConfig src, Configuration dst)
-        {
-            if ((src == null) || (dst == null))
-                return;
-
-            // dst.Overview = ConvertOverview(src.Overview);
-            dst.ExperimentName = src.Experiment;
-
-            if (TryParseDouble(src.Minimum_training_accuracy, out var minimumTrainingAccuracy))
-                dst.Minimum_training_accuracy = minimumTrainingAccuracy;
-
-            if (TryParseInt(src.N_trials_before_pause_training, out var trialsBeforePauseTraining))
-                dst.N_trials_before_pause_training = trialsBeforePauseTraining;
-
-            dst.Instructions_ODD_participants = src.Instructions_ODD_participants;
-            dst.Instructions_EVEN_participants = src.Instructions_EVEN_participants;
-            dst.Audio_Instructions_ODD_participants = src.Audio_Instructions_ODD_participants;
-            dst.Audio_Instructions_EVEN_participants = src.Audio_Instructions_EVEN_participants;
-
-            if (TryParseInt(src.RT_constant_error_ms, out var rtConstantErrorMs))
-                dst.RT_constant_error_ms = rtConstantErrorMs;
-
-            if (TryParseColor(src.Run_background_shape_colour, out var runBackground))
-                dst.backgroundCircleColor = runBackground;
-
-            if (TryParseColor(src.Pause_background_shape_colour, out var pauseBackground))
-                dst.Pause_background_circle_colour = pauseBackground;
-
-            CopyMessages(src, dst);
-            CopyFonts(src, dst);
-            CopyShapeColors(src, dst);
-
-            // Skipped intentionally: Reference_Number, Version, Release_date, Author,
-            // Member_user_name, Age_range, Device, Study, and Study_Reference_Number
-            // do not currently have direct fields in WMAData.Configuration.
-            // Skipped intentionally: LUFA_USB_CDC_Interrupt is device IO metadata and
-            // has no direct WMAData.Configuration target yet.
-        }
 
         public static string ConvertOverview(string excelOver)
         {
@@ -61,59 +24,9 @@ namespace WMAExcel
             return string.Join("\r\n", lines);
         }
 
-        private static void CopyMessages(ExcelConfig src, Configuration dst)
-        {
-            if (src.Messages.Count == 0)
-                return;
+        
 
-            int max = src.Messages.Keys.Max();
-            string[] messages = new string[max + 1];
-            foreach (var kv in src.Messages)
-            {
-                if (kv.Key >= 0)
-                    messages[kv.Key] = kv.Value;
-            }
-            dst.Message = messages;
-        }
-
-        private static void CopyFonts(ExcelConfig src, Configuration dst)
-        {
-            if (src.Fonts.TryGetValue(1, out var font1))
-                dst.font_1 = font1;
-
-            if (src.Fonts.TryGetValue(2, out var font2))
-                dst.font_2 = font2;
-
-            if (src.Fonts.TryGetValue(3, out var feedbackFont))
-                dst.Feedback_font = feedbackFont;
-
-            // Skipped intentionally: Excel Font_4 and higher have no direct named
-            // targets in WMAData.Configuration at the moment.
-        }
-
-        private static void CopyShapeColors(ExcelConfig src, Configuration dst)
-        {
-            foreach (var kv in src.Shapes_text_colour)
-            {
-                if ((kv.Key < 0) || (kv.Key >= dst.ShapeColors.Length))
-                    continue;
-
-                if (TryParseColor(kv.Value, out var color))
-                    dst.ShapeColors[kv.Key] = color;
-            }
-        }
-
-        private static bool TryParseInt(string value, out int result)
-        {
-            return int.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out result);
-        }
-
-        private static bool TryParseDouble(string value, out double result)
-        {
-            return double.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out result);
-        }
-
-        private static bool TryParseColor(string value, out ColorFloat result)
+        public static bool TryParseColor(string value, out ColorFloat result)
         {
             result = new ColorFloat();
             if (string.IsNullOrWhiteSpace(value))
@@ -123,11 +36,10 @@ namespace WMAExcel
             if (parts.Length < 3)
                 return false;
 
-            if (!TryParseDouble(parts[0], out var r)
-                || !TryParseDouble(parts[1], out var g)
-                || !TryParseDouble(parts[2], out var b))
-                return false;
-
+            var r = ToDouble(parts[0]);
+            var g = ToDouble(parts[1]);
+            var b = ToDouble(parts[2]);
+                
             result = new ColorFloat
             {
                 r = NormalizeColorChannel(r),
@@ -144,25 +56,22 @@ namespace WMAExcel
 
             return value;
         }
-        public static void ExcelToTrial(ExcelInputData xD, ExcelTrialRow xT, ExcelConfig xCfg, TrialOrder dst)
+
+        public static PlayItemCond ToCond(ExcelTrialObject.ShowCondition cond)
         {
-            foreach(var evNameVal in xD.Events)
+            switch (cond)
             {
-                string g = evNameVal.Key;
-                var ev = evNameVal.Value;
-                foreach (var l in ev.levels)
-                {
-                    string grpName = ev.Name; // S1
-                    string fullName = $"{ev.Name}_{l.Value.LevelName}"; // S1_L1
-                    // the full name should be present id trials
-
-                    var sd = dst.AddStimuli(fullName, grpName);
-
-                    sd.Level = l.Value.LevelNum;
-                    //sd.Position = xT.st("")
-                }
+                case ExcelTrialObject.ShowCondition.Incorrect:
+                    return PlayItemCond.Incorrect;
+                case ExcelTrialObject.ShowCondition.Correct:
+                    return PlayItemCond.Correct;
+                case ExcelTrialObject.ShowCondition.Ommission:
+                    return PlayItemCond.Ommission;
+                default:
+                    return PlayItemCond.None;
             }
+
         }
     }
-    */
+
 }

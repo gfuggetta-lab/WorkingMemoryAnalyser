@@ -10,7 +10,11 @@ namespace WMAExcel
         public Dictionary<string, string> data = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         public List<ExcelTrialObject> objects = null;
-        public List<ExcelTrialEvent> events = null; 
+        // it keeps an array because of the "conditions"!!!
+        public Dictionary<string, ExcelTrialObject[]> objectsLk = null;
+        public List<ExcelTrialEvent> events = null;
+        public Dictionary<string, ExcelTrialEvent> eventsLk = null;
+
 
         // Experimental_Condition is recorder as conditions[0]
         // Condition_1 is recorded as conditions[1]
@@ -23,9 +27,9 @@ namespace WMAExcel
             events = new List<ExcelTrialEvent>();
             conditions = new Dictionary<int, string>();
 
-            var objectGroups = new Dictionary<string, ExcelTrialObject[]>(StringComparer.OrdinalIgnoreCase);
+            objectsLk = new Dictionary<string, ExcelTrialObject[]>(StringComparer.OrdinalIgnoreCase);
             var objectOrder = new List<string>();
-            var eventGroups = new Dictionary<string, ExcelTrialEvent>(StringComparer.OrdinalIgnoreCase);
+            eventsLk = new Dictionary<string, ExcelTrialEvent>(StringComparer.OrdinalIgnoreCase);
             var eventOrder = new List<string>();
 
             foreach (var item in data)
@@ -38,15 +42,15 @@ namespace WMAExcel
                     continue;
 
                 string[] parts = columnName.Split(new char[] { '_' }, StringSplitOptions.None);
-                if (TryPopulateObject(parts, item.Value, objectGroups, objectOrder))
+                if (TryPopulateObject(parts, item.Value, objectsLk, objectOrder))
                     continue;
 
-                TryPopulateEvent(parts, item.Value, eventGroups, eventOrder);
+                TryPopulateEvent(parts, item.Value, eventsLk, eventOrder);
             }
 
             foreach (string key in objectOrder)
             {
-                foreach (ExcelTrialObject obj in objectGroups[key])
+                foreach (ExcelTrialObject obj in objectsLk[key])
                 {
                     if (HasObjectData(obj))
                         objects.Add(obj);
@@ -55,7 +59,7 @@ namespace WMAExcel
 
             foreach (string key in eventOrder)
             {
-                ExcelTrialEvent ev = eventGroups[key];
+                ExcelTrialEvent ev = eventsLk[key];
                 if (HasEventData(ev))
                     events.Add(ev);
             }
