@@ -41,7 +41,7 @@ namespace WMAExcel
                 i--;
             if (i < 0)
                 return false;
-            string n = name.Substring(0, i);
+            string n = name.Substring(0, i+1);
             if (string.IsNullOrWhiteSpace(n))
                 return false;
 

@@ -5,6 +5,8 @@ using NPOI.SS.UserModel;
 using WMAData;
 using static WMAExcel.Utils;
 using static WMAExcel.ExcelToWMA;
+using System.IO;
+using NPOI.Util;
 
 namespace WMAExcel
 {
@@ -18,7 +20,17 @@ namespace WMAExcel
         int inputDataNum;
         public bool LoadFromFile(string fn)
         {
-            IWorkbook workbook = WorkbookFactory.Create(fn);
+            IWorkbook workbook = null;
+            using (FileStream fs = new FileStream(fn, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            {
+                workbook = WorkbookFactory.Create(fs);
+            }
+            if (workbook == null)
+            {
+                log.warn($"failed to load the workbook: {fn}");
+                return false;
+            }
+
             var cnt = workbook.NumberOfSheets;
             log.debug($"{workbook.GetType().Name}");
 
@@ -138,11 +150,29 @@ namespace WMAExcel
 
 
                 trial.eventsLk.TryGetValue(evName, out var evTr);
+                if (evTr == null)
+                    evTr = ExcelTrialEvent.Empty;
 
-                double duration = ToDouble(evTr.Duration);
+                double duration = 0;
+                if (evTr != null)
+                    duration = ToDouble(evTr.Duration);
+
+                bool wantResponse = evName.StWith("R");
+
+                if (wantResponse && (duration == 0)) // response
+                {
+                    if (trial.eventsLk.TryGetValue(evInp.link_to_stimulus, out var evResp))
+                    {
+                        duration = ToDouble(evResp.Response_time);
+                    }
+                }
 
                 dst.StartSection(evName, timeOfs, duration);
-                
+                if (wantResponse)
+                {
+                    dst.ReadResponse(timeOfs, duration);
+                }
+
                 // event sound
                 if (!string.IsNullOrWhiteSpace(evTr.Sound))
                 {
@@ -194,9 +224,12 @@ namespace WMAExcel
                 timeOfs += duration;
 
                 // ISI (fade)
-                duration = ToDouble(evTr.ISI); 
-                dst.StartSection($"{evName}>{nextEvent}", timeOfs, duration);
-                timeOfs += duration;
+                duration = ToDouble(evTr.ISI);
+                if (duration > 0)
+                {
+                    dst.StartSection($"{evName}>{nextEvent}", timeOfs, duration);
+                    timeOfs += duration;
+                }
             }
 
             public PlayItem PositionItem(PlayItem item, ExcelTrialObject obj, int totalVtx, double radius)

@@ -145,8 +145,8 @@ namespace WMAExcel
                 return false;
 
             string field = string.Join("_", parts, 1, parts.Length - 1);
-            if (!IsEventField(field))
-                return false;
+            // if (!IsEventField(field))
+            //     return false;
 
             string eventName = parts[0];
             if (!groups.TryGetValue(eventName, out var ev))
@@ -166,6 +166,12 @@ namespace WMAExcel
                 ev.Data_Logging = value;
             else if (field.Equals("ISI", StringComparison.OrdinalIgnoreCase))
                 ev.ISI = value;
+            else if (field.Equals("Response_time", StringComparison.OrdinalIgnoreCase))
+                ev.Response_time = value;
+            else if (field.Equals("Response", StringComparison.OrdinalIgnoreCase)
+                || field.Equals("Reponse", StringComparison.OrdinalIgnoreCase))
+                ev.Response = value;
+
 
             return true;
         }
