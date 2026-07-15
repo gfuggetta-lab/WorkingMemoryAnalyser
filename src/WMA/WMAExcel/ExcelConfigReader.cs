@@ -10,7 +10,7 @@ using static WMAExcel.ExcelToWMA;
 
 namespace WMAExcel
 {
-    public class ExcelConfigReader : IConfigReader
+    public class ExcelConfigReader
     {
         public string fileName;
 

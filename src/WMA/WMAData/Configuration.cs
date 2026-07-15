@@ -11,16 +11,9 @@ using static WMAData.Consts;
 
 namespace WMAData
 {
-    // It's the InputData file and an Overview file
+    // It's the Configuration.txt file
     public class Configuration
     {
-        // The experiment overview text
-        public string Overview;
-
-        // should be true for anything  read from .txt file
-        // todo: this is a temporary flag and should not be used for too long
-        public bool isLegacySchedule = false;
-
         private int width_px;
         private int height_px;
         private double width_cm;
@@ -735,12 +728,6 @@ namespace WMAData
 
         public void Schedule(TrialMonitor tm, List<TrialOrder> trials, List<PauseData> pauses, PlayList dst)
         {
-            if (!isLegacySchedule)
-            {
-                ScheduleNew(tm, trials, pauses, dst);
-                return;
-            }
-
             width_px = tm.widthPx;
             height_px = tm.widthPx;
             width_cm = tm.widthCm;

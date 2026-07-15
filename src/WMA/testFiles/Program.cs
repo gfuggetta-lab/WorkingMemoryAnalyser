@@ -12,17 +12,17 @@ namespace testFiles
     class Program
     {
 
-        static IDataProvider[] provs = new IDataProvider[]
+        static IExperimentReader[] provs = new IExperimentReader[]
         {
-            new TextFilesProvider(),
+            new TextExperimentReader(),
             new ExcelFileProvider()
         };
 
-        static async Task<IDataProvider> GetProv(string fn)
+        static async Task<IExperimentReader> GetProv(string fn)
         {
             foreach(var p in provs)
             {
-                if (await p.IsConfigureFile(fn))
+                if (await p.IsExperimentFile(fn, CancellationToken.None))
                     return p;
             }
             return null;
@@ -43,37 +43,27 @@ namespace testFiles
                 return;
             }
             Console.WriteLine($"config file: {fn}");
-            var rdr = prov.GetReader(fn);
-            //if (args.Length == 0)
-            //{
-            //    Console.WriteLine("please provide the input file name");
-            //    return;
-            //}
+            var exam = await prov.ReadExperiment(fn, CancellationToken.None);
+            if (exam == null)
+            {
+                Console.WriteLine("failed to read the experiment");
+                return;
+            }
             //ConfigFile cfg = ConfigFile.FromFile("Configuration.txt");
-            Configuration exam = new Configuration();
-            await rdr.ReadConfig(exam, CancellationToken.None);
-
 
             Console.WriteLine("---"); 
-            Console.WriteLine(exam.Overview);
+            Console.WriteLine(exam.GetOverview());
             Console.WriteLine("---");
 
-            var inpNums = rdr.GetInputDataListSync();
+            var inpNums = exam.GetInputDataListSync();
             Console.WriteLine($"total input data: {inpNums.Length}");
             if (inpNums.Length == 0)
                 return;
             int n = inpNums[0];
             Console.WriteLine($"Reading: {n}");
 
-
-            //exam.LoadConfig(cfg);
-            List<TrialOrder> trials = new List<TrialOrder>();
-            List<PauseData> pauses = new List<PauseData>();
-            await rdr.ReadTrials(n, trials, pauses);
-
-
             PlayList playList = new PlayList();
-            exam.Schedule(TrialMonitor.DefaultMonitor(), trials, pauses, playList);
+            exam.SchedulePlaylist(n, TrialMonitor.DefaultMonitor(), playList);
 
             var tick = 1000.0 / 60.0;
             PlayListTracker trck = new PlayListTracker(playList);

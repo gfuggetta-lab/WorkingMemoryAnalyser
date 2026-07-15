@@ -13,7 +13,7 @@ namespace WMAExcel
             if ((src == null) || (dst == null))
                 return;
 
-            dst.Overview = ConvertOverview(src.Overview);
+            // dst.Overview = ConvertOverview(src.Overview);
             dst.ExperimentName = src.Experiment;
 
             if (TryParseDouble(src.Minimum_training_accuracy, out var minimumTrainingAccuracy))

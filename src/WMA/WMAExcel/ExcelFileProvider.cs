@@ -4,12 +4,13 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using WMAData;
+using System.Threading;
 
 namespace WMAExcel
 {
-    public class ExcelFileProvider : IDataProvider
+    public class ExcelFileProvider : IExperimentReader
     {
-        public Task<bool> IsConfigureFile(string filename)
+        public Task<bool> IsExperimentFile(string filename, CancellationToken cancel)
         {
             string p = Path.GetExtension(filename);
             bool res = (string.Compare(p, ".xlsx", true) == 0)
@@ -18,9 +19,9 @@ namespace WMAExcel
         }
 
         // allocating the configuration reader, for the specified file
-        public IConfigReader GetReader(string filename)
+        public Task<IExperimentData> ReadExperiment(string filename, CancellationToken cancel)
         {
-            return new ExcelConfigReader(filename);
+            return Task.FromResult<IExperimentData>(null);
         }
     }
 }
