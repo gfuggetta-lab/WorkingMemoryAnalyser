@@ -44,7 +44,7 @@ namespace WMAData
             handedness = exp.Handedness;
             trialOrderFileNo = exp.TrialOrderNum;
         }
-
+        /*
         public void SetConfig(Configuration cfg)
         {
             if (cfg == null)
@@ -157,6 +157,7 @@ namespace WMAData
 
             text.AppendLine();
         }
+        */
 
         private void AppendLine(string name, object value)
         {
@@ -176,6 +177,7 @@ namespace WMAData
             return (int)Math.Round(value * 255.0);
         }
 
+        /*
         public void WriteTrial(TrialOrder trial, TrialResults res)
         {
             if (trial == null)
@@ -271,6 +273,7 @@ namespace WMAData
 
             text.AppendLine();
         }
+        */
 
         private void AppendField(object value)
         {

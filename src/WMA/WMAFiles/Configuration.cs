@@ -7,9 +7,10 @@ using System.Text;
 using Microsoft.Extensions.Logging;
 using static System.Math;
 using static System.Net.Mime.MediaTypeNames;
+using WMAData;
 using static WMAData.Consts;
 
-namespace WMAData
+namespace WMAFiles
 {
     // It's the Configuration.txt file
     public class Configuration

@@ -13,8 +13,13 @@ namespace WMAData
         // Write Gender
 
         void SetExperiment(ExperimentData exp);
+
+        /* todo:
+         * 
+         * 
         void SetConfig(Configuration cfg);
         void WriteTrial(TrialOrder trial, TrialResults res);
+        */
     }
 
     public class TrialResults
