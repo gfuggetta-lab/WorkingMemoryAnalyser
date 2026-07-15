@@ -121,6 +121,18 @@ namespace WMAData
             return pt;
         }
 
+        public static PlayItem AddImageByName(this PlayList list, string imageName, double ImageSize, ColorFloat color, double timeOfs = 0, double durationMs = -1)
+        {
+            if (list == null) return null;
+            var pt = list.Add(timeOfs);
+            pt.itemType = PlayItemType.ImageByName;
+            pt.imageName = imageName;
+            pt.sizeCm = ImageSize;
+            pt.color = color;
+            pt.durationMs = durationMs;
+            pt.pos = PlayItemPos.Center;
+            return pt;
+        }
         public static PlayItem AddText(this PlayList list, string text, string font, ColorFloat color, double timeOfs = 0, double durationMs = -1)
         {
             if (list == null) return null;

@@ -23,6 +23,7 @@ namespace WMAData
         public int posCount;
 
         public int imageId; // used only for ImageById
+        public string imageName; // used only by ImageByName
 
         public PlayItemType itemType = PlayItemType.None;
         public double radiusCm;
@@ -39,7 +40,7 @@ namespace WMAData
 
         // used by PLayItemPos.Text
         public string fontName;
-        public string text;
+        public string text; 
         public int fontSizePx; // font size in godot pixels
 
         public string soundId; // extensions might not be needed
@@ -73,6 +74,7 @@ namespace WMAData
         Star, // radiusCm
         RegularShape, // radiusCm, lineWidthCm, regularPoints, regularFilled, regularRotation
         ImageById,
+        ImageByName,
         Sound,
         Text, // draw text, centered at the pos
 
@@ -106,6 +108,9 @@ namespace WMAData
 
         // items to draw, for the incorrect answer
         Incorrect,
+
+        // items to draw, if no correct answer is given (during feedback stage)
+        Ommission,
 
         // items to draw, when paused. If none specified
         // when the last state is drawn
