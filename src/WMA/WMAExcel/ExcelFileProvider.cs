@@ -21,7 +21,11 @@ namespace WMAExcel
         // allocating the configuration reader, for the specified file
         public Task<IExperimentData> ReadExperiment(string filename, CancellationToken cancel)
         {
-            return Task.FromResult<IExperimentData>(null);
+            ExcelExperiment result = new ExcelExperiment();
+            if (!result.LoadFromFile(filename))
+                return Task.FromResult<IExperimentData>(null);
+
+            return Task.FromResult<IExperimentData>(result);
         }
     }
 }

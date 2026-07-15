@@ -12,11 +12,12 @@ using static WMAExcel.Utils;
 
 namespace WMAExcel
 {
-    public class ExcelExperiment
+    public class ExcelExperiment : IExperimentData
     {
         public ILogger log;
         public ExcelConfig cfg = null;
         public List<ExcelInputData> inputData = new List<ExcelInputData>();
+        public int[] inputNums;
         public bool LoadFromFile(string fn)
         {
             IWorkbook workbook = WorkbookFactory.Create(fn);
@@ -47,7 +48,28 @@ namespace WMAExcel
                 }
             }
 
+            List<int> indicies = new List<int>();
+            foreach (var data in inputData)
+                indicies.Add(data.Index);
+            inputNums = indicies.ToArray();
+
             return ((cfg != null) || (inputData.Count > 0));
+        }
+
+        public string GetOverview()
+        {
+            return cfg.Overview;
+        }
+
+        public int[] GetInputDataListSync()
+        {
+            return inputNums;
+        }
+
+
+        public bool SchedulePlaylist(int inputDataNum, TrialMonitor display, PlayList playList)
+        {
+            return false;
         }
 
         public static void ParseConfig(ISheet source, ExcelConfig dst, ILogger log = null)
