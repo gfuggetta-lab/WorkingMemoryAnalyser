@@ -16,6 +16,8 @@ namespace WMAFiles
         public Dictionary<int, string> inputFiles;
 
         private int inputDataNum = -1;
+        private List<TrialOrder> trials = null;
+        private List<PauseData> pauses = null;
 
         public string GetOverview()
         {
@@ -29,27 +31,57 @@ namespace WMAFiles
 
         public bool SelectInputdata(int inputNum)
         {
-            bool result = inputFiles.ContainsKey(inputNum);
-            if (!result)
+            bool result = inputFiles.TryGetValue(inputNum, out var inputFn);
+            if ((inputNum < 0) || (!result))
+            {
                 inputDataNum = -1;
-            else
-                inputDataNum = inputNum;
+                trials = null;
+                pauses = null;
+                // we return true, if -1 is explicitly requested
+                return inputNum == -1;
+            }
+
+            inputDataNum = inputNum;
+
+            trials = new List<TrialOrder>();
+            pauses = new List<PauseData>();
+            InputDataHelper.LoadTrials(inputFn, trials, pauses);
             return result;
         }
 
-        public bool SchedulePlaylist(TrialMonitor display, PlayList playList)
+        public bool SchedulePlaylist(TrialMonitor display, PlayList playList, out int trialsCount)
         {
+            trialsCount = 0;
             if (inputDataNum < 0) 
                 return false;
 
             if (!inputFiles.TryGetValue(inputDataNum, out var fn))
                 return false;
 
-            List<TrialOrder> trials = new List<TrialOrder>();
-            List<PauseData> pauses = new List<PauseData>();
-            var result = InputDataHelper.LoadTrials(fn/*$"InputData_{inputDataNum}.txt"*/, trials, pauses);
             cfg.Schedule(display, trials, pauses, playList);
+            trialsCount = trials.Count;
             return true;
+        }
+
+        public string GetKeyboardCsv()
+        {
+            return cfg.keyboards;
+        }
+        public void GetPreloadImages(List<string> names)
+        {
+            if (inputDataNum < 0) return;
+            cfg.GetPreloadImages(trials, names);
+        }
+        public void GetPreloadFonts(List<string> names)
+        {
+            if (inputDataNum < 0) return;
+            cfg.GetPreloadFonts(names);
+        }
+
+        public void GetPreloadSounds(List<string> names)
+        {
+            if (inputDataNum < 0) return;
+            cfg.GetPreloadImages(trials, names);
         }
     }
 }

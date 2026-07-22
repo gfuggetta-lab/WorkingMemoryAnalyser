@@ -64,7 +64,8 @@ namespace testFiles
 
             PlayList playList = new PlayList();
             exam.SelectInputdata(n);
-            exam.SchedulePlaylist(TrialMonitor.DefaultMonitor(), playList);
+            exam.SchedulePlaylist(TrialMonitor.DefaultMonitor(), playList, out var cnt);
+            Console.WriteLine($"count: {cnt}");
 
             var tick = 1000.0 / 60.0;
             PlayListTracker trck = new PlayListTracker(playList);

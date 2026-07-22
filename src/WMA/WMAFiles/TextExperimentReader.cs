@@ -36,8 +36,13 @@ namespace WMAFiles
 
             te.inputFiles = new Dictionary<int, string>();
             const string pfx = "inputdata_";
-            
-            var files = Directory.EnumerateFiles(dir, "InputData_*.txt", SearchOption.TopDirectoryOnly);
+
+
+            string inpDir = Path.Combine(dir, "Input data");
+            if (!Directory.Exists(inpDir)) 
+                inpDir = dir;
+
+            var files = Directory.EnumerateFiles(inpDir, "InputData_*.txt", SearchOption.TopDirectoryOnly);
             List<int> nums = new List<int>();
             foreach (var fn in files)
             {

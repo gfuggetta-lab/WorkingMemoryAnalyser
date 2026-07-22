@@ -18,6 +18,10 @@ namespace WMAData
 
         // SelectInputdata() must be called prior to calling SchedulePlayList
         // InputData could be external, thus should it be async interface?
-        bool SchedulePlaylist(TrialMonitor display, PlayList playList);
+        bool SchedulePlaylist(TrialMonitor display, PlayList playList, out int trialCount);
+        string GetKeyboardCsv();
+        void GetPreloadImages(List<string> names);
+        void GetPreloadFonts(List<string> names);
+        void GetPreloadSounds(List<string> names);
     }
 }

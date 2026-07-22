@@ -90,8 +90,24 @@ namespace WMAExcel
                 return true;
             }
         }
-        public bool SchedulePlaylist(TrialMonitor display, PlayList playList)
+
+        public string GetKeyboardCsv()
         {
+            // todo:
+            return "a,d";
+        }
+        public void GetPreloadImages(List<string> names)
+        { 
+        }
+        public void GetPreloadFonts(List<string> names)
+        { 
+        }
+        public void GetPreloadSounds(List<string> names)
+        { 
+        }
+        public bool SchedulePlaylist(TrialMonitor display, PlayList playList, out int trialCount)
+        {
+            trialCount = 0;
             if (inputDataNum <= 0) 
                 return false;
             if (!inputDataLk.TryGetValue(inputDataNum, out var inp))
@@ -105,6 +121,8 @@ namespace WMAExcel
 
             var seqList = Utils.GetSequenceList(inp.Sequence_of_Events_of_a_trial);
             double timeOfs = 0;
+            trialCount = inp.Trials.Count;
+
             foreach (var t in inp.Trials)
             {
                 t.Populate();
