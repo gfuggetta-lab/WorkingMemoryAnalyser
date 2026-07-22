@@ -127,7 +127,7 @@ public partial class BootScript : Node2D
 		new TextExperimentReader()
 	};
 
-	public async Task<IExperimentData> GetExpirmentData(string cfgFileName)
+	public static async Task<IExperimentData> GetExpirmentData(string cfgFileName)
 	{
 		if (!File.Exists(cfgFileName))
 			return null;

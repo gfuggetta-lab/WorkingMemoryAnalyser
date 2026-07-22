@@ -22,7 +22,7 @@ monitorsGroup = NodePath("FormPanel/grpMonitors")
 overviewText = NodePath("FormPanel/textOverview")
 enableButton = NodePath("FormPanel/btnBegin")
 selectExperimentButton = NodePath("FormPanel/btnSelectExperiment")
-experimentDirectoryDialog = NodePath("ExperimentDirectoryDialog")
+experimentDirectoryDialog = NodePath("OpenFileDialog")
 aboutButton = NodePath("FormPanel/btnAbout")
 aboutDialog = NodePath("AboutDialog")
 nextSceneLoader = NodePath("ToInstructions")
@@ -2690,13 +2690,14 @@ grow_horizontal = 2
 grow_vertical = 0
 text = "---"
 
-[node name="ExperimentDirectoryDialog" type="FileDialog" parent="." unique_id=348450104]
-title = "Open a Directory"
+[node name="OpenFileDialog" type="FileDialog" parent="." unique_id=348450104]
+title = "Open a File"
 initial_position = 2
 size = Vector2i(676, 420)
 ok_button_text = "Select Current Folder"
-file_mode = 2
+file_mode = 0
 access = 2
+filters = PackedStringArray("Configuration.txt;Experiment configuration text file;text/plain", "*.xlsx;Microsoft Excel experiment description file;application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 use_native_dialog = true
 
 [node name="AboutDialog" type="AcceptDialog" parent="." unique_id=1059167245]

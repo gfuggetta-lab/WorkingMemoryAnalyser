@@ -22,10 +22,10 @@ public partial class ParticipantAndExamDataBinder : Control
 
 
 	[Export]
-    // Normally this would be set to "Random" (the value of zero)
+	// Normally this would be set to "Random" (the value of zero)
 	// However, we still keep it for the "debugging" purposes.
 	// The list of items would be repopulated when loading the experiment.
-    public OptionButton trialNumber;
+	public OptionButton trialNumber;
 
 	private readonly ButtonGroup monitorButtonGroup = new ButtonGroup();
 	private readonly Dictionary<BaseButton, ConnectedMonitor> monitorByButton = new Dictionary<BaseButton, ConnectedMonitor>();
@@ -43,12 +43,15 @@ public partial class ParticipantAndExamDataBinder : Control
 		ConnectOption(ageInput);
 		ConnectOption(sexInput);
 		ConnectOption(handednessInput);
-        ConnectOption(trialNumber);
+		ConnectOption(trialNumber);
 
-        PopulateMonitorButtons();
+		PopulateMonitorButtons();
 
 		if (selectExperimentButton != null)
 			selectExperimentButton.Pressed += OpenSelectExperimentDialog;
+
+		if (experimentDirectoryDialog != null)
+			experimentDirectoryDialog.FileSelected += OnExperimentFileSelected;
 
 		if (experimentDirectoryDialog != null)
 			experimentDirectoryDialog.DirSelected += OnExperimentDirectorySelected;
@@ -56,7 +59,7 @@ public partial class ParticipantAndExamDataBinder : Control
 		if (aboutButton != null)
 			aboutButton.Pressed += ShowAboutDialog;
 
-        UpdateData();
+		UpdateData();
 	}
 
 	private void ConnectOption(OptionButton option)
@@ -92,13 +95,13 @@ public partial class ParticipantAndExamDataBinder : Control
 		if (trialNumber != null)
 		{
 			var idx = trialNumber.Selected;
-            if (idx >= 0)
+			if (idx >= 0)
 				ExperimentShared.data.TrialOrderNum = trialNumber.GetItemId(idx);
 			else
 				ExperimentShared.data.TrialOrderNum = 0;
 		}
 
-        return hasParticipandData && hasExperiment;
+		return hasParticipandData && hasExperiment;
 	}
 	private void UpdateData()
 	{
@@ -160,9 +163,9 @@ public partial class ParticipantAndExamDataBinder : Control
 		int screen = FindGodotScreenForMonitor(selectedMonitor);
 		try
 		{
-            // todo: maybe use (DisplayServer.WindowMode.FullScreen screen instead ?
-            // don't use Exclusive. It's heavy weight of no use
-            DisplayServer.WindowSetMode(DisplayServer.WindowMode.Windowed);
+			// todo: maybe use (DisplayServer.WindowMode.FullScreen screen instead ?
+			// don't use Exclusive. It's heavy weight of no use
+			DisplayServer.WindowSetMode(DisplayServer.WindowMode.Windowed);
 			if (screen >= 0)
 				DisplayServer.WindowSetCurrentScreen(screen);
 
@@ -183,6 +186,52 @@ public partial class ParticipantAndExamDataBinder : Control
 		experimentDirectoryDialog.PopupCenteredRatio(0.8f);
 	}
 
+	private async void OnExperimentFileSelected(string filename)
+	{
+		try
+		{
+			ExperimentShared.SourcePath = Path.GetDirectoryName(filename);
+
+			var exam = await BootScript.GetExpirmentData(filename);
+
+			if (exam == null)
+			{
+				GD.PushWarning($"{filename} is invalid experiment file");
+				return;
+			}
+
+			// todo: make it async
+			int[] list = exam.GetInputDataListSync();
+
+
+			if (overviewText != null)
+				overviewText.Text = exam.GetOverview();
+
+			if (trialNumber != null)
+			{
+				
+				trialNumber.Visible = true;
+
+				// todo: store and restore the previously selected value
+				trialNumber.Clear();
+				trialNumber.AddItem("Random", 0);
+
+				foreach (var i in list)
+				{
+					if (i == 0) continue; // do not override "Random" 
+					trialNumber.AddItem(i.ToString(), i);
+				}
+				trialNumber.Selected = 0;
+				ExperimentShared.data.TrialOrderNum = 0;
+			}
+
+			UpdateData();
+		}
+		catch
+		{
+			return;
+		}
+	}
 	private void OnExperimentDirectorySelected(string directory)
 	{
 		ExperimentShared.SourcePath = directory;
@@ -202,21 +251,21 @@ public partial class ParticipantAndExamDataBinder : Control
 
 			trialNumber.Visible = true;
 
-            // todo: store and restore the previously selected value
-            trialNumber.Clear();
+			// todo: store and restore the previously selected value
+			trialNumber.Clear();
 			trialNumber.AddItem("Random", 0);
 			var list = InputDataReader.GetTrialNumberFilesFromExperimentDir(ExperimentShared.SourcePath);
 
-            foreach(var i in list)
+			foreach(var i in list)
 			{
 				if (i == 0) continue; // do not override "Random" 
-                trialNumber.AddItem(i.ToString(), i);
+				trialNumber.AddItem(i.ToString(), i);
 			}
 			trialNumber.Selected = 0;
 			ExperimentShared.data.TrialOrderNum = 0;
-        }
+		}
 
-        UpdateData();
+		UpdateData();
 	}
 
 	private void ShowAboutDialog()
