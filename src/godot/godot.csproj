@@ -17,6 +17,7 @@
     <ProjectReference Include="..\WMA\MonitorInfo.Abstractions\MonitorInfo.Abstractions.csproj" />
     <ProjectReference Include="..\WMA\MonitorInfo\MonitorInfo.csproj" />
     <ProjectReference Include="..\WMA\WMAData\WMAData.csproj" />
+    <ProjectReference Include="..\WMA\WMAExcel\WMAExcel.csproj" />
     <ProjectReference Include="..\WMA\WMAFiles\WMAFiles.csproj" />
   </ItemGroup>
 </Project>

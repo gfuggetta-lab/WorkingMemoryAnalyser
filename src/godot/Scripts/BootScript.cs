@@ -5,11 +5,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using WMAData;
 using WMAFiles;
+//using ConfigFile = WMAFiles.ConfigFile;
 using static godot.WMAUtils;
-using ConfigFile = WMAFiles.ConfigFile;
+
 
 public partial class BootScript : Node2D
 {
@@ -34,6 +36,7 @@ public partial class BootScript : Node2D
 	double cmToPix = 0.0f;
 
 	PlayList playList = new PlayList();
+	int trialCount; 
 	PlayListTracker plrTrack;
 	List<PlayItem> drawItems = new List<PlayItem>();
 	List<PlayItem> pauseList = new List<PlayItem>();
@@ -57,16 +60,17 @@ public partial class BootScript : Node2D
 	// it's populated at CheckResponse, based on the actual response given
 	public PlayItemCond currentCond = PlayItemCond.None;
 
-	public Configuration exam;
-	public List<TrialOrder> trials = new List<TrialOrder>();
-	public List<PauseData> pauses = new List<PauseData>();
+	public IExperimentData examData;
+	//public Configuration exam;
+	//public List<TrialOrder> trials = new List<TrialOrder>();
+	//public List<PauseData> pauses = new List<PauseData>();
+	//public TrialOrder curTrial = null;
 	private int curTrialIdx = -1;
-	public TrialOrder curTrial = null;
 	public TrialResults result = new TrialResults();
 	public ResultReport report = new ResultReport();
 	public IAsyncExperimentNotifier notifier = null;
 
-    private ulong timeOfExperimentStart;
+	private ulong timeOfExperimentStart;
 	private ulong s4start;
 
 	private int isWaitInput = 0;
@@ -101,15 +105,15 @@ public partial class BootScript : Node2D
 			return result;
 		
 		var trials = InputDataReader.GetTrialNumberFilesFromExperimentDir(ExperimentShared.SourcePath);
-        if (trials == null)
-            return 1;
+		if (trials == null)
+			return 1;
 
-        List<int> vals = new List<int>();
+		List<int> vals = new List<int>();
 		vals.AddRange(trials);
-        var rng = new RandomNumberGenerator();
+		var rng = new RandomNumberGenerator();
 		rng.Randomize();
 		var idx = rng.RandiRange(0, vals.Count-1);
-        result = vals[idx];
+		result = vals[idx];
 		return result;
 	}
 
@@ -118,13 +122,35 @@ public partial class BootScript : Node2D
 		return new NothingNotifier();
 	}
 
+	public static IExperimentReader[] readers = new IExperimentReader[]
+	{
+		new TextExperimentReader()
+	};
+
+	public async Task<IExperimentData> GetExpirmentData(string cfgFileName)
+	{
+		if (!File.Exists(cfgFileName))
+			return null;
+
+		foreach (var rdr in readers)
+		{
+			bool isReader = await rdr.IsExperimentFile(cfgFileName, CancellationToken.None);
+			if (!isReader)
+				continue;
+
+			var res = await rdr.ReadExperiment(cfgFileName, CancellationToken.None);
+			return res;
+		}
+		return null;
+	}
+
 	// Called when the node enters the scene tree for the first time.
 	public override async void _Ready()
 	{
 		notifier = PrepareNotifier();
 
 
-		exam = new Configuration(new GodotMSLogger());
+		//exam = new Configuration(new GodotMSLogger());
 
 		// there's no configuration for the clear color
 		RenderingServer.SetDefaultClearColor(new Color(0f, 0f, 0f));
@@ -136,15 +162,16 @@ public partial class BootScript : Node2D
 		if (sectionInfo != null)
 			sectionInfo.ZIndex = 1000;
 
-
 		string cfgFileName = GetConfigFileName();
-		
-		if (File.Exists(cfgFileName))
+		GD.Print($"Loading config file: {cfgFileName}");
+		examData = await GetExpirmentData(cfgFileName);
+		if (examData == null)
 		{
-			var cfg = ConfigFile.FromFile(cfgFileName);
-			exam.LoadConfig(cfg);
+			GD.Print($"Failed to load an experiment from: {cfgFileName}");
+			return;
 		}
-		AssignKeyboardEvents(exam.keyboards);
+
+		AssignKeyboardEvents(examData.GetKeyboardCsv());
 
 		TrialMonitor tm = new TrialMonitor();
 		if (screenRes != null)
@@ -168,28 +195,28 @@ public partial class BootScript : Node2D
 		}
 		var dir = Path.GetDirectoryName(cfgFileName);
 		int inpNum = GetWantedTrial();
-		string inp = Path.Combine(dir, "Input data", $"InputData_{inpNum}.txt");
 
-		trials = new List<TrialOrder>();
-		InputDataHelper.LoadTrials(inp, trials, pauses);
+		examData.SelectInputdata(inpNum);
 
-		log($"trials:  {trials.Count}; pauses: {pauses.Count}");
-		exam.Schedule(tm, trials, pauses, playList);
-		curTrial = trials[0];
+		bool schResult = examData.SchedulePlaylist(tm, playList, out trialCount);
+		log($"loaded: {inpNum}; schedule: {schResult}; trials: {trialCount}");
+
+		//exam.Schedule(tm, trials, pauses, playList);
+		//curTrial = trials[0];
 		curTrialIdx = -1; // needed to handle TrialStart properly
 
 		timeOfExperimentStart = Time.GetTicksMsec();
 		if (ExperimentShared.data != null)
 			report.SetExperiment(ExperimentShared.data);
-		report.SetConfig(exam);
+
+		// todo: implement report writing!
+		// report.SetConfig(exam);
 
 		drawItems.Clear();
 		plrTrack = new PlayListTracker(playList);
 		plrTrack.Track(0, drawItems, null, null, null);
 
-		string imgDir = Path.GetDirectoryName(inp);
-		imgDir = Path.GetDirectoryName(imgDir);
-		Preload(exam, imgDir, trials);
+		Preload(examData, dir);
 
 		ControlEvents(drawItems);
 		RebuildDrawNodes();
@@ -204,7 +231,7 @@ public partial class BootScript : Node2D
 
 		// Notify Async should be the last step
 		await NotifyAsync(drawItems);
-    }
+	}
 
 	private void PreloadTextures(IEnumerable<string> resNames, string imgDir)
 	{
@@ -305,11 +332,11 @@ public partial class BootScript : Node2D
 		}
 	}
 
-	private void Preload(Configuration exam, string expDir, List<TrialOrder> list)
+	private void Preload(IExperimentData exam, string expDir)
 	{
 		List<string> resNames = new List<string>();
 		
-		exam.GetPreloadImages(list, resNames);
+		exam.GetPreloadImages(resNames);
 		resNames.Add("correct");
 		resNames.Add("incorrect");
 
@@ -333,7 +360,7 @@ public partial class BootScript : Node2D
 		resNames.Clear();
 
 		string audDir = Path.Combine(expDir, "Stimulus sounds");
-		exam.GetPreloadSounds(list, resNames);
+		exam.GetPreloadSounds(resNames);
 		GD.Print($"sounds: {resNames.Count}");
 		foreach (var fn in resNames)
 		{
@@ -391,10 +418,10 @@ public partial class BootScript : Node2D
 		PlaySoundIfAny(trigAndOff);
 		StopReadResponse(offList);
 		StopReadResponse(trigAndOff);
-        
+		
 		// Notify Async should be the last step
-        await NotifyAsync(trigAndOff);
-    }
+		await NotifyAsync(trigAndOff);
+	}
 
 	public static Vector2 GetPos(PlayItemPos pos, Vector2 center, double distance, int posVal, int posCount)
 	{
@@ -554,7 +581,7 @@ void fragment() {
 				dstList.Add(itm);
 		}
 	}
-    public async Task NotifyAsync(List<PlayItem> items)
+	public async Task NotifyAsync(List<PlayItem> items)
 	{
 		if (notifier == null)
 			return;
@@ -566,29 +593,29 @@ void fragment() {
 				case PlayItemType.NotifyStart:
 					await notifier.StartTrial();
 					break;
-                case PlayItemType.NotifyS1:
-                    await notifier.MarkerS1(itm.markerValue);
-                    break;
-                case PlayItemType.NotifyS2:
-                    await notifier.MarkerS2(itm.markerValue);
-                    break;
-                case PlayItemType.NotifyS3:
-                    await notifier.MarkerS3(itm.markerValue);
-                    break;
-                case PlayItemType.NotifyS4:
-                    await notifier.MarkerS4(itm.markerValue);
-                    break;
-                case PlayItemType.NotifyFeedbackCorrect:
-                case PlayItemType.NotifyFeedbackIncorrect:
+				case PlayItemType.NotifyS1:
+					await notifier.MarkerS1(itm.markerValue);
+					break;
+				case PlayItemType.NotifyS2:
+					await notifier.MarkerS2(itm.markerValue);
+					break;
+				case PlayItemType.NotifyS3:
+					await notifier.MarkerS3(itm.markerValue);
+					break;
+				case PlayItemType.NotifyS4:
+					await notifier.MarkerS4(itm.markerValue);
+					break;
+				case PlayItemType.NotifyFeedbackCorrect:
+				case PlayItemType.NotifyFeedbackIncorrect:
 					bool isCorr = itm.itemType == PlayItemType.NotifyFeedbackCorrect;
-                    await notifier.Feedback(isCorr);
-                    break;
-            }
-        }
+					await notifier.Feedback(isCorr);
+					break;
+			}
+		}
 
 	}
 
-    private void PlaySoundIfAny(List<PlayItem> items)
+	private void PlaySoundIfAny(List<PlayItem> items)
 	{
 		if (soundPlayer == null) return;
 
@@ -619,9 +646,9 @@ void fragment() {
 				case PlayItemType.TrialStart:
 					log($"Trial start: {itm.text}");
 					currentCond = PlayItemCond.None;
-					curTrialIdx++;
-					if ((curTrialIdx>= 0) && (curTrialIdx < trials.Count))
-						curTrial = trials[curTrialIdx];
+					//curTrialIdx++;
+					//if ((curTrialIdx>= 0) && (curTrialIdx < trials.Count))
+					//	curTrial = trials[curTrialIdx];
 
 					// resetting the measurement time
 					result.Reset();
@@ -629,12 +656,13 @@ void fragment() {
 					break;
 
 				case PlayItemType.TrialEnd:
-					log($"Trial end: {itm.text}; {(curTrialIdx + 1)}/{trials.Count}");
+					log($"Trial end: {itm.text}; {(curTrialIdx + 1)}/{trialCount}");
 					result.blank_onsetTime = (int)(Time.GetTicksMsec() - timeOfExperimentStart);
 
-					report.WriteTrial(curTrial, result);
+					// TODO: implement report writing
+					//report.WriteTrial(curTrial, result);
 					
-					if ((curTrialIdx+1) >= trials.Count)
+					if ((curTrialIdx+1) >= trialCount)
 					{
 						log("ending trials");
 						EndTrial();
@@ -665,7 +693,9 @@ void fragment() {
 
 					if (trialResponse != ResponseButton.NotGiven)
 					{
-						exam.ProcessResponse(trialResponse, curTrial, out result.observedDataResponseRecord, out isCorr);
+						// todo:
+						// exam.ProcessResponse(trialResponse, curTrial, out result.observedDataResponseRecord, out isCorr);
+
 						result.observedDataCorrectResponseRecord = isCorr ? 1 : 0;
 						if (isCorr)
 							currentCond = PlayItemCond.Correct;
