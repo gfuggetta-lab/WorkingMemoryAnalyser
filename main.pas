@@ -3324,6 +3324,7 @@ begin
       if (s3_shape<>12) then begin
         if (Show_S3_peripheral_placeholders) then
           drawDistractions(targetRadiusCM, s3_distractor_shape, s3_distractor_colour, Image_size_CM, -1, s3_set_size);
+        glClear(GL_DEPTH_BUFFER_BIT);
         targetImage(targetRadiusCM, s3_shape, s3_quad, 0, s3_colour, s3_distractor_colour
           , false, Show_S3_placeholder_when_centre, Image_size_CM, -1);
       end;
@@ -3539,7 +3540,7 @@ begin
         drawDistractions(targetRadiusCM, s4_distractor_shape, s4_distractor_colour
          , Image_size_CM, -1, s4_set_size);
       end;
-
+      glClear(GL_DEPTH_BUFFER_BIT);
       targetImage(targetRadiusCM, s4_shape, s4_quad,0, s4_colour, s4_distractor_colour
         , false, Show_S4_placeholder_when_centre, Image_size_CM, -1);
     end;
