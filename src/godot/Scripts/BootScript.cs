@@ -951,6 +951,12 @@ void fragment() {
 
 	private void AssignKeyboardEvents(string keysCsv)
 	{
+		if (string.IsNullOrWhiteSpace(keysCsv))
+		{
+			GD.Print("no configuration level keys. Using per trial keys");
+			return;
+		}
+
 		GD.Print($"keys: '{keysCsv}'");
 		string[] parts = keysCsv.Split(',');
 		for (int i = 0; i < parts.Length; i++)
