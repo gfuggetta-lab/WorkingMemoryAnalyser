@@ -51,6 +51,7 @@ public partial class BootScript : Node2D
 	Dictionary<string, AudioStream> sounds = new Dictionary<string, AudioStream>(StringComparer.OrdinalIgnoreCase);
 
 
+	private bool examHasGlobalKeys = false;
 	public bool isWaitingResponse = false;
 	public bool isDrawPause = false;
 	public bool isDrawPostPause = false;
@@ -171,7 +172,8 @@ public partial class BootScript : Node2D
 			return;
 		}
 
-		AssignKeyboardEvents(examData.GetKeyboardCsv());
+		string globalKeys = examData.GetKeyboardCsv();
+        AssignKeyboardEvents(globalKeys);
 
 		TrialMonitor tm = new TrialMonitor();
 		if (screenRes != null)
@@ -1012,8 +1014,24 @@ void fragment() {
 		RebuildDrawNodes();
 	}
 
+	private void CheckByGlobalKeys(InputEvent ev)
+	{
+        if (ev.IsActionPressed(RightResponse))
+        {
+            SetResponse(ResponseButton.RightButton);
+        }
+        else if (ev.IsActionPressed(LeftResponse))
+        {
+            SetResponse(ResponseButton.LeftButton);
+        }
+    }
 
-	public override void _Input(InputEvent ev)
+	private void CheckByTrialKeys(InputEvent ev)
+	{
+		// todo:
+	}
+
+    public override void _Input(InputEvent ev)
 	{
 		if (ev.IsActionPressed(CloseTrial))
 		{
@@ -1046,13 +1064,15 @@ void fragment() {
 		if (!isWaitingResponse)
 			return;
 
-		if (ev.IsActionPressed(RightResponse))
+		if (examHasGlobalKeys)
 		{
-			SetResponse(ResponseButton.RightButton);
+			CheckByGlobalKeys(ev);
 		}
-		else if (ev.IsActionPressed(LeftResponse))
+		else
 		{
-			SetResponse(ResponseButton.LeftButton);
+			CheckByTrialKeys(ev);
 		}
+
+
 	}
 }
