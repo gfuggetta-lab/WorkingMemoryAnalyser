@@ -51,7 +51,16 @@ namespace WMAData
         public PlayItemCond cond = PlayItemCond.None;
 
         // for NotifySx PlayItemType, the marker to send to the notifier
-        public int markerValue; 
+        public int markerValue;
+
+        // the list of keys that are excepted to be recieved
+        // null or empty array - means, response keys are not implemented on the "per trial" state
+        // .ReadReponse.
+        public string[] responseKeys;
+        // the list of keys that are considered to be correct results
+        // if the list is not assigned, then the in-code determination is used
+        // assigned at the time of .ReadReponse.
+        public string[] correctKeys;
     }
 
     public enum PlayItemPos
@@ -81,7 +90,7 @@ namespace WMAData
         TrialStart, // does nothing, only debugging
         TrialEnd, // does nothing, only debugging
         SectionStart, // does nothing, only debugging
-        ReadResponse, // the time when the response is expected
+        ReadResponse, // the time when the response is expected, and the possible keys
         CheckResponse, // check the response (for the following condition feedback)
 
         CustomEvent, // custom event for anything else.

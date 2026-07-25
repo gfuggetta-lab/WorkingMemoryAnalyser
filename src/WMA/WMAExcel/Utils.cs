@@ -552,5 +552,13 @@ namespace WMAExcel
                 return def;
             return res;
         }
+
+        public static string[] CsvKeysToArray(string s)
+        {
+            string[] rr = s.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            for(int i = 0; i < rr.Length; i++)
+                rr[i] = rr[i].Trim();
+            return rr;
+        }
     }
 }

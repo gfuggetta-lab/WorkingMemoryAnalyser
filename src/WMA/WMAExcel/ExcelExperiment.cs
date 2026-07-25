@@ -93,8 +93,8 @@ namespace WMAExcel
 
         public string GetKeyboardCsv()
         {
-            // todo:
-            return "a,d";
+            // using per TrialOrder
+            return "";
         }
         public void GetPreloadImages(List<string> names)
         { 
@@ -188,7 +188,9 @@ namespace WMAExcel
                 dst.StartSection(evName, timeOfs, duration);
                 if (wantResponse)
                 {
-                    dst.ReadResponse(timeOfs, duration);
+                    var r = dst.ReadResponse(timeOfs, duration);
+                    r.responseKeys = CsvKeysToArray(evInp.allowed_keys_to_respond);
+                    r.correctKeys = CsvKeysToArray(evTr.Response);
                 }
 
                 // event sound
