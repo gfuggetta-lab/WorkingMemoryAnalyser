@@ -9,11 +9,13 @@ namespace WMAExcelValidator
 {
     public partial class MainForm : Form
     {
+        private const string LastFileNameConfig = "last-validated-file.txt";
         private string currentFileName;
 
         public MainForm()
         {
             InitializeComponent();
+            LoadLastFileName();
         }
 
         private void BtnOpen_Click(object sender, EventArgs e)
@@ -67,6 +69,7 @@ namespace WMAExcelValidator
             textFileName.Text = fileName;
             btnValidate.Enabled = true;
             List<string> notes = new List<string>();
+            SaveLastFileName(fileName, notes);
 
             try
             {
@@ -109,6 +112,49 @@ namespace WMAExcelValidator
             }
 
             ShowNotes(notes);
+        }
+
+        private void LoadLastFileName()
+        {
+            try
+            {
+                string configPath = GetLastFileNameConfigPath();
+                if (!File.Exists(configPath))
+                    return;
+
+                string fileName = File.ReadAllText(configPath).Trim();
+                if (string.IsNullOrWhiteSpace(fileName))
+                    return;
+
+                currentFileName = fileName;
+                textFileName.Text = fileName;
+                btnValidate.Enabled = true;
+                textNotes.Text = "Last validated file restored. Click Validate to run checks again.";
+            }
+            catch
+            {
+                currentFileName = null;
+                btnValidate.Enabled = false;
+            }
+        }
+
+        private static void SaveLastFileName(string fileName, List<string> notes)
+        {
+            try
+            {
+                string configPath = GetLastFileNameConfigPath();
+                Directory.CreateDirectory(Path.GetDirectoryName(configPath));
+                File.WriteAllText(configPath, fileName ?? string.Empty, Encoding.UTF8);
+            }
+            catch (Exception ex)
+            {
+                notes.Add("Failed to save last validated file name: " + ex.Message);
+            }
+        }
+
+        private static string GetLastFileNameConfigPath()
+        {
+            return Path.Combine(Application.UserAppDataPath, LastFileNameConfig);
         }
 
         private static bool IsExcelFile(string fileName)
