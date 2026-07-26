@@ -208,12 +208,18 @@ namespace WMAExcel
                     if (string.IsNullOrWhiteSpace(ev.Sound))
                         continue;
 
-                    string soundName = ev.Sound.Trim();
-                    if (existing.ContainsKey(soundName))
-                        continue;
+                    foreach (string sound in CsvKeysToArray(ev.Sound))
+                    {
+                        if (string.IsNullOrWhiteSpace(sound))
+                            continue;
 
-                    existing[soundName] = true;
-                    names.Add(soundName);
+                        string soundName = sound.Trim();
+                        if (existing.ContainsKey(soundName))
+                            continue;
+
+                        existing[soundName] = true;
+                        names.Add(soundName);
+                    }
                 }
             }
         }
