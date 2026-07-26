@@ -52,7 +52,8 @@ public partial class BootScript : Node2D
 
 
 	private bool examHasGlobalKeys = false;
-	private Dictionary<string, WMAResponseKeys> pendingKeys = new Dictionary<string, WMAResponseKeys>(StringComparer.OrdinalIgnoreCase);
+	private WMAResponseKeys pendingKeys = null;
+	public List<WMAResponseResults> responseResults = new List<WMAResponseResults>();
 	public bool isWaitingResponse = false;
 	public bool isDrawPause = false;
 	public bool isDrawPostPause = false;
@@ -174,7 +175,7 @@ public partial class BootScript : Node2D
 		}
 
 		string globalKeys = examData.GetKeyboardCsv();
-        AssignKeyboardEvents(globalKeys);
+		AssignKeyboardEvents(globalKeys);
 
 		TrialMonitor tm = new TrialMonitor();
 		if (screenRes != null)
@@ -828,12 +829,10 @@ void fragment() {
 		WMAResponseKeys rk = new WMAResponseKeys();
 		rk.responseKeys = itm.responseKeys;
 		rk.correctKeys = itm.correctKeys;
-		string t = itm.text;
-		if (t == null) t = string.Empty;
-        pendingKeys[t] = rk;
-    }
+		pendingKeys = rk;
+	}
 
-    private void RebuildDrawNodes(List<PlayItem> itemsList, PlayItemCond checkCond)
+	private void RebuildDrawNodes(List<PlayItem> itemsList, PlayItemCond checkCond)
 	{
 		if (drawRoot == null)
 			return;
@@ -859,11 +858,15 @@ void fragment() {
 			{
 				case PlayItemType.ReadResponse:
 					if (!isWaitingResponse)
+					{
 						log("waiting for response");
+						pendingKeys = null;
+						responseResults.Clear();
+					}
 					isWaitingResponse = true;
 					trialResponse = ResponseButton.NotGiven;
 					if ((itm.responseKeys != null) && (itm.responseKeys.Length > 0))
-                        AddWaitKeys(itm);
+						AddWaitKeys(itm);
 					break;
 
 				case PlayItemType.Text:
@@ -1029,22 +1032,117 @@ void fragment() {
 
 	private void CheckByGlobalKeys(InputEvent ev)
 	{
-        if (ev.IsActionPressed(RightResponse))
-        {
-            SetResponse(ResponseButton.RightButton);
-        }
-        else if (ev.IsActionPressed(LeftResponse))
-        {
-            SetResponse(ResponseButton.LeftButton);
-        }
-    }
+		if (ev.IsActionPressed(RightResponse))
+		{
+			SetResponse(ResponseButton.RightButton);
+		}
+		else if (ev.IsActionPressed(LeftResponse))
+		{
+			SetResponse(ResponseButton.LeftButton);
+		}
+	}
 
 	private void CheckByTrialKeys(InputEvent ev)
 	{
-		// todo:
+		if (pendingKeys == null)
+			return;
+
+		if (!TryGetInputName(ev, out var inputName))
+			return;
+
+		if (!StringArrayContains(pendingKeys.responseKeys, inputName))
+			return;
+
+		AddTrialResponseResult(new WMAResponseResults
+		{
+			name = inputName,
+			isCorrect = StringArrayContains(pendingKeys.correctKeys, inputName)
+		});
 	}
 
-    public override void _Input(InputEvent ev)
+	private void AddTrialResponseResult(WMAResponseResults responseResult)
+	{
+		if (!isWaitingResponse)
+			return;
+
+		bool isFirstResponse = responseResults.Count == 0;
+		responseResults.Add(responseResult);
+
+		if (isFirstResponse)
+		{
+			result.responseTimeMs = (int)(Time.GetTicksMsec() - s4start);
+			result.response_onsetTime = (int)(Time.GetTicksMsec() - timeOfExperimentStart);
+		}
+	}
+
+	private static bool TryGetInputName(InputEvent ev, out string inputName)
+	{
+		inputName = string.Empty;
+
+		if (ev is InputEventKey keyEvent)
+			return TryGetKeyEventName(keyEvent, out inputName);
+
+		if (ev is InputEventMouseButton mouseEvent)
+			return TryGetMouseButtonName(mouseEvent, out inputName);
+
+		return false;
+	}
+
+	private static bool TryGetKeyEventName(InputEventKey keyEvent, out string inputName)
+	{
+		inputName = string.Empty;
+
+		if (keyEvent == null || !keyEvent.Pressed || keyEvent.Echo)
+			return false;
+
+		Key key = keyEvent.PhysicalKeycode != Key.None ? keyEvent.PhysicalKeycode : keyEvent.Keycode;
+		if (key == Key.None)
+			return false;
+
+		inputName = key.ToString();
+		return !string.IsNullOrWhiteSpace(inputName);
+	}
+
+	private static bool TryGetMouseButtonName(InputEventMouseButton mouseEvent, out string inputName)
+	{
+		inputName = string.Empty;
+
+		if (mouseEvent == null || !mouseEvent.Pressed)
+			return false;
+
+		switch (mouseEvent.ButtonIndex)
+		{
+			case MouseButton.Left:
+				inputName = "left_mouse";
+				return true;
+
+			case MouseButton.Right:
+				inputName = "right_mouse";
+				return true;
+
+			case MouseButton.Middle:
+				inputName = "middle_mouse";
+				return true;
+		}
+
+		return false;
+	}
+
+	private static bool StringArrayContains(string[] values, string expected)
+	{
+		if (values == null || string.IsNullOrWhiteSpace(expected))
+			return false;
+
+		foreach (var value in values)
+		{
+			if (string.Compare(value?.Trim(), expected, true) == 0)
+				return true;
+		}
+
+		return false;
+	}
+
+	public override void _Input(InputEvent ev)
 	{
 		if (ev.IsActionPressed(CloseTrial))
 		{
