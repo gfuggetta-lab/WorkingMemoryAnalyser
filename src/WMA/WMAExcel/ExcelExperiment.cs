@@ -97,14 +97,127 @@ namespace WMAExcel
             return "";
         }
         public void GetPreloadImages(List<string> names)
-        { 
+        {
+            if (names == null)
+                return;
+
+            var existing = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
+            foreach (var name in names)
+            {
+                if (!string.IsNullOrWhiteSpace(name))
+                    existing[name.Trim()] = true;
+            }
+
+            if (inputDataNum <= 0)
+                return;
+
+            if (!inputDataLk.TryGetValue(inputDataNum, out var inp))
+                return;
+
+            foreach (var trial in inp.Trials)
+            {
+                if (trial == null)
+                    continue;
+
+                trial.Populate();
+
+                if (trial.objects == null)
+                    continue;
+
+                foreach (var obj in trial.objects)
+                {
+                    if (obj == null)
+                        continue;
+
+                    if (!string.Equals(obj.Type, "Picture", StringComparison.OrdinalIgnoreCase))
+                        continue;
+
+                    if (string.IsNullOrWhiteSpace(obj.Object))
+                        continue;
+
+                    string imageName = obj.Object.Trim();
+                    if (existing.ContainsKey(imageName))
+                        continue;
+
+                    existing[imageName] = true;
+                    names.Add(imageName);
+                }
+            }
         }
         public void GetPreloadFonts(List<string> names)
-        { 
+        {
+            if (names == null)
+                return;
+
+            var existing = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
+            foreach (var name in names)
+            {
+                if (!string.IsNullOrWhiteSpace(name))
+                    existing[name.Trim()] = true;
+            }
+
+            if (cfg == null || cfg.Fonts == null)
+                return;
+
+            foreach (var font in cfg.Fonts.Values)
+            {
+                if (string.IsNullOrWhiteSpace(font.name))
+                    continue;
+
+                string fontName = font.name.Trim();
+                if (existing.ContainsKey(fontName))
+                    continue;
+
+                existing[fontName] = true;
+                names.Add(fontName);
+            }
         }
         public void GetPreloadSounds(List<string> names)
-        { 
+        {
+            if (names == null)
+                return;
+
+            var existing = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
+            foreach (var name in names)
+            {
+                if (!string.IsNullOrWhiteSpace(name))
+                    existing[name.Trim()] = true;
+            }
+
+            if (inputDataNum <= 0)
+                return;
+
+            if (!inputDataLk.TryGetValue(inputDataNum, out var inp))
+                return;
+
+            foreach (var trial in inp.Trials)
+            {
+                if (trial == null)
+                    continue;
+
+                trial.Populate();
+
+                if (trial.events == null)
+                    continue;
+
+                foreach (var ev in trial.events)
+                {
+                    if (ev == null)
+                        continue;
+
+                    if (string.IsNullOrWhiteSpace(ev.Sound))
+                        continue;
+
+                    string soundName = ev.Sound.Trim();
+                    if (existing.ContainsKey(soundName))
+                        continue;
+
+                    existing[soundName] = true;
+                    names.Add(soundName);
+                }
+            }
         }
+
         public bool SchedulePlaylist(TrialMonitor display, PlayList playList, out int trialCount)
         {
             trialCount = 0;
