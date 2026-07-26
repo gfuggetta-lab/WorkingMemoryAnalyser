@@ -52,6 +52,7 @@ public partial class BootScript : Node2D
 
 
 	private bool examHasGlobalKeys = false;
+	private Dictionary<string, WMAResponseKeys> pendingKeys = new Dictionary<string, WMAResponseKeys>(StringComparer.OrdinalIgnoreCase);
 	public bool isWaitingResponse = false;
 	public bool isDrawPause = false;
 	public bool isDrawPostPause = false;
@@ -822,7 +823,17 @@ void fragment() {
 	}
 
 
-	private void RebuildDrawNodes(List<PlayItem> itemsList, PlayItemCond checkCond)
+	private void AddWaitKeys(PlayItem itm)
+	{
+		WMAResponseKeys rk = new WMAResponseKeys();
+		rk.responseKeys = itm.responseKeys;
+		rk.correctKeys = itm.correctKeys;
+		string t = itm.text;
+		if (t == null) t = string.Empty;
+        pendingKeys[t] = rk;
+    }
+
+    private void RebuildDrawNodes(List<PlayItem> itemsList, PlayItemCond checkCond)
 	{
 		if (drawRoot == null)
 			return;
@@ -851,6 +862,8 @@ void fragment() {
 						log("waiting for response");
 					isWaitingResponse = true;
 					trialResponse = ResponseButton.NotGiven;
+					if ((itm.responseKeys != null) && (itm.responseKeys.Length > 0))
+                        AddWaitKeys(itm);
 					break;
 
 				case PlayItemType.Text:
