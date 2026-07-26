@@ -47,7 +47,7 @@ namespace WMAExcel
                     continue;
 
                 string imagePath = Path.Combine(imagesDir, image);
-                if (!File.Exists(imagePath))
+                if (!AssetExists(imagePath, ".png", ".bmp"))
                     notes.Add($"Missing preload image file: {imagePath}");
             }
 
@@ -60,9 +60,26 @@ namespace WMAExcel
                     continue;
 
                 string soundPath = Path.Combine(soundsDir, sound);
-                if (!File.Exists(soundPath))
+                if (!AssetExists(soundPath, ".ogg", ".mp3", ".wav"))
                     notes.Add($"Missing preload sound file: {soundPath}");
             }
+        }
+
+        private static bool AssetExists(string path, params string[] extensions)
+        {
+            if (File.Exists(path))
+                return true;
+
+            if (!string.IsNullOrEmpty(Path.GetExtension(path)))
+                return false;
+
+            foreach (string extension in extensions)
+            {
+                if (File.Exists(path + extension))
+                    return true;
+            }
+
+            return false;
         }
     }
 }
