@@ -285,6 +285,7 @@ namespace WMAExcel
                 if (!inp.Events.TryGetValue(evName, out var evInp))
                     return;
 
+                PlayItemCond[] itcnd = new PlayItemCond[] { PlayItemCond.Correct, PlayItemCond.Incorrect, PlayItemCond.Ommission };
 
                 trial.eventsLk.TryGetValue(evName, out var evTr);
                 if (evTr == null)
@@ -295,6 +296,7 @@ namespace WMAExcel
                     duration = ToDouble(evTr.Duration);
 
                 bool wantResponse = evName.StWith("R");
+                bool isFeedback = (!wantResponse) && evName.StWith("FB");
 
                 if (wantResponse && (duration == 0)) // response
                 {
@@ -315,7 +317,23 @@ namespace WMAExcel
                 // event sound
                 if (!string.IsNullOrWhiteSpace(evTr.Sound))
                 {
-                    dst.AddSound(evTr.Sound, timeOfs);
+                    if (isFeedback)
+                    {
+                        string[] sfx = Utils.CsvKeysToArray(evTr.Sound);
+
+                        for(int i = 0; i < itcnd.Length; i++)
+                        {
+                            if (i < sfx.Length)
+                            {
+                                var it = dst.AddSound(sfx[i], timeOfs);
+                                it.cond = itcnd[i];
+                            }
+                        }
+                    }
+                    else
+                    {
+                        dst.AddSound(evTr.Sound, timeOfs);
+                    }
                 }
 
 
