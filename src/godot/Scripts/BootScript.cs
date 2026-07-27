@@ -275,7 +275,13 @@ public partial class BootScript : Node2D
 			{
 				var video = PreloadVideo(bmpFn);
 				if (video != null)
+				{
 					videos[nm] = video;
+
+					var fn = Path.GetFileName(bmpFn);
+					videos[fn] = video;
+					videos[Path.GetFileNameWithoutExtension(fn)] = video;
+				}
 				continue;
 			}
 
@@ -291,6 +297,10 @@ public partial class BootScript : Node2D
 				var _tex = ImageTexture.CreateFromImage(img);
 				GD.Print($"loaded: {Path.GetFileName(bmpFn)}");
 				texs[nm] = _tex;
+
+				string f = Path.GetFileName(bmpFn);
+				texs[f] = _tex;
+				texs[Path.GetFileNameWithoutExtension(f)] = _tex;
 			}
 			catch (Exception x)
 			{
@@ -871,8 +881,13 @@ void fragment() {
 					break;
 
 				case PlayItemType.ImageById:
+				case PlayItemType.ImageByName:
 					string n;
-					n = itm.imageId.ToString();
+					if (itm.itemType == PlayItemType.ImageById)
+						n = itm.imageId.ToString();
+					else
+						n = itm.imageName;
+
 					float w = (float)(itm.sizeCm * cmToPix);
 					if (videos.TryGetValue(n, out var video))
 					{
