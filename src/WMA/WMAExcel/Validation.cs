@@ -35,7 +35,7 @@ namespace WMAExcel
                 return;
 
             string baseDir = rootDir ?? string.Empty;
-            string imagesDir = Path.Combine(baseDir, "Stimulis images");
+            string imagesDir = Path.Combine(baseDir, "Stimulus images");
             string soundsDir = Path.Combine(baseDir, "Stimulus sounds");
 
             List<string> images = new List<string>();

@@ -1,15 +1,21 @@
-﻿using System;
-using System.IO;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using WMAData;
-using System.Threading;
 
 namespace WMAExcel
 {
-    public class ExcelFileProvider : IExperimentReader
+    public class ExcelFileProvider : IExperimentReader, IExperimentDataSetLog
     {
+        ILogger log;
+        public void SetLog(ILogger log)
+        {
+            this.log = log;
+        }
         public Task<bool> IsExperimentFile(string filename, CancellationToken cancel)
         {
             string p = Path.GetExtension(filename);
@@ -22,6 +28,7 @@ namespace WMAExcel
         public Task<IExperimentData> ReadExperiment(string filename, CancellationToken cancel)
         {
             ExcelExperiment result = new ExcelExperiment();
+            result.SetLog(log);
             if (!result.LoadFromFile(filename))
                 return Task.FromResult<IExperimentData>(null);
 

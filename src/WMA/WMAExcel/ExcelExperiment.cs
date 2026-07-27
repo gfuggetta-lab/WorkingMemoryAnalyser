@@ -10,7 +10,7 @@ using NPOI.Util;
 
 namespace WMAExcel
 {
-    public class ExcelExperiment : IExperimentData
+    public class ExcelExperiment : IExperimentData, IExperimentDataSetLog
     {
         public ILogger log;
         public ExcelConfig cfg = null;
@@ -18,6 +18,11 @@ namespace WMAExcel
         public Dictionary<int, ExcelInputData> inputDataLk = new Dictionary<int, ExcelInputData>();
         public int[] inputNums;
         int inputDataNum;
+
+        public void SetLog(ILogger log)
+        {
+            this.log = log;
+        }
         public bool LoadFromFile(string fn)
         {
             IWorkbook workbook = null;
@@ -46,7 +51,7 @@ namespace WMAExcel
                 {
                     //log.debug("parsing config");
                     cfg = new ExcelConfig();
-                    ParseConfig(sh, cfg);
+                    ParseConfig(sh, cfg, log);
                 } 
                 else if (IsInputDataSheet(sh.SheetName, out var inpIdx))
                 {
@@ -233,6 +238,7 @@ namespace WMAExcel
                 return false;
 
             Scheduler sch = new Scheduler();
+            sch.log = log;
             sch.display = display;
             sch.dst = playList;
             sch.inp = inp;
@@ -262,6 +268,7 @@ namespace WMAExcel
         // The class is used just not simplify the pass of the internal variables
         private class Scheduler
         {
+            public ILogger log;
             public string fallbackFont = "arial.ttf";
 
             public double distanceCm = 57;
@@ -428,11 +435,20 @@ namespace WMAExcel
                     TryGetNumber(obj.Type, "Text_Font_", out var f);
 
                     string font = fallbackFont;
-                    if (cfg.Fonts.TryGetValue(f, out var fd))
+                    bool hasFont;
+                    hasFont = cfg.Fonts.TryGetValue(f, out var fd);
+                    if (hasFont)
                         font = fd.name;
+                    else
+                        log.warn($"failed to find log: {f}");
 
                     // todo: font size! and font style
                     result = dst.AddText(obj.Object, font, clr, timeOfs, duration);
+                    if (hasFont)
+                    {
+                        log.debug($"font {f} is '{fd.name}'; size: {fd.size}");
+                        result.SetFont(fd.name, fd.size);
+                    }
                 }
                 else if (obj.Type.StWith("Picture"))
                 {
