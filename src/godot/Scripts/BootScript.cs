@@ -126,6 +126,9 @@ public partial class BootScript : Node2D
 
 		foreach (var rdr in readers)
 		{
+			if (rdr is IExperimentDataSetLog sl)
+				sl.SetLog(new GodotMSLogger());
+
 			bool isReader = await rdr.IsExperimentFile(cfgFileName, CancellationToken.None);
 			if (!isReader)
 				continue;
@@ -161,6 +164,11 @@ public partial class BootScript : Node2D
 		{
 			GD.Print($"Failed to load an experiment from: {cfgFileName}");
 			return;
+		}
+
+		if (examData is IExperimentDataSetLog sl)
+		{
+			sl.SetLog(new GodotMSLogger());
 		}
 
 		string globalKeys = examData.GetKeyboardCsv();
