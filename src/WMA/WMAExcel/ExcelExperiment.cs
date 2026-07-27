@@ -272,6 +272,7 @@ namespace WMAExcel
                 {
                     var nm = seqList[i];
                     string nx;
+                    // todo: if "C", then skip
                     if (i < seqList.Count - 1)
                         nx = seqList[i + 1];
                     else
@@ -304,16 +305,103 @@ namespace WMAExcel
                 return (deg * (Math.PI / 180.0)) * distanceCm;
             }
 
+            static readonly PlayItemCond[] itcnd = new PlayItemCond[] 
+            { 
+                PlayItemCond.Correct, 
+                PlayItemCond.Incorrect, 
+                PlayItemCond.Ommission 
+            };
+            private void ScheduleEventObjects(
+                ExcelTrialRow trial,
+                string evName,
+                ExcelInputEvent evInp,
+                ExcelTrialEvent evTr, 
+                bool isFeedback, 
+                double timeOfs, double duration)
+            {
+                // event sound
+                if (!string.IsNullOrWhiteSpace(evTr.Sound))
+                {
+                    if (isFeedback)
+                    {
+                        string[] sfx = Utils.CsvKeysToArray(evTr.Sound);
+
+                        for (int i = 0; i < itcnd.Length; i++)
+                        {
+                            if (i < sfx.Length)
+                            {
+                                var it = dst.AddSound(sfx[i], timeOfs);
+                                it.cond = itcnd[i];
+                            }
+                        }
+                    }
+                    else
+                    {
+                        dst.AddSound(evTr.Sound, timeOfs);
+                    }
+                }
+
+                // visual objects
+                List<int> lvlIdx = new List<int>();
+                lvlIdx.AddRange(evInp.levels.Keys);
+                lvlIdx.Sort();
+
+                foreach (var lidx in lvlIdx)
+                {
+                    var lvl = evInp.levels[lidx];
+                    int totalVtx = lvl.VertCount;
+                    double radius = DegToCmSize(Convert.ToDouble(lvl.EccentriciyDeg));
+
+                    for (int i = 1; i <= lvl.ObjCount; i++)
+                    {
+
+                        // Normally, it's 1 object in the array
+                        // but for the feed-back it's an array of 3 objects, with diff condition
+                        if (!trial.objectsLk.TryGetValue($"{evName}_{lvl.LevelName}_O{i}", out var objArr))
+                            continue;
+
+
+                        if (objArr.Length == 3)
+                        {
+                            // conditions
+                            foreach (var cobj in objArr)
+                            {
+                                var st = AllocItem(cobj, duration, timeOfs);
+                                if (st != null)
+                                {
+                                    st = PositionItem(st, cobj, totalVtx, radius);
+                                    st.cond = ToCond(cobj.Condition);
+                                }
+                            }
+                        }
+                        else if (objArr.Length > 0)
+                        {
+                            // stimuli
+                            var st = AllocItem(objArr[0], duration, timeOfs);
+                            PositionItem(st, objArr[0], totalVtx, radius);
+                        }
+                    }
+                }
+
+            }
+
             public void ScheduleEvent(ExcelTrialRow trial, string evName, ref double timeOfs, string nextEvent)
             {
                 if (!inp.Events.TryGetValue(evName, out var evInp))
                     return;
 
-                PlayItemCond[] itcnd = new PlayItemCond[] { PlayItemCond.Correct, PlayItemCond.Incorrect, PlayItemCond.Ommission };
 
                 trial.eventsLk.TryGetValue(evName, out var evTr);
+                
                 if (evTr == null)
                     evTr = ExcelTrialEvent.Empty;
+                // C event is used as "place holders" and dot, which is applied at every ISI
+                if (!inp.Events.TryGetValue("C", out var CInp))
+                    return;
+
+                trial.eventsLk.TryGetValue("C", out var CTr);
+                if (CTr == null)
+                    CTr = ExcelTrialEvent.Empty;
 
                 double duration = 0;
                 if (evTr != null)
@@ -337,70 +425,9 @@ namespace WMAExcel
                     r.responseKeys = CsvKeysToArray(evInp.allowed_keys_to_respond);
                     r.correctKeys = CsvKeysToArray(evTr.Response);
                 }
+                ScheduleEventObjects(trial, "C", CInp, CTr, false, timeOfs, duration);
 
-                // event sound
-                if (!string.IsNullOrWhiteSpace(evTr.Sound))
-                {
-                    if (isFeedback)
-                    {
-                        string[] sfx = Utils.CsvKeysToArray(evTr.Sound);
-
-                        for(int i = 0; i < itcnd.Length; i++)
-                        {
-                            if (i < sfx.Length)
-                            {
-                                var it = dst.AddSound(sfx[i], timeOfs);
-                                it.cond = itcnd[i];
-                            }
-                        }
-                    }
-                    else
-                    {
-                        dst.AddSound(evTr.Sound, timeOfs);
-                    }
-                }
-
-
-                List<int> lvlIdx = new List<int>();
-                lvlIdx.AddRange(evInp.levels.Keys);
-                lvlIdx.Sort();
-
-                foreach (var lidx in lvlIdx)
-                {
-                    var lvl = evInp.levels[lidx];
-                    int totalVtx = lvl.VertCount;
-                    double radius = DegToCmSize(Convert.ToDouble(lvl.EccentriciyDeg));
-
-                    for (int i = 1; i <= lvl.ObjCount; i++)
-                    {
-
-                        // Normally, it's 1 object in the array
-                        // but for the feed-back it's an array of 3 objects, with diff condition
-                        if (!trial.objectsLk.TryGetValue($"{evName}_{lvl.LevelName}_O{i}", out var objArr))
-                            continue;
-
-
-                        if (objArr.Length == 3)
-                        {
-                            // conditions
-                            foreach(var cobj in objArr)
-                            {
-                                var st = AllocItem(cobj, duration, timeOfs);
-                                if (st != null)
-                                {
-                                    st = PositionItem(st, cobj, totalVtx, radius);
-                                    st.cond = ToCond(cobj.Condition);
-                                }
-                            }
-                        } 
-                        else if (objArr.Length > 0)
-                        {
-                            // stimuli
-                            var st = AllocItem(objArr[0], duration, timeOfs);
-                            PositionItem(st, objArr[0], totalVtx, radius);
-                        }
-                    }
-                }
+                ScheduleEventObjects(trial, evName, evInp, evTr, isFeedback, timeOfs, duration);
 
                 timeOfs += duration;
 
@@ -408,7 +435,14 @@ namespace WMAExcel
                 duration = ToDouble(evTr.ISI);
                 if (duration > 0)
                 {
+
+
+
                     dst.StartSection($"{evName}>{nextEvent}", timeOfs, duration);
+
+                    // ISI is never a feedback
+                    ScheduleEventObjects(trial, "C", CInp, CTr, false, timeOfs, duration);
+
                     timeOfs += duration;
                 }
             }
@@ -435,6 +469,12 @@ namespace WMAExcel
 
             ColorFloat GetColorFromConfig(string clr)
             {
+                if (string.IsNullOrWhiteSpace(clr))
+                    return ColorFloat.Black;
+
+                if (string.Compare(clr, "n/a", true) ==0)
+                    return ColorFloat.White;
+
                 ColorFloat def = ColorFloat.Black;
                 if (!int.TryParse(clr, out var cidx))
                     return def;
@@ -457,14 +497,24 @@ namespace WMAExcel
 
                 if (obj.Type == "Shape")
                 {
-                    TryGetNumber(obj.Object, "", out var nm);
-                    result = dst.AddByShape(
-                        nm,
-                        DegToCmSize(obj.Size),
-                        DegToCmSize(obj.Size),
-                        clr,
-                        timeOfs, duration);
-
+                    // special cas for the shape!
+                    if (string.Compare(obj.Object, "Circular_Placeholder", true)==0)
+                    {
+                        // tood: 0.05 is a hard-coded value from the "text" version
+                        result = dst.AddCircleHollow(
+                            DegToCmSize(obj.Size)/2.0, clr, timeOfs, duration);
+                        result.lineWidthCm = DegToCmSize(0.05);
+                    }
+                    else
+                    { 
+                        TryGetNumber(obj.Object, "", out var nm);
+                        result = dst.AddByShape(
+                            nm,
+                            DegToCmSize(obj.Size),
+                            DegToCmSize(obj.Size),
+                            clr,
+                            timeOfs, duration);
+                    }
                 }
                 else if (obj.Type.StWith("Text_Font_"))
                 {
@@ -486,7 +536,10 @@ namespace WMAExcel
                 }
                 else if (obj.Type.StWith("Picture"))
                 {
-                    result = dst.AddImageByName(obj.Object, DegToCmSize(obj.Size), clr, timeOfs, duration);
+                    result = dst.AddImageByName(
+                        obj.Object, 
+                        DegToCmSize(obj.Size), 
+                        clr, timeOfs, duration);
                 }
 
 
