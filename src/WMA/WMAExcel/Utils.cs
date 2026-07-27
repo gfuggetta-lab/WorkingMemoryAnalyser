@@ -252,7 +252,7 @@ namespace WMAExcel
                 else if (rdr.Name.StWith("LUFA_USB_CDC_Interrupt_"))
                     ParseLufa(rdr.Name, v, dst);
                 else if (rdr.Name.StWith("Font_"))
-                    ParseFont(rdr.Name, v, dst);
+                    ParseFont(rdr.Name, v, dst, log);
                 else if (rdr.Name.StWith("Experiment"))
                     dst.Experiment = v;
                 else if (rdr.Name.StWith("Reference_Number"))
@@ -496,13 +496,18 @@ namespace WMAExcel
                 lufa.dead_ms = value;
         }
 
-        private static void ParseFont(string name, string value, ExcelConfig dst)
+        private static void ParseFont(string name, string value, ExcelConfig dst, ILogger log)
         {
             if (!TryGetNumber(name, "Font_", out var n))
+            {
+                log.debug($"failed to get number from: {name}");
                 return;
+            }
 
             if (!dst.Fonts.TryGetValue(n, out var font))
+            {
                 font = new FontData();
+            }
 
             if (name.StWith($"Font_{n}_size"))
             {

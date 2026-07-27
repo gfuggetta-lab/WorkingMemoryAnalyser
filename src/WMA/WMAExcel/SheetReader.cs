@@ -52,6 +52,12 @@ namespace WMAExcel
             name = name.Trim();
             if (string.IsNullOrWhiteSpace(name))
                 return false;
+            
+            int i = name.Length -1;
+            while ((i >= 0) && (name[i] == ':')) i--;
+            if (i < 0)
+                return false;
+            name = name.Substring(0, i+1);
 
             if (row.LastCellNum == x)
                 return true;
