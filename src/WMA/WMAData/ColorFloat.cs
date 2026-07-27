@@ -14,5 +14,7 @@ namespace WMAData
         {
             return $"r:{r};g:{g}b:{b}";
         }
+
+        public static ColorFloat Black = new ColorFloat { r = 0.0, g = 0.0, b = 0.0 };
     }
 }

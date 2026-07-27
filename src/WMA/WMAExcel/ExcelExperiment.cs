@@ -415,10 +415,25 @@ namespace WMAExcel
                 }
                 return item;
             }
+
+            ColorFloat GetColorFromConfig(string clr)
+            {
+                ColorFloat def = ColorFloat.Black;
+                if (!int.TryParse(clr, out var cidx))
+                    return def;
+                if (!cfg.Shapes_text_colour.TryGetValue(cidx, out var str))
+                    return def;
+
+                if (!TryParseColor(str, out var result))
+                    return def;
+                return result;
+            }
+
             public PlayItem AllocItem(ExcelTrialObject obj, double duration, double timeOfs)
             {
                 PlayItem result = null;
-                TryParseColor(obj.Colour, out var clr);
+                var clr = GetColorFromConfig(obj.Colour);
+
                 if (obj.Type == "Shape")
                 {
                     result = dst.AddByShape(
@@ -445,10 +460,7 @@ namespace WMAExcel
                     // todo: font size! and font style
                     result = dst.AddText(obj.Object, font, clr, timeOfs, duration);
                     if (hasFont)
-                    {
-                        log.debug($"font {f} is '{fd.name}'; size: {fd.size}");
                         result.SetFont(fd.name, fd.size);
-                    }
                 }
                 else if (obj.Type.StWith("Picture"))
                 {
