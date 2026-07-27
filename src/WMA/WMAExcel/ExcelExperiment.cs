@@ -244,6 +244,23 @@ namespace WMAExcel
             sch.inp = inp;
             sch.cfg = cfg;
 
+            // runtime backgtround
+            ExcelTrialObject back = new ExcelTrialObject();
+            back.Type = inp.Background_Type;
+            back.Object = inp.Background_Object;
+            back.Size = inp.Background_diameter_deg;
+            back.ColorTriplet = cfg.Run_background_shape_colour;
+            var itm = sch.AllocItem(back, -1, 0);
+
+            // paused background
+            back.Type = inp.Background_Type;
+            back.Object = inp.Background_Object;
+            back.Size = inp.Background_diameter_deg;
+            back.ColorTriplet = cfg.Pause_background_shape_colour;
+            itm = sch.AllocItem(back, -1, 0);
+            itm.cond = PlayItemCond.Paused; 
+
+
             var seqList = Utils.GetSequenceList(inp.Sequence_of_Events_of_a_trial);
             double timeOfs = 0;
             trialCount = inp.Trials.Count;
@@ -432,18 +449,23 @@ namespace WMAExcel
             public PlayItem AllocItem(ExcelTrialObject obj, double duration, double timeOfs)
             {
                 PlayItem result = null;
-                var clr = GetColorFromConfig(obj.Colour);
+                ColorFloat clr;
+                if (!string.IsNullOrEmpty(obj.ColorTriplet))
+                    TryParseColor(obj.ColorTriplet, out clr);
+                else
+                    clr = GetColorFromConfig(obj.Colour);
 
                 if (obj.Type == "Shape")
                 {
+                    TryGetNumber(obj.Object, "", out var nm);
                     result = dst.AddByShape(
-                        ToInt(obj.Object), 
-                        DegToCmSize(obj.Size), 
-                        DegToCmSize(obj.Size), 
+                        nm,
+                        DegToCmSize(obj.Size),
+                        DegToCmSize(obj.Size),
                         clr,
                         timeOfs, duration);
-                    
-                } 
+
+                }
                 else if (obj.Type.StWith("Text_Font_"))
                 {
                     // try to get font!

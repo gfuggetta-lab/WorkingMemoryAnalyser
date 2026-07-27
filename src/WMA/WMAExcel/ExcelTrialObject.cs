@@ -40,6 +40,10 @@ namespace WMAExcel
         public string Object;
         // the id of the color. Can be "n/a" for Pictures.
         public string Colour;
+
+        // the string or r,g,b values
+        public string ColorTriplet;
+
         // the size of the object.
         public string Size;
 
