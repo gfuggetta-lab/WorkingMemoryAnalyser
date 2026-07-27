@@ -8,6 +8,8 @@ public partial class ExperimentShared : Node
 
     // The exam source directory where Overview.txt and Configure.txt are stored
     public static string SourcePath = "";
+    // the soruce file name
+    public static string SourceFileName = "";
 
     // The monitor selected
     public static string SelectedMonitorID = "";

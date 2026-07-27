@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using WMAData;
+using WMAExcel;
 using WMAFiles;
 //using ConfigFile = WMAFiles.ConfigFile;
 using static godot.WMAUtils;
@@ -84,20 +85,7 @@ public partial class BootScript : Node2D
 
 	protected string GetConfigFileName()
 	{
-		string result = ExperimentShared.SourcePath;
-		// we started from 
-		if (!string.IsNullOrWhiteSpace(result))
-		{
-			result = Path.Combine(result, "Configuration.txt");
-			if (!File.Exists(result))
-				result = "";
-		}
-
-		// we probably started from the editor
-		if (string.IsNullOrWhiteSpace(result))
-			result = fileName;
-
-		return result;
+		return ExperimentShared.SourceFileName;
 	}
 
 	// returns the exact TrialOrderNum
@@ -106,9 +94,9 @@ public partial class BootScript : Node2D
 		var result = ExperimentShared.data.TrialOrderNum;
 		if (result > 0)
 			return result;
-		
-		var trials = InputDataReader.GetTrialNumberFilesFromExperimentDir(ExperimentShared.SourcePath);
-		if (trials == null)
+
+		var trials = examData.GetInputDataListSync();
+		if ((trials == null)||(trials.Length == 0))
 			return 1;
 
 		List<int> vals = new List<int>();
@@ -127,7 +115,8 @@ public partial class BootScript : Node2D
 
 	public static IExperimentReader[] readers = new IExperimentReader[]
 	{
-		new TextExperimentReader()
+		new TextExperimentReader(),
+		new ExcelFileProvider()
 	};
 
 	public static async Task<IExperimentData> GetExpirmentData(string cfgFileName)
@@ -511,9 +500,9 @@ void fragment() {
 		// the central position
 		Vector2 pos)
 	{
-		if (!fonts.TryGetValue(itm.fontName, out var fnt))
+		if ((itm.fontName == null) ||!fonts.TryGetValue(itm.fontName, out var fnt))
 		{
-			GD.Print($"Font not found: {itm.fontName}");
+			GD.Print($"Font not found: {itm.fontName}; '{itm.text}'");
 			return null;
 		}
 		int fontSize = itm.fontSizePx;

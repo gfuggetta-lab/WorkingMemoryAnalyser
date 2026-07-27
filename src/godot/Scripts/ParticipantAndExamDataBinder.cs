@@ -86,12 +86,8 @@ public partial class ParticipantAndExamDataBinder : Control
 			&& !string.IsNullOrWhiteSpace(experimentData.Sex)
 			&& !string.IsNullOrWhiteSpace(experimentData.Handedness);
 
-		bool hasExperiment = !string.IsNullOrEmpty(ExperimentShared.SourcePath);
-		if (hasExperiment)
-		{
-			string path = Path.Combine(ExperimentShared.SourcePath, "Configuration.txt");
-			hasExperiment = File.Exists(path);
-		}
+		bool hasExperiment = !string.IsNullOrEmpty(ExperimentShared.SourceFileName);
+
 		if (trialNumber != null)
 		{
 			var idx = trialNumber.Selected;
@@ -196,9 +192,13 @@ public partial class ParticipantAndExamDataBinder : Control
 
 			if (exam == null)
 			{
+				ExperimentShared.SourcePath = "";
+				ExperimentShared.SourceFileName = "";
 				GD.PushWarning($"{filename} is invalid experiment file");
 				return;
 			}
+
+			ExperimentShared.SourceFileName = filename;
 
 			// todo: make it async
 			int[] list = exam.GetInputDataListSync();
