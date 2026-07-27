@@ -34,6 +34,10 @@ namespace godot.Scripts
 			{
 				cfgFn = Path.Combine(dir, "Configuration.txt");
 			}
+			
+			if (!File.Exists(cfgFn))
+				return;
+
 			if (!string.IsNullOrWhiteSpace(cfgFn))
 				LoadConfig(cfgFn);
 			if (playButton != null)
