@@ -31,6 +31,7 @@ namespace WMAExcel
 
             PopulateTrials(data);
             ValidateTrialObjects(data, noteWriter);
+            noteWriter.FlushTrialNotes();
         }
 
         public static void PopulateTrials(ExcelInputData data)
@@ -47,7 +48,9 @@ namespace WMAExcel
 
         public static void ValidateTrialObjects(ExcelInputData data, List<string> notes)
         {
-            ValidateTrialObjects(data, new ValidationNoteWriter(notes));
+            ValidationNoteWriter noteWriter = new ValidationNoteWriter(notes);
+            ValidateTrialObjects(data, noteWriter);
+            noteWriter.FlushTrialNotes();
         }
 
         public static void ValidateTrialObjects(ExcelInputData data, ValidationNoteWriter notes)
