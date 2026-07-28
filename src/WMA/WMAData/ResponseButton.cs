@@ -10,5 +10,7 @@ namespace WMAData
         NotGiven,
         LeftButton,
         RightButton,
+        Correct,
+        Incorrect
     }
 }

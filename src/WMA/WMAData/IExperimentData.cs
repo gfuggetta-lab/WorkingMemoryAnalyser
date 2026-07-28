@@ -23,5 +23,7 @@ namespace WMAData
         void GetPreloadImages(List<string> names);
         void GetPreloadFonts(List<string> names);
         void GetPreloadSounds(List<string> names);
+
+        bool UseOmission();
     }
 }
