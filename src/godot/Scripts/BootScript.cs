@@ -704,12 +704,21 @@ void fragment() {
 
 					if (trialResponse != ResponseButton.NotGiven)
 					{
+						if (trialResponse == ResponseButton.Correct)
+							isCorr = true;
+						else if (trialResponse == ResponseButton.Incorrect)
+							isCorr = false;
 						// todo:
 						// exam.ProcessResponse(trialResponse, curTrial, out result.observedDataResponseRecord, out isCorr);
 
 						result.observedDataCorrectResponseRecord = isCorr ? 1 : 0;
 						if (isCorr)
 							currentCond = PlayItemCond.Correct;
+					}
+					else
+					{
+						if (examData.UseOmission())
+							currentCond = PlayItemCond.Ommission;
 					}
 					log($"is correct response: {currentCond}");
 					break;
@@ -887,6 +896,10 @@ void fragment() {
 						n = itm.imageId.ToString();
 					else
 						n = itm.imageName;
+					if (n == null)
+					{
+						n = string.Empty;
+					}
 
 					float w = (float)(itm.sizeCm * cmToPix);
 					if (videos.TryGetValue(n, out var video))
@@ -898,7 +911,7 @@ void fragment() {
 						node = CreateImageNode(tt, pos, w);
 					}
 					else
-						log($"image/video not found: {n}; {itm.imageId}");
+						log($"image/video not found: '{n}'; {itm.imageId} {itm.imageName}");
 					break;
 
 				case PlayItemType.CircleFilled:
@@ -1065,11 +1078,15 @@ void fragment() {
 		if (!StringArrayContains(pendingKeys.responseKeys, inputName))
 			return;
 
+		bool isCorrect = StringArrayContains(pendingKeys.correctKeys, inputName);
+
 		AddTrialResponseResult(new WMAResponseResults
 		{
 			name = inputName,
-			isCorrect = StringArrayContains(pendingKeys.correctKeys, inputName)
+			isCorrect = isCorrect
 		});
+		SetResponse(isCorrect ? ResponseButton.Correct : ResponseButton.Incorrect);
+		
 	}
 
 	private void AddTrialResponseResult(WMAResponseResults responseResult)
