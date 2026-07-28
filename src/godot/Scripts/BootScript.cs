@@ -843,8 +843,7 @@ void fragment() {
 	private void AddWaitKeys(PlayItem itm)
 	{
 		WMAResponseKeys rk = new WMAResponseKeys();
-		rk.responseKeys = itm.responseKeys;
-		rk.correctKeys = itm.correctKeys;
+		rk.SetResponse(itm.responseKeys, itm.correctKeys);
 		pendingKeys = rk;
 	}
 
@@ -1075,11 +1074,15 @@ void fragment() {
 		if (!TryGetInputName(ev, out var inputName))
 			return;
 
-		if (!StringArrayContains(pendingKeys.responseKeys, inputName))
+		GD.Print($"Trial key: '{inputName}'");
+		if (!pendingKeys.IsResponse(inputName))
+		{
+			GD.Print("unexpected key");
 			return;
+		}
 
-		bool isCorrect = StringArrayContains(pendingKeys.correctKeys, inputName);
-
+		bool isCorrect = pendingKeys.IsCorrect(inputName);
+		
 		AddTrialResponseResult(new WMAResponseResults
 		{
 			name = inputName,
@@ -1151,20 +1154,6 @@ void fragment() {
 
 			case MouseButton.Middle:
 				inputName = "middle_mouse";
-				return true;
-		}
-
-		return false;
-	}
-
-	private static bool StringArrayContains(string[] values, string expected)
-	{
-		if (values == null || string.IsNullOrWhiteSpace(expected))
-			return false;
-
-		foreach (var value in values)
-		{
-			if (string.Compare(value?.Trim(), expected, true) == 0)
 				return true;
 		}
 
