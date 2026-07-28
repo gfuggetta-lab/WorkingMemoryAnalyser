@@ -14,6 +14,7 @@ namespace WMAExcel
             if ((data == null) || (notes == null))
                 return;
 
+            ValidationNoteWriter noteWriter = new ValidationNoteWriter(notes);
             HashSet<string> trialDataNames = new HashSet<string>(
                 data.TrialDataNames,
                 StringComparer.OrdinalIgnoreCase);
@@ -25,8 +26,62 @@ namespace WMAExcel
 
                 string markerName = ev.Name + "_Marker";
                 if (!trialDataNames.Contains(markerName))
-                    notes.Add($"Missing trial sequence column: {markerName}");
+                    noteWriter.Add($"Missing trial sequence column: {markerName}");
             }
+
+            PopulateTrials(data);
+            ValidateTrialObjects(data, noteWriter);
+        }
+
+        public static void PopulateTrials(ExcelInputData data)
+        {
+            if ((data == null) || (data.Trials == null))
+                return;
+
+            foreach (ExcelTrialRow trial in data.Trials)
+            {
+                if (trial != null)
+                    trial.Populate();
+            }
+        }
+
+        public static void ValidateTrialObjects(ExcelInputData data, List<string> notes)
+        {
+            ValidateTrialObjects(data, new ValidationNoteWriter(notes));
+        }
+
+        public static void ValidateTrialObjects(ExcelInputData data, ValidationNoteWriter notes)
+        {
+            if ((data == null) || (notes == null) || (data.Trials == null))
+                return;
+
+            for (int trialIndex = 0; trialIndex < data.Trials.Count; trialIndex++)
+            {
+                ExcelTrialRow trial = data.Trials[trialIndex];
+                if (trial == null)
+                    continue;
+
+                if (trial.objects == null)
+                    continue;
+
+                foreach (ExcelTrialObject obj in trial.objects)
+                {
+                    if (obj == null)
+                        continue;
+
+                    string objectName = FormatTrialObjectName(obj);
+                    if (string.IsNullOrWhiteSpace(obj.Type))
+                        notes.AddTrialNote(data, trialIndex, $"Missing object Type: {objectName}");
+
+                    if (string.IsNullOrWhiteSpace(obj.Object))
+                        notes.AddTrialNote(data, trialIndex, $"Missing object Obj: {objectName}");
+                }
+            }
+        }
+
+        private static string FormatTrialObjectName(ExcelTrialObject obj)
+        {
+            return $"{obj.Event}_L{obj.Level}_O{obj.Index}, condition {obj.Condition}";
         }
 
         public static void ValidateAssets(IExperimentData data, string rootDir, List<string> notes)
