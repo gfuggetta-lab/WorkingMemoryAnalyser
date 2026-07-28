@@ -317,7 +317,8 @@ namespace WMAExcel
                 ExcelInputEvent evInp,
                 ExcelTrialEvent evTr, 
                 bool isFeedback, 
-                double timeOfs, double duration)
+                double timeOfs, double duration, 
+                PlayItemCond forceCond = PlayItemCond.None)
             {
                 // event sound
                 if (!string.IsNullOrWhiteSpace(evTr.Sound))
@@ -337,7 +338,8 @@ namespace WMAExcel
                     }
                     else
                     {
-                        dst.AddSound(evTr.Sound, timeOfs);
+                        var itm = dst.AddSound(evTr.Sound, timeOfs);
+                        itm.cond = forceCond;
                     }
                 }
 
@@ -378,7 +380,9 @@ namespace WMAExcel
                         {
                             // stimuli
                             var st = AllocItem(objArr[0], duration, timeOfs);
-                            PositionItem(st, objArr[0], totalVtx, radius);
+                            st = PositionItem(st, objArr[0], totalVtx, radius);
+                            if (st != null)
+                                st.cond = forceCond;
                         }
                     }
                 }
@@ -425,7 +429,16 @@ namespace WMAExcel
                     r.responseKeys = CsvKeysToArray(evInp.allowed_keys_to_respond);
                     r.correctKeys = CsvKeysToArray(evTr.Response);
                 }
-                ScheduleEventObjects(trial, "C", CInp, CTr, false, timeOfs, duration);
+
+                if (isFeedback)
+                {
+                    dst.CheckResponse(timeOfs);
+                    // Schedule "C" portion for 3 times
+                    foreach (var cnd in itcnd)
+                        ScheduleEventObjects(trial, "C", CInp, CTr, false, timeOfs, duration, cnd);
+                }
+                else
+                    ScheduleEventObjects(trial, "C", CInp, CTr, false, timeOfs, duration);
 
                 ScheduleEventObjects(trial, evName, evInp, evTr, isFeedback, timeOfs, duration);
 
@@ -435,9 +448,6 @@ namespace WMAExcel
                 duration = ToDouble(evTr.ISI);
                 if (duration > 0)
                 {
-
-
-
                     dst.StartSection($"{evName}>{nextEvent}", timeOfs, duration);
 
                     // ISI is never a feedback
