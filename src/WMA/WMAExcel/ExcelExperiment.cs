@@ -427,7 +427,7 @@ namespace WMAExcel
                 {
                     var r = dst.ReadResponse(timeOfs, duration);
                     r.responseKeys = CsvKeysToArray(evInp.allowed_keys_to_respond);
-                    r.correctKeys = CsvKeysToArray(evTr.Response);
+                    r.correctKeys = CsvKeysToArray(evTr.Correct_response);
                 }
 
                 if (isFeedback)

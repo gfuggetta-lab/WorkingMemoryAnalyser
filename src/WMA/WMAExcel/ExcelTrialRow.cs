@@ -168,6 +168,8 @@ namespace WMAExcel
                 ev.ISI = value;
             else if (field.Equals("Response_time", StringComparison.OrdinalIgnoreCase))
                 ev.Response_time = value;
+            else if (field.Equals("Correct_response", StringComparison.OrdinalIgnoreCase))
+                ev.Correct_response = value;
             else if (field.Equals("Response", StringComparison.OrdinalIgnoreCase)
                 || field.Equals("Reponse", StringComparison.OrdinalIgnoreCase))
                 ev.Response = value;
