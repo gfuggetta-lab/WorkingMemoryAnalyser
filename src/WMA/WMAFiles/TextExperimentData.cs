@@ -83,5 +83,10 @@ namespace WMAFiles
             if (inputDataNum < 0) return;
             cfg.GetPreloadImages(trials, names);
         }
+
+        public bool UseOmission()
+        {
+            return false;
+        }
     }
 }
