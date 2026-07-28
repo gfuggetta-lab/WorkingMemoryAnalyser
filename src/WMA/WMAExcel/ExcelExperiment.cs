@@ -549,5 +549,9 @@ namespace WMAExcel
             }
         }
 
+        public bool UseOmission()
+        {
+            return true;
+        }
     }
 }
