@@ -27,6 +27,7 @@ type
     scaleV: double = 1.0):integer;
   function displayBMPimageXYSizecm(var BMPimages: TBMPimages; xcm, ycm :real; screenWidthCM, screenHeightCM: real;
     widthCm, HeightCm: real):integer;
+  function deleteGLTex (var BMPimages : array of TBMPimages): integer;
 
 implementation
 
@@ -400,6 +401,7 @@ begin
   begin
     fn := experiment_dir + 'Stimulus images' + PathDelim + {'Image_'+} inttostr(c+300);
     BMPimages[c].TextureImage := TryToLoadImage(fn);
+    BMPimages[c].textureID:=0; // no open GL texture
   end;
 
   // load 'correct.bmp'
@@ -416,6 +418,20 @@ end;
 
 
 //------------------------------------------------------------------------------
+function deleteGLTex(var BMPimages : array of TBMPimages): integer;
+var
+  i : integer;
+begin
+  Result := 0;
+  for i := 0 to length(BMPimages)-1 do begin
+   if BmpImages[i].textureID<>0 then begin
+     glDeleteTextures(1,@BMPimages[i].textureID );
+     BmpImages[i].textureID := 0;
+     inc(Result);
+    end;
+  end;
+end;
+
 function displayBMPimage(var BMPimages: array of TBMPimages; imageNo:integer):integer;
 
 var
@@ -440,20 +456,23 @@ begin
     //* Create storage space for the texture */
     glEnable(GL_TEXTURE_2D);
 
-    //* Create The Texture */
-    glGenTextures( 1, @BMPimages[imageNo].textureID );
+    if BMPimages[imageNo].textureID = 0 then begin
+      //* Create The Texture */
+      glGenTextures( 1, @BMPimages[imageNo].textureID );
 
-    //* Typical Texture Generation Using Data From The Bitmap */
-    glBindTexture( GL_TEXTURE_2D, BMPimages[imageNo].textureID );
+      //* Typical Texture Generation Using Data From The Bitmap */
+      glBindTexture( GL_TEXTURE_2D, BMPimages[imageNo].textureID );
 
-    GetGLTexturePixelFormatFromSurface(BMPimages[imageNo].TextureImage, gl_intFmt, gl_Fmt, gl_PixType);
+      GetGLTexturePixelFormatFromSurface(BMPimages[imageNo].TextureImage, gl_intFmt, gl_Fmt, gl_PixType);
 
-    glTexImage2D( GL_TEXTURE_2D, 0,
-      gl_intFmt,
-      BMPimages[imageNo].TextureImage.w,
-      BMPimages[imageNo].TextureImage.h,
-      0, gl_Fmt, gl_PixType,
-      BMPimages[imageNo].TextureImage.pixels );
+      glTexImage2D( GL_TEXTURE_2D, 0,
+        gl_intFmt,
+        BMPimages[imageNo].TextureImage.w,
+        BMPimages[imageNo].TextureImage.h,
+        0, gl_Fmt, gl_PixType,
+        BMPimages[imageNo].TextureImage.pixels );
+    end else
+      glBindTexture( GL_TEXTURE_2D, BMPimages[imageNo].textureID );
 
     //* Linear Filtering */
     glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
@@ -481,7 +500,8 @@ begin
     glEnd;
 
     glDisable(GL_TEXTURE_2D);
-    glDeleteTextures(1,@BMPimages[imageNo].textureID );
+    //the texture needs to be deleted later
+    //glDeleteTextures(1,@BMPimages[imageNo].textureID );
 
   end;
 

@@ -4206,6 +4206,7 @@ begin
       trialNo:=trialno+1;
     end;
 
+    deleteGLTex(BMPimages);
   end;// when all trials are done
 
   Result := true;
@@ -4214,6 +4215,7 @@ begin
     on e: ExperimentTerminateException do // can be thrown by pollevent()
       Result := false; // terminated. Resultng false
   end;
+  deleteGLTex(BMPimages);
   //TerminateApplication;
 end;//end of experiment
 
