@@ -1837,6 +1837,10 @@ var
 
   TMS_s3_SOA: integer;
 
+  s3_tickStart : LongWord;
+  s3_TMSTicks  : LongWord;
+  s4_tickStart : LongWord;
+  curTick      : LongWord;
 
 
   Experimental_Condition:string;
@@ -3300,6 +3304,8 @@ begin
   if (show_s3) then
   begin
 
+    s3_tickStart :=SDL_GetTicks;
+    s3_TMSTicks := s3_tickStart+TMS_s3_SOA;
     Nframes:=round(s3_duration/1000 / (1/REFRESH_RATE))  ;
     triggerState:= true; // re-latch the trigger for one-shot parallel port data
 
@@ -3317,6 +3323,7 @@ begin
     timer1.start;
     for frameNo:=0 to Nframes-1 do
     begin
+      curTick:=SDL_GetTicks;
       ef.ProjectionTrans;
 
       drawBackgroundFixation(fixSpotSizeCM, Run_background_circle_colour, Fixation_colour);
@@ -3346,26 +3353,18 @@ begin
       pollevent(state, eventTime) ;
       if showTrialsRemaining then showCountdown(pfontGeneral,fontCol,inttostr(Ntrials-trialNo));
 
-      if (frameNoTotal = TMS_frameNo) then
+      if ((frameNoTotal = TMS_frameNo) or (curTick >= s3_TMSTicks))  then
       begin
         if (isTriggerStation) then glCallList(DL_PHOTODIODE_PATCH_RIGHT);
         if (Photodiode_TMS_S3.Show) then
           DrawPhotodiode(Photodiode_TMS_S3, ef.WidthCM, ef.HeightCM);
+       // get time of TMS onset
+        TMS_onsetTime := SDL_GetTicks - timeOfExperimentStart;
       end;
 
        handledSuspended(isRuinedTrial); // suspend rendering the stimulus if IS_SUSPENDED
 
       ef.renderStereo;
-
-
-
-
-
-      // get time of TMS onset
-      if (frameNoTotal = TMS_frameNo) then
-      begin
-        TMS_onsetTime := SDL_GetTicks - timeOfExperimentStart;
-      end;
 
       doPhotodiode:=false;
       // get the time after the first image is displayed
@@ -3404,6 +3403,10 @@ begin
       end;
 
       frameNoTotal := frameNoTotal+1;
+
+      // for 120 hz rate, the drawing takes longer than desired
+      if (curTick > (s3_tickStart + s3_duration)) then
+         Break;
     end;
     //showmessage(floattostr(frameNo));
     //=======================================================================================
