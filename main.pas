@@ -1516,11 +1516,12 @@ end;
 procedure handledSuspended(var isRuinedTrial: integer);
 
 var
-  state, c,Nframes: integer  ;
+  state, c: integer  ;
   eventTime : uint32 ;
   fontCol, fontBgrColBlack:TSDL_color;
 
   wasSuspended:boolean = false;
+  FrameTrg : TTimeTarget;
 begin
     // set font colours
   fontCol.r:=255; fontCol.g:=255; fontCol.b:=255; fontCol.a:=0;
@@ -1556,8 +1557,10 @@ begin
    if not(IS_SUSPENDED) then
    begin
       // 2 sec pause   after resuming from suspense
-      Nframes:=round (2 / (1/REFRESH_RATE))  ;
-      for c:=0 to Nframes-1 do
+      StartTarget(2000, FrameTrg);
+      c := 0;
+
+      while not IsTimeOver(c, FrameTrg) do
       begin
         ef.ProjectionTrans;
         glMatrixMode(GL_MODELVIEW);
@@ -1566,7 +1569,9 @@ begin
         drawFixationWithPlaceholders(fixSpotSizeCM,targetRadiusCM,
           Fixation_colour, Placeholders_colour);
         ef.renderStereo;
+        inc(c);
       end;
+
       ef.ProjectionTrans;
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity;
