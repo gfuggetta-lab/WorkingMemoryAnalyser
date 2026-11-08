@@ -37,20 +37,19 @@ var
   devmod  : TDEVMODEA;
 begin
   dst := Tlist(Arg4);
-
-  FillChar(mi, sizeof(mi), 0);
+  mi := default(MONITORINFOEXA);
   mi.info.cbSize := sizeof(mi);
   if GetMonitorInfoA(monitor, @mi) then
     monname := mi.szDevice
   else
     monname := '';
-
+  ed := default(TEDIDRec);
   if (monname <>'') and (GetEdidForDevicePath( monname, ed)) then begin
     wm := TMonitor.Create;
     wm.bounds := mi.info.rcMonitor;
     EdidGetPhysSizeMm(ed, wm.PhysSizeMm.cx, wm.PhysSizeMm.cy);
 
-    FillChar(devmod, sizeof(devmod), 0);
+    devmod := default(TDEVMODEA);
     devmod.dmSize := sizeof(devmod);
     EnumDisplaySettingsA(PChar(monname), ENUM_CURRENT_SETTINGS, devmod);
     wm.Name := EdidGetDisplayName(ed);
