@@ -1876,6 +1876,8 @@ var
 
 
   doPhotodiode:boolean;
+  doPhotodiodeForOfs: Boolean;
+  NFramesForOfs: Integer; // used only for ITI_after_feedback
   triggerStationData:integer;
 
   c,k: integer; //general purpose counter
@@ -3057,6 +3059,7 @@ begin
       Nframes:=round(s1_s2_isi/1000 / (1/REFRESH_RATE))  ;
       timer1.start;
       triggerState:= true; // re-latch the trigger for one-shot parallel port data
+      doPhotodiodeForOfs := true;
       for frameNo:=0 to Nframes-1 do
       begin
         ef.ProjectionTrans;
@@ -3070,6 +3073,11 @@ begin
         if ((frameNoTotal = TMS_frameNo) and (isTriggerStation or isLufaUSBserial)) then
         begin
           glCallList(DL_PHOTODIODE_PATCH_RIGHT);
+        end;
+        if doPhotodiodeForOfs then begin
+          // the first frame draws PATCH_LEFT
+          glCallList(DL_PHOTODIODE_PATCH_LEFT);
+          doPhotodiodeForOfs := false;
         end;
 
 
@@ -3255,6 +3263,7 @@ begin
 
 
    Nframes:=round (s2_s3_isi/1000 / (1/REFRESH_RATE))  ;
+    doPhotodiodeForOfs := true;
     timer1.start;
 
     for frameNo:=0 to Nframes-1 do
@@ -3269,6 +3278,11 @@ begin
       if ((frameNoTotal = TMS_frameNo) and (isTriggerStation or isLufaUSBserial)) then
       begin
         glCallList(DL_PHOTODIODE_PATCH_RIGHT);
+      end;
+      if doPhotodiodeForOfs then begin
+        // the first frame draws PATCH_LEFT
+        glCallList(DL_PHOTODIODE_PATCH_LEFT);
+        doPhotodiodeForOfs := false;
       end;
 
        handledSuspended(isRuinedTrial); // suspend rendering the stimulus if IS_SUSPENDED
@@ -3470,7 +3484,7 @@ begin
 
     Nframes:=round   (s3_s4_isi/1000 / (1/REFRESH_RATE))  ;
     timer1.start;
-    doPhotodiode:=true;
+    doPhotodiodeForOfs:=true;
     for frameNo:=0 to Nframes-1 do
     begin
       ef.ProjectionTrans;
@@ -3483,6 +3497,10 @@ begin
       if ((frameNoTotal = TMS_frameNo) and (isTriggerStation or isLufaUSBserial)) then
       begin
         glCallList(DL_PHOTODIODE_PATCH_RIGHT);
+      end;
+      if doPhotodiodeForOfs then begin
+        glCallList(DL_PHOTODIODE_PATCH_LEFT);
+        doPhotodiodeForOfs := false;
       end;
 
        handledSuspended(isRuinedTrial); // suspend rendering the stimulus if IS_SUSPENDED
@@ -3645,7 +3663,9 @@ begin
 
 
   doPhotodiode:=false;
+  doPhotodiodeForOfs:=true;
   Nframes:=round  ((Response_Time_after_S4 + Feedback_duration_after_response_time + ITI_after_feedback)/1000  / (1/REFRESH_RATE))  ;  // max response time from the start of the S4 blank period
+  NFramesForOfs :=round  ((Response_Time_after_S4 + Feedback_duration_after_response_time)/1000  / (1/REFRESH_RATE))  ;  // need to know the frame when ITI_after_feedback starts
   frameNo:=0;
   //state:=-1;
   repeat;
@@ -3666,6 +3686,13 @@ begin
 
        doPhotodiode:=false;
     //   showmessage('blank triggerStationData = '+ inttostr(triggerStationData));
+    end;
+    if (frameNo = NFramesForOfs) then
+       doPhotodiodeForOfs := true;
+
+    if doPhotodiodeForOfs then begin
+      glCallList(DL_PHOTODIODE_PATCH_LEFT);
+      doPhotodiodeForOfs := false;
     end;
     if showTrialsRemaining then showCountdown(pfontGeneral,fontCol,inttostr(Ntrials-trialNo));
 
