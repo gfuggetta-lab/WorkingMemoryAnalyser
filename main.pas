@@ -1856,9 +1856,6 @@ var
 
   TMS_s3_SOA: integer;
 
-  s3_tickStart : LongWord;
-  s3_tickToEnd : LongWord;
-  s3_TMSTicks  : LongWord;
   s4_tickStart : LongWord;
   curTick      : LongWord;
 
@@ -3348,11 +3345,7 @@ begin
   if (show_s3) then
   begin
 
-    s3_tickStart :=SDL_GetTicks;
-    if (TMS_s3_SOA >= 0) then
-      s3_TMSTicks := s3_tickStart+LongWord(TMS_s3_SOA)
-    else
-      s3_TMSTicks := s3_tickStart;
+    // TMS_s3_SOA
     StartTarget(s3_duration, TimeTrg);
     triggerState:= true; // re-latch the trigger for one-shot parallel port data
 
@@ -3369,9 +3362,6 @@ begin
     doPhotodiode:=true;
     timer1.start;
 
-    s3_tickToEnd := s3_tickStart;
-    if (s3_duration >= 0) then
-      s3_tickToEnd := s3_tickToEnd + LongWord(s3_duration);
     frameNo := 0;
     while not IsTimeOver(frameNo, TimeTrg) do
     begin
@@ -3405,7 +3395,7 @@ begin
       pollevent(state, eventTime) ;
       if showTrialsRemaining then showCountdown(pfontGeneral,fontCol,inttostr(Ntrials-trialNo));
 
-      if ((frameNoTotal = TMS_frameNo) or (curTick >= s3_TMSTicks))  then
+      if (frameNoTotal = TMS_frameNo)  then
       begin
         if (isTriggerStation) then glCallList(DL_PHOTODIODE_PATCH_RIGHT);
         if (Photodiode_TMS_S3.Show) then
@@ -3456,10 +3446,6 @@ begin
 
       frameNoTotal := frameNoTotal+1;
       inc(frameNo);
-
-      // for 120 hz rate, the drawing takes longer than desired
-      if (curTick > s3_tickToEnd) then
-         Break;
     end;
     //showmessage(floattostr(frameNo));
     //=======================================================================================
