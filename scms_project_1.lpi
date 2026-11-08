@@ -10,7 +10,6 @@
         <MainUnitHasTitleStatement Value="False"/>
       </Flags>
       <SessionStorage Value="InProjectDir"/>
-      <MainUnit Value="0"/>
       <Title Value="scms_project_1"/>
       <Scaled Value="True"/>
       <UseAppBundle Value="False"/>
@@ -138,9 +137,13 @@
   <CompilerOptions>
     <Version Value="11"/>
     <PathDelim Value="\"/>
+    <Target>
+      <Filename Value="scms_project_1"/>
+    </Target>
     <SearchPaths>
       <IncludeFiles Value="..\Temporal integration experiment 3 - constant stimuli - orientation - 144Hz;$(ProjOutDir)"/>
       <OtherUnitFiles Value="SDL2;EDID"/>
+      <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Parsing>
       <SyntaxOptions>
