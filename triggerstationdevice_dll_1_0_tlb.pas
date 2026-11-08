@@ -221,8 +221,11 @@ begin
 end;
 
 Class Function CoTriggerStationDevice.CreateRemote(const MachineName: string): ITriggerStationDevice;
+var
+  machNameW : WideString;
 begin
-  Result := CreateRemoteComObject(MachineName,CLASS_TriggerStationDevice) as ITriggerStationDevice;
+  machNameW := WideString(MachineName);
+  Result := CreateRemoteComObject(machNameW,CLASS_TriggerStationDevice) as ITriggerStationDevice;
 end;
 
 end.
