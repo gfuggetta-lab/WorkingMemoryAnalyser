@@ -2471,7 +2471,7 @@ begin
   age:= Form1.combobox3.items[Form1.combobox3.itemindex];
   sex :=  Form1.combobox13.items[Form1.combobox13.itemindex];
   handedness := Form1.combobox14.items[Form1.combobox14.itemindex];
-  displayType:= 'Config file';//radiogroup4.items[radiogroup4.itemindex];
+  displayType := radiogroup4.items[radiogroup4.itemindex];
 
   outputDataFilename := Form1.Savedialog1.filename;
   AssignFile(f, outputDataFilename);
