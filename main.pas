@@ -3692,7 +3692,7 @@ begin
        doPhotodiode:=false;
     //   showmessage('blank triggerStationData = '+ inttostr(triggerStationData));
     end;
-    if (frameNo = NFramesForOfs) then begin
+    if (isLufaUSBserial) and (frameNo = NFramesForOfs) then begin
       LufaPreparePhotodiode(TrialNo, 'ITI after feedback', lufaUSBserialPhotodiodeInput, ofs_marker);
       doPhotodiodeForOfs := true;
     end;
