@@ -1855,6 +1855,7 @@ var
   Feedback_shape, Feedback_sound: integer;
 
   TMS_s3_SOA: integer;
+  TMS_s3_triggered: Boolean;
 
   Experimental_Condition:string;
 
@@ -3355,6 +3356,7 @@ begin
 
 
 
+    TMS_s3_triggered := false;
     doPhotodiode:=true;
     timer1.start;
 
@@ -3390,13 +3392,15 @@ begin
       pollevent(state, eventTime) ;
       if showTrialsRemaining then showCountdown(pfontGeneral,fontCol,inttostr(Ntrials-trialNo));
 
-      if (frameNoTotal = TMS_frameNo)  then
+      if not TMS_s3_triggered
+        and IsSameFrameOrPassOfs(frameNoTotal, TMS_frameNo, TMS_s3_SOA, TimeTrg) then
       begin
         if (isTriggerStation) then glCallList(DL_PHOTODIODE_PATCH_RIGHT);
         if (Photodiode_TMS_S3.Show) then
           DrawPhotodiode(Photodiode_TMS_S3, ef.WidthCM, ef.HeightCM);
        // get time of TMS onset
         TMS_onsetTime := SDL_GetTicks - timeOfExperimentStart;
+        TMS_s3_triggered := true;
       end;
 
        handledSuspended(isRuinedTrial); // suspend rendering the stimulus if IS_SUSPENDED
