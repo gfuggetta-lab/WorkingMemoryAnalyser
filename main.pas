@@ -669,7 +669,7 @@ end;
 
 //------------------------------------------------------------------------------
 // handle event
-procedure pollevent(var State: integer; var eventTime : uint32) ;
+procedure pollevent(out State: integer; out eventTime : uint32) ;
 
 var
   event : TSDL_Event;
@@ -1418,7 +1418,7 @@ end;
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-procedure checkKeypressAndButtonbox(var state:integer; var eventTime : uint32);
+procedure checkKeypressAndButtonbox(var state:integer; out eventTime : uint32);
 var
   dataValue :word;
 begin
