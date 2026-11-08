@@ -790,7 +790,7 @@ var
   p1,p2,p3,p4, p5, p6, p7, p8:Txyz;
 
   Xo,Yo, Xi, Yi  :array [0..2] of real;
-  InnerRadius:real;
+  //InnerRadius:real;
 
   c: integer;
 theta1, theta2, radius:real;
@@ -819,7 +819,7 @@ begin
 
 
 
-  getcirclecoords(Xi,Yi,InnerRadius,3);
+  getcirclecoords(Xi,Yi,Radius,3);
 
 
   p1.x:=Xo[0];
