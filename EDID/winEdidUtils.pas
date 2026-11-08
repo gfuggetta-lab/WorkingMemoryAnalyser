@@ -103,7 +103,7 @@ var
   p      : PChar;
   dsp    : string;
 begin
-  FillChar(dev, sizeof(dev), 0);
+  dev := default(DISPLAY_DEVICEA);
   dev.cb := sizeof(dev);
   dsp := '';
 
@@ -158,7 +158,7 @@ function GetMonitorDevicePath(monitor: HMONITOR): string;
 var
   mi : MONITORINFOEXA;
 begin
-  FillChar(mi, sizeof(mi), 0);
+  mi := default(MONITORINFOEXA);
   mi.info.cbSize := sizeof(mi);
   if GetMonitorInfoA(monitor, @mi) then
     Result := mi.szDevice
@@ -228,6 +228,7 @@ var
   prmKey  : HKEY;
   m,d     : string;
 begin
+  dispKey := default(HKey);
   Result := RegOpenKeyEx(HKEY_LOCAL_MACHINE, 'SYSTEM\CurrentControlSet\Enum\DISPLAY\', 0, KEY_READ, dispKey) = ERROR_SUCCESS;
   if not Result then Exit;
   Result := false;
