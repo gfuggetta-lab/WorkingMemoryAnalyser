@@ -21,6 +21,7 @@ uses
   ,Menus
   ,edidMonitorUtils, aboutFormUnit, drawutils
   ,successResultForm , SynaSer   , usbserialunit
+  ,timemeasure
   {$ifdef triggerstation}
   ,TriggerStationDevice_DLL_1_0_TLB
   {$endif}
@@ -1879,6 +1880,7 @@ var
   hasBlankedTheTarget:boolean; //flag for whether the target has been blanked or not
   Nframes:integer;
   frameNo:integer;
+  FrameTrg: TTimeTarget;
 
 
 
@@ -2657,6 +2659,8 @@ begin
 
   // trial loop
   trialNo:=0;
+  TimeMeasure.DEF_REFRESHRATE := REFRESH_RATE;
+  TimeMeasure.DEF_CHECK := tcBoth;
 
   try // catching ExperimateTerminate exception. It can be thrown by pollevent()
 
@@ -2878,8 +2882,9 @@ begin
 
 
       // 2 sec pause
-      Nframes:=round (2 / (1/REFRESH_RATE))  ;
-      for c:=0 to Nframes-1 do
+      StartTarget(2000, FrameTrg);
+      c := 0;
+      while not IsTimeOver(c, FrameTrg) do
       begin
          ef.ProjectionTrans;
          drawBackgroundFixation(fixSpotSizeCM,Run_background_circle_colour, Fixation_colour);
@@ -2887,6 +2892,7 @@ begin
          handledSuspended(isRuinedTrial);
          pollevent(state, eventTime) ;
         ef.renderStereo;
+        inc(c);
       end;
     end;
     //=======================================================================================
@@ -2909,7 +2915,8 @@ begin
     s1_onsetTime:=-1;
     if (show_s1) then
     begin
-      Nframes:=round (s1_duration/1000 / (1/REFRESH_RATE))  ;
+      StartTarget(s1_duration, FrameTrg);
+
       triggerState:= true; // re-latch the trigger for one-shot parallel port data
 
       // if trigger station is present,load it with trigger data
@@ -2926,7 +2933,8 @@ begin
 
       doPhotodiode:=true;
 
-      for frameNo:=0 to Nframes-1 do
+      frameNo := 0;
+      while not isTimeOver(frameNo, FrameTrg) do
       begin
         ef.ProjectionTrans;
 
@@ -3040,6 +3048,7 @@ begin
         }
 
         frameNoTotal := frameNoTotal+1;
+        inc(frameNo);
       end;
 
       //closefile(fTest);
