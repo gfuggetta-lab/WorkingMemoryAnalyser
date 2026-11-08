@@ -648,8 +648,6 @@ begin
 end;
 //------------------------------------------------------------------------------
 
-
-
 //------------------------------------------------------------------------------
 procedure SaveBMP;
 var
@@ -1748,6 +1746,21 @@ begin
 end;
 
 
+procedure LufaPreparePhotodiode(
+    TrialNo: integer; const sectionToLog: string;
+    lufaUSBserialPhotodiodeInput, marker: integer);
+begin
+  WriteStringToLog('');
+  WriteStringToLog('TrialNo = ' +  inttostr(TrialNo) + '. '+sectionToLog);
+
+  lufaUSBserial.flush;
+  lufaUSBserial.purge;
+  // Left photodiode
+  // one-shot mapping. Photodiode, falling edge -> Parallel port s1_marker
+  lufaUSBwrite(lufaUSBserial, 'M 1 I '+inttostr(lufaUSBserialPhotodiodeInput)+' 0 P '+ inttostr(marker), 5);
+  // one-shot mapping. Photodiode, falling edge -> Digital output 0, 5ms
+  lufaUSBwrite(lufaUSBserial, 'M 1 I '+inttostr(lufaUSBserialPhotodiodeInput)+' 0 O 0 0 1 5', 5);
+end;
 
 
 
@@ -2021,6 +2034,8 @@ const
  // NphotodiodeCalibImages = 10; // number of photodiode calibration images
 
   lufaUSBserialPhotodiodeInput  = 0;  //input bit number of photodiode
+
+  ofs_marker = 250; // used for ISI
 
 begin
 
@@ -2731,16 +2746,17 @@ begin
       // i.e. send it a photodiode input-parallel port output mapping.
       if (isLufaUSBserial) then
       begin
-        WriteStringToLog('');
-        WriteStringToLog('TrialNo = ' + inttostr(TrialNo) + '. S1');
-        lufaUSBserial.flush;
-        lufaUSBserial.purge;
+        LufaPreparePhotodiode(TrialNo, 'S1', lufaUSBserialPhotodiodeInput, s1_marker);
+        //WriteStringToLog('');
+        //WriteStringToLog('TrialNo = ' + inttostr(TrialNo) + '. S1');
+        //lufaUSBserial.flush;
+        //lufaUSBserial.purge;
 
         //Left photodiode
         // one-shot mapping. Photodiode, falling edge -> Parallel port s1_marker
-        lufaUSBwrite(lufaUSBserial, 'M 1 I '+inttostr(lufaUSBserialPhotodiodeInput)+' 0 P '+ inttostr(s1_marker), 5);
-         // one-shot mapping. Photodiode, falling edge -> Digital output 0, 5ms
-        lufaUSBwrite(lufaUSBserial, 'M 1 I '+inttostr(lufaUSBserialPhotodiodeInput)+' 0 O 0 0 1 5', 5);
+        //lufaUSBwrite(lufaUSBserial, 'M 1 I '+inttostr(lufaUSBserialPhotodiodeInput)+' 0 P '+ inttostr(s1_marker), 5);
+        // one-shot mapping. Photodiode, falling edge -> Digital output 0, 5ms
+        //lufaUSBwrite(lufaUSBserial, 'M 1 I '+inttostr(lufaUSBserialPhotodiodeInput)+' 0 O 0 0 1 5', 5);
 
         //Right photodiode
          // one-shot mapping. Photodiode, falling edge -> Parallel port 251
@@ -3045,14 +3061,15 @@ begin
       // i.e. send it a photodiode input-parallel port output mapping.
       if (isLufaUSBserial) then
       begin
-        WriteStringToLog('');
-        WriteStringToLog('TrialNo = ' +  inttostr(TrialNo) + '. S2');
-        lufaUSBserial.flush;
-        lufaUSBserial.purge;
-        // one-shot mapping. Photodiode, falling edge -> Parallel port s1_marker
-        lufaUSBwrite(lufaUSBserial, 'M 1 I '+inttostr(lufaUSBserialPhotodiodeInput)+' 0 P '+ inttostr(s2_marker), 5);
-        // one-shot mapping. Photodiode, falling edge -> Digital output 0, 5ms
-        lufaUSBwrite(lufaUSBserial, 'M 1 I '+inttostr(lufaUSBserialPhotodiodeInput)+' 0 O 0 0 1 5', 5);
+        LufaPreparePhotodiode(TrialNo, 'S2_S3', lufaUSBserialPhotodiodeInput, ofs_marker);
+        // WriteStringToLog('');
+        // WriteStringToLog('TrialNo = ' +  inttostr(TrialNo) + '. S2');
+        // lufaUSBserial.flush;
+        // lufaUSBserial.purge;
+        // // one-shot mapping. Photodiode, falling edge -> Parallel port s1_marker
+        // lufaUSBwrite(lufaUSBserial, 'M 1 I '+inttostr(lufaUSBserialPhotodiodeInput)+' 0 P '+ inttostr(s2_marker), 5);
+        // // one-shot mapping. Photodiode, falling edge -> Digital output 0, 5ms
+        // lufaUSBwrite(lufaUSBserial, 'M 1 I '+inttostr(lufaUSBserialPhotodiodeInput)+' 0 O 0 0 1 5', 5);
       end;
 
 
@@ -3074,7 +3091,7 @@ begin
         begin
           glCallList(DL_PHOTODIODE_PATCH_RIGHT);
         end;
-        if doPhotodiodeForOfs then begin
+        if doPhotodiodeForOfs and isLufaUSBserial then begin
           // the first frame draws PATCH_LEFT
           glCallList(DL_PHOTODIODE_PATCH_LEFT);
           doPhotodiodeForOfs := false;
@@ -3113,10 +3130,10 @@ begin
   //=======================================================================================
   //=======================================================================================
 
-
-
-
-
+    if (isLufaUSBserial) then
+    begin
+      LufaPreparePhotodiode(TrialNo, 'S2', lufaUSBserialPhotodiodeInput, s2_marker);
+    end;
 
 
   //=======================================================================================
@@ -3246,20 +3263,10 @@ begin
     // S2 - S3 ISI Blank screen---------------------------------------------
     //=======================================================================================
 
-    // if LUFA USB serial device is present, load it with trigger data in prepaparation for s3
-    // i.e. send it a photodiode input-parallel port output mapping.
     if (isLufaUSBserial) then
     begin
-      WriteStringToLog('');
-      WriteStringToLog('TrialNo = ' +  inttostr(TrialNo) + '. S3');
-      lufaUSBserial.flush;
-      lufaUSBserial.purge;
-      // one-shot mapping. Photodiode, falling edge -> Parallel port s1_marker
-      lufaUSBwrite(lufaUSBserial, 'M 1 I '+inttostr(lufaUSBserialPhotodiodeInput)+' 0 P '+ inttostr(s3_marker), 5);
-      // one-shot mapping. Photodiode, falling edge -> Digital output 0, 5ms
-      lufaUSBwrite(lufaUSBserial, 'M 1 I '+inttostr(lufaUSBserialPhotodiodeInput)+' 0 O 0 0 1 5',0);
+      LufaPreparePhotodiode(TrialNo, 'S2_S3', lufaUSBserialPhotodiodeInput, ofs_marker);
     end;
-
 
 
    Nframes:=round (s2_s3_isi/1000 / (1/REFRESH_RATE))  ;
@@ -3279,7 +3286,7 @@ begin
       begin
         glCallList(DL_PHOTODIODE_PATCH_RIGHT);
       end;
-      if doPhotodiodeForOfs then begin
+      if doPhotodiodeForOfs and isLufaUSBserial then begin
         // the first frame draws PATCH_LEFT
         glCallList(DL_PHOTODIODE_PATCH_LEFT);
         doPhotodiodeForOfs := false;
@@ -3302,9 +3309,12 @@ begin
   //=======================================================================================
   //=======================================================================================
 
-
-
-
+  // if LUFA USB serial device is present, load it with trigger data in prepaparation for s3
+  // i.e. send it a photodiode input-parallel port output mapping.
+  if (isLufaUSBserial) then
+  begin
+    LufaPreparePhotodiode(TrialNo, 'S3', lufaUSBserialPhotodiodeInput, s3_marker);
+  end;
 
 
 
@@ -3444,43 +3454,11 @@ begin
     //=======================================================================================
     // S3 - S4 ISI Blank screen---------------------------------------------
     //=======================================================================================
-
-    // if LUFA USB serial device is present, load it with trigger data in preparation for S4 onset
-    // i.e. send it mappings
     if (isLufaUSBserial) then
     begin
-
-
-      WriteStringToLog('');
-      WriteStringToLog('TrialNo = ' +  inttostr(TrialNo) + '. S4');
-      WriteStringToLog('1.......');
-      lufaUSBserial.flush;
-      lufaUSBserial.purge;
-
-      // one-shot mapping. Photodiode, falling edge -> Parallel port s4_marker
-      lufaUSBwrite(lufaUSBserial, 'M 1 I '+inttostr(lufaUSBserialPhotodiodeInput)+' 0 P '+ inttostr(s4_marker),5 );
-
-      // one-shot mapping. Photodiode, falling edge -> Digital output 4, 1000ms
-      WriteStringToLog('2.......');
-      // one-shot mapping. Photodiode, falling edge -> Digital output 0, 5ms
-      lufaUSBwrite(lufaUSBserial, 'M 1 I '+inttostr(lufaUSBserialPhotodiodeInput)+' 0 O 0 0 1 5', 5);
-
-        WriteStringToLog('3.......');
-      // set up one-shot IO mapping :Input 2 falling edge -> parallel port 252
-      lufaUSBwrite(lufaUSBserial, 'M 1 I 2 0 P 252' ,5);
-
-       WriteStringToLog('4.......');
-      // one-shot mapping. Input 2 falling edge -> Digital output 5, 1000ms
-      lufaUSBwrite(lufaUSBserial, 'M 1 I 2 0 O 0 0 4 5', 5);
-
-       WriteStringToLog('5.......');
-      // set up one-shot IO mapping :Input 3 falling edge -> parallel port 253
-      lufaUSBwrite(lufaUSBserial, 'M 1 I 3 0 P 253', 5 );
-
-       WriteStringToLog('6.......');
-      // one-shot mapping. Input 2 falling edge -> Digital output 2, 1000ms
-      lufaUSBwrite(lufaUSBserial, 'M 1 I 3 0 O 0 0 8 5', 5 );
+      LufaPreparePhotodiode(TrialNo, 'S3_S4', lufaUSBserialPhotodiodeInput, ofs_marker);
     end;
+
 
     Nframes:=round   (s3_s4_isi/1000 / (1/REFRESH_RATE))  ;
     timer1.start;
@@ -3498,7 +3476,7 @@ begin
       begin
         glCallList(DL_PHOTODIODE_PATCH_RIGHT);
       end;
-      if doPhotodiodeForOfs then begin
+      if doPhotodiodeForOfs and isLufaUSBserial then begin
         glCallList(DL_PHOTODIODE_PATCH_LEFT);
         doPhotodiodeForOfs := false;
       end;
@@ -3521,6 +3499,28 @@ begin
   //=======================================================================================
 
 
+    // if LUFA USB serial device is present, load it with trigger data in preparation for S4 onset
+    // i.e. send it mappings
+    if (isLufaUSBserial) then
+    begin
+       LufaPreparePhotodiode(TrialNo, 'S4', lufaUSBserialPhotodiodeInput, s4_marker);
+
+       WriteStringToLog('3.......');
+       // set up one-shot IO mapping :Input 2 falling edge -> parallel port 252
+      lufaUSBwrite(lufaUSBserial, 'M 1 I 2 0 P 252' ,5);
+
+       WriteStringToLog('4.......');
+      // one-shot mapping. Input 2 falling edge -> Digital output 5, 1000ms
+      lufaUSBwrite(lufaUSBserial, 'M 1 I 2 0 O 0 0 4 5', 5);
+
+      WriteStringToLog('5.......');
+      // set up one-shot IO mapping :Input 3 falling edge -> parallel port 253
+      lufaUSBwrite(lufaUSBserial, 'M 1 I 3 0 P 253', 5 );
+
+      WriteStringToLog('6.......');
+      // one-shot mapping. Input 2 falling edge -> Digital output 2, 1000ms
+      lufaUSBwrite(lufaUSBserial, 'M 1 I 3 0 O 0 0 8 5', 5 );
+    end;
 
 
   //=======================================================================================
@@ -3657,13 +3657,18 @@ begin
   //=======================================================================================
   //=======================================================================================
   //'blank' screen duration-----------------------------------------------------
+
   isAuditoryFeedback:=true;
   triggerState:=true;  // re-latch the trigger for one-shot parallel port data
   hasBlankedTheTarget:= false; //set flag  to false
 
 
   doPhotodiode:=false;
-  doPhotodiodeForOfs:=true;
+  if (isLufaUSBserial) then begin
+    LufaPreparePhotodiode(TrialNo, 'Response After S4', lufaUSBserialPhotodiodeInput, ofs_marker);
+    doPhotodiodeForOfs:=true;
+  end;
+
   Nframes:=round  ((Response_Time_after_S4 + Feedback_duration_after_response_time + ITI_after_feedback)/1000  / (1/REFRESH_RATE))  ;  // max response time from the start of the S4 blank period
   NFramesForOfs :=round  ((Response_Time_after_S4 + Feedback_duration_after_response_time)/1000  / (1/REFRESH_RATE))  ;  // need to know the frame when ITI_after_feedback starts
   frameNo:=0;
@@ -3687,10 +3692,12 @@ begin
        doPhotodiode:=false;
     //   showmessage('blank triggerStationData = '+ inttostr(triggerStationData));
     end;
-    if (frameNo = NFramesForOfs) then
-       doPhotodiodeForOfs := true;
+    if (frameNo = NFramesForOfs) then begin
+      LufaPreparePhotodiode(TrialNo, 'ITI after feedback', lufaUSBserialPhotodiodeInput, ofs_marker);
+      doPhotodiodeForOfs := true;
+    end;
 
-    if doPhotodiodeForOfs then begin
+    if doPhotodiodeForOfs and isLufaUSBserial then begin
       glCallList(DL_PHOTODIODE_PATCH_LEFT);
       doPhotodiodeForOfs := false;
     end;
