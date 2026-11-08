@@ -41,7 +41,7 @@ interface
 
   //function MaximumValue(Vals: array of real; NVals: integer): real;
 
-  procedure GetCircleCoords( var X,Y: array of real; Radius: real;Npoints: integer  );
+  procedure GetCircleCoords( out X,Y: array of real; Radius: real;Npoints: integer  );
 
   procedure GetFunnyCircleCoords( var X,Y: array of real; Radius: array of real; Npoints: integer  );
 
@@ -216,7 +216,7 @@ end;
 
 
 //------------------------------------------------------------------------------
-procedure GetCircleCoords( var X,Y: array of real; Radius: real;Npoints: integer  );
+procedure GetCircleCoords( out X,Y: array of real; Radius: real;Npoints: integer  );
 var
 c: integer;
 theta:real;

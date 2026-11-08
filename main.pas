@@ -855,8 +855,8 @@ end;
 
 
 procedure SplitTabsIntoParts(const ec: string;
-  var Experimental_Condition: string;
-  var extra: TExtraInputData);
+  out Experimental_Condition: string;
+  out extra: TExtraInputData);
 var
   i : integer;
   j : integer;
@@ -897,21 +897,21 @@ end;
  procedure readTrialOrderData(filename: string ;
     sessionNo:integer;
     trialNo:integer;
-    var s1_marker,s2_marker,s3_marker, s4_marker:integer;
+    out s1_marker,s2_marker,s3_marker, s4_marker:integer;
    // var TMS_marker: integer;
-    var s1_shape, s1_sound, s1_cue_quad:integer;
-    var s1_duration, s1_s2_isi:integer;
-    var s2_shape_position_1, s2_shape_position_2, s2_shape_position_3, s2_shape_position_4, s2_shape_position_5, s2_sound  :integer;
-    var s2_duration, s2_s3_isi:integer;
-    var s3_shape, s3_distractor_shape, s3_sound, s3_quad:integer;
-    var s3_duration, s3_s4_isi:integer;
-    var s4_shape, s4_distractor_shape, s4_sound, s4_quad:integer;
-    var s4_duration:integer;
-    var Response_Time_after_S4, Feedback_shape, Feedback_sound, Feedback_duration_after_response_time,  ITI_after_feedback  : integer;
-    var s1_colour, s2_colour_position_1, s2_colour_position_2, s2_colour_position_3, s2_colour_position_4, s2_colour_position_5 ,s3_colour, s3_distractor_colour,s4_colour, s4_distractor_colour, keyMapping, taskType:integer;
-    var TMS_s3_SOA:integer;
-    var Experimental_Condition: string;
-    var extra: TExtraInputData);
+    out s1_shape, s1_sound, s1_cue_quad:integer;
+    out s1_duration, s1_s2_isi:integer;
+    out s2_shape_position_1, s2_shape_position_2, s2_shape_position_3, s2_shape_position_4, s2_shape_position_5, s2_sound  :integer;
+    out s2_duration, s2_s3_isi:integer;
+    out s3_shape, s3_distractor_shape, s3_sound, s3_quad:integer;
+    out s3_duration, s3_s4_isi:integer;
+    out s4_shape, s4_distractor_shape, s4_sound, s4_quad:integer;
+    out s4_duration:integer;
+    out Response_Time_after_S4, Feedback_shape, Feedback_sound, Feedback_duration_after_response_time,  ITI_after_feedback  : integer;
+    out s1_colour, s2_colour_position_1, s2_colour_position_2, s2_colour_position_3, s2_colour_position_4, s2_colour_position_5 ,s3_colour, s3_distractor_colour,s4_colour, s4_distractor_colour, keyMapping, taskType:integer;
+    out TMS_s3_SOA:integer;
+    out Experimental_Condition: string;
+    out extra: TExtraInputData);
 var
   dat: char;
   dat1: integer;
