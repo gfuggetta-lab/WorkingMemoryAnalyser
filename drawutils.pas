@@ -20,7 +20,7 @@ procedure drawPlaceholders4(targetRadiusCM: real);
 // N must be 0 to count-1.
 procedure objectLocationNofCount(out x, y: real; cueRadiusCM: real; N, Count: integer);
 
-procedure objectLocation(var x, y:real ; cueRadiusCM: real; cueQuadrant: integer);
+procedure objectLocation(out x, y:real ; cueRadiusCM: real; cueQuadrant: integer);
 
 procedure drawShape(shapeNo:integer);
 
@@ -89,8 +89,10 @@ end;
 
 //------------------------------------------------------------------------------
 // work out the x and y location of the trajectory object on a given quadrant
-procedure objectLocation(var x: real; var y:real ; cueRadiusCM: real; cueQuadrant: integer);
+procedure objectLocation(out x, y:real ; cueRadiusCM: real; cueQuadrant: integer);
 begin
+  x := 0;
+  y := 0;
   case cueQuadrant of
 
     1: // 45degrees "North West"

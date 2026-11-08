@@ -758,7 +758,7 @@ end;
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-procedure GetNtrials(filename: string ; sessionNo:integer; var Ntrials:integer);
+procedure GetNtrials(filename: string ; sessionNo:integer; out Ntrials:integer);
 
 var
    dats:integer;
