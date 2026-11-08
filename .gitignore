@@ -1,2 +1,19 @@
 ﻿*.ppu
 *.o
+scms_project_1.exe
+*.lps
+*.obj
+*.or
+scms_project_1.res
+scms_project_1.compiled
+
+# the place for the compiled units
+/lib/
+
+# Lazarus IDE backup style
+/backup/
+/*/backup/
+
+# experiment libraries
+/Experiment Library/
+/Experiments library/
