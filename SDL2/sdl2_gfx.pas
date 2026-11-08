@@ -32,7 +32,7 @@ Andreas Schiffler -- aschiffler at ferzkopp dot net
 
 *)
 
-{$INCLUDE jedi.inc}
+{$INCLUDE jedi_sdl2.inc}
 
 interface
    uses SDL2;

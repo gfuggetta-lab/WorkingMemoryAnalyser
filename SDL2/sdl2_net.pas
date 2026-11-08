@@ -21,7 +21,7 @@ misrepresented as being the original software.
 *}
 unit sdl2_net;
 
-{$INCLUDE jedi.inc}
+{$INCLUDE jedi_sdl2.inc}
 
 interface
 

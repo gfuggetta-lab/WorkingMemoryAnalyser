@@ -36,7 +36,7 @@ unit sdl2_image;
 
 {$DEFINE SDL_IMAGE}
 
-{$I jedi.inc}
+{$I jedi_sdl2.inc}
 
 interface
 

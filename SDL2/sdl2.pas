@@ -129,7 +129,7 @@ unit sdl2;
 
 {$DEFINE SDL}
 
-{$I jedi.inc}
+{$I jedi_sdl2.inc}
 
 interface
 

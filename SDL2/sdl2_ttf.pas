@@ -37,7 +37,7 @@ unit sdl2_ttf;
 
 interface
 
-{$I jedi.inc}
+{$I jedi_sdl2.inc}
 
 uses
   SDL2;
