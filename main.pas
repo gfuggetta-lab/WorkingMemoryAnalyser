@@ -1856,10 +1856,6 @@ var
 
   TMS_s3_SOA: integer;
 
-  s4_tickStart : LongWord;
-  curTick      : LongWord;
-
-
   Experimental_Condition:string;
 
   //max_response_time: real; //maximum duration allowed for response, after which the program advances to the next trial
@@ -3365,7 +3361,6 @@ begin
     frameNo := 0;
     while not IsTimeOver(frameNo, TimeTrg) do
     begin
-      curTick:=SDL_GetTicks;
       ef.ProjectionTrans;
 
       drawBackgroundFixation(fixSpotSizeCM, Run_background_circle_colour, Fixation_colour);
