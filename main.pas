@@ -1521,7 +1521,7 @@ var
   fontCol, fontBgrColBlack:TSDL_color;
 
   wasSuspended:boolean = false;
-  FrameTrg : TTimeTarget;
+  TimeTrg : TTimeTarget;
 begin
     // set font colours
   fontCol.r:=255; fontCol.g:=255; fontCol.b:=255; fontCol.a:=0;
@@ -1557,10 +1557,10 @@ begin
    if not(IS_SUSPENDED) then
    begin
       // 2 sec pause   after resuming from suspense
-      StartTarget(2000, FrameTrg);
+      StartTarget(2000, TimeTrg);
       c := 0;
 
-      while not IsTimeOver(c, FrameTrg) do
+      while not IsTimeOver(c, TimeTrg) do
       begin
         ef.ProjectionTrans;
         glMatrixMode(GL_MODELVIEW);
@@ -1883,9 +1883,8 @@ var
   hasResponded : boolean; // has responded?
   triggerState:boolean; //trigger for one-shot sending of parallel port data
   hasBlankedTheTarget:boolean; //flag for whether the target has been blanked or not
-  Nframes:integer;
+  TimeTrg: TTimeTarget;
   frameNo:integer;
-  FrameTrg: TTimeTarget;
 
 
 
@@ -2887,9 +2886,9 @@ begin
 
 
       // 2 sec pause
-      StartTarget(2000, FrameTrg);
+      StartTarget(2000, TimeTrg);
       c := 0;
-      while not IsTimeOver(c, FrameTrg) do
+      while not IsTimeOver(c, TimeTrg) do
       begin
          ef.ProjectionTrans;
          drawBackgroundFixation(fixSpotSizeCM,Run_background_circle_colour, Fixation_colour);
@@ -2920,7 +2919,7 @@ begin
     s1_onsetTime:=-1;
     if (show_s1) then
     begin
-      StartTarget(s1_duration, FrameTrg);
+      StartTarget(s1_duration, TimeTrg);
 
       triggerState:= true; // re-latch the trigger for one-shot parallel port data
 
@@ -2939,7 +2938,7 @@ begin
       doPhotodiode:=true;
 
       frameNo := 0;
-      while not isTimeOver(frameNo, FrameTrg) do
+      while not isTimeOver(frameNo, TimeTrg) do
       begin
         ef.ProjectionTrans;
 
@@ -3087,11 +3086,12 @@ begin
       end;
 
 
-      Nframes:=round(s1_s2_isi/1000 / (1/REFRESH_RATE))  ;
+      StartTarget(s1_s2_isi, TimeTrg);
       timer1.start;
       triggerState:= true; // re-latch the trigger for one-shot parallel port data
       doPhotodiodeForOfs := true;
-      for frameNo:=0 to Nframes-1 do
+      frameNo := 0;
+      while not IsTimeOver(frameNo, TimeTrg) do
       begin
         ef.ProjectionTrans;
         drawBackgroundFixationWithPlaceholders(fixSpotSizeCM, targetRadiusCM,
@@ -3138,6 +3138,7 @@ begin
         //  triggerState:=false;
         //end;
         frameNoTotal := frameNoTotal+1;
+        inc(frameNo);
       end;
   end;
   //=======================================================================================
@@ -3160,7 +3161,7 @@ begin
   if (show_s2) then
   begin
 
-    Nframes:=round (s2_duration/1000 / (1/REFRESH_RATE))  ;
+    StartTarget(s2_duration, TimeTrg);
 
     triggerState:= true; // re-latch the trigger for one-shot parallel port data
 
@@ -3178,7 +3179,8 @@ begin
 
     timer1.start;
 
-    for frameNo:=0 to Nframes-1 do
+    frameNo := 0;
+    while not IsTimeOver(frameNo, TimeTrg) do
     begin
       ef.ProjectionTrans;
       glMatrixMode(GL_MODELVIEW);
@@ -3256,6 +3258,7 @@ begin
       }
     //until timer1.query>= 0.5-0.01;//trajectoryDuration-0.01;
       frameNoTotal := frameNoTotal+1;
+      inc(frameNo);
     end;
 
         //Out32($378, s1_quad+10);
@@ -3283,11 +3286,12 @@ begin
     end;
 
 
-   Nframes:=round (s2_s3_isi/1000 / (1/REFRESH_RATE))  ;
+    StartTarget(s2_s3_isi, TimeTrg);
     doPhotodiodeForOfs := true;
     timer1.start;
 
-    for frameNo:=0 to Nframes-1 do
+    frameNo := 0;
+    while not IsTimeOver(frameNo, TimeTrg) do
     begin
       ef.ProjectionTrans;
       drawBackgroundFixationWithPlaceholders(fixSpotSizeCM, targetRadiusCM,
@@ -3317,6 +3321,7 @@ begin
       end;
 
       frameNoTotal := frameNoTotal+1;
+      inc(frameNo);
     end;
   end;
   //=======================================================================================
@@ -3348,7 +3353,7 @@ begin
       s3_TMSTicks := s3_tickStart+LongWord(TMS_s3_SOA)
     else
       s3_TMSTicks := s3_tickStart;
-    Nframes:=round(s3_duration/1000 / (1/REFRESH_RATE))  ;
+    StartTarget(s3_duration, TimeTrg);
     triggerState:= true; // re-latch the trigger for one-shot parallel port data
 
     if (isTriggerstation) then
@@ -3367,7 +3372,8 @@ begin
     s3_tickToEnd := s3_tickStart;
     if (s3_duration >= 0) then
       s3_tickToEnd := s3_tickToEnd + LongWord(s3_duration);
-    for frameNo:=0 to Nframes-1 do
+    frameNo := 0;
+    while not IsTimeOver(frameNo, TimeTrg) do
     begin
       curTick:=SDL_GetTicks;
       ef.ProjectionTrans;
@@ -3449,6 +3455,7 @@ begin
       end;
 
       frameNoTotal := frameNoTotal+1;
+      inc(frameNo);
 
       // for 120 hz rate, the drawing takes longer than desired
       if (curTick > s3_tickToEnd) then
@@ -3474,10 +3481,11 @@ begin
     end;
 
 
-    Nframes:=round   (s3_s4_isi/1000 / (1/REFRESH_RATE))  ;
+    StartTarget(s3_s4_isi, TimeTrg);
     timer1.start;
     doPhotodiodeForOfs:=true;
-    for frameNo:=0 to Nframes-1 do
+    frameNo := 0;
+    while not IsTimeOver(frameNo, TimeTrg) do
     begin
       ef.ProjectionTrans;
       drawBackgroundFixationWithPlaceholders(fixSpotSizeCM, targetRadiusCM,
@@ -3506,6 +3514,7 @@ begin
       end;
 
       frameNoTotal := frameNoTotal+1;
+      inc(frameNo);
     end;
   end;
   //=======================================================================================
@@ -3542,7 +3551,7 @@ begin
   //=======================================================================================
   //     S4  target onset
   //=======================================================================================
-  Nframes:=round  (s4_duration/1000 / (1/REFRESH_RATE))  ;
+  StartTarget(s4_duration, TimeTrg);
   triggerState:= true; // re-latch the trigger for one-shot parallel port data
 
   if (isTriggerstation) then
@@ -3572,7 +3581,8 @@ begin
   responseState:=-1;
   responseEventTime:=0;
 
-  for frameNo:=0 to Nframes-1 do
+  frameNo:=0;
+  while not IsTimeOver(frameNo, TimeTrg) do
   begin
     ef.ProjectionTrans;
 
@@ -3658,6 +3668,7 @@ begin
       //showmessage('reading trigger station during stimulus');
     end;
     frameNoTotal := frameNoTotal+1;
+    inc(frameNo);
   end;
   //=======================================================================================
   //=======================================================================================
@@ -3683,7 +3694,7 @@ begin
     doPhotodiodeForOfs:=true;
   end;
 
-  Nframes:=round  ((Response_Time_after_S4 + Feedback_duration_after_response_time + ITI_after_feedback)/1000  / (1/REFRESH_RATE))  ;  // max response time from the start of the S4 blank period
+  StartTarget(Response_Time_after_S4 + Feedback_duration_after_response_time + ITI_after_feedback, TimeTrg);
   NFramesForOfs :=round  ((Response_Time_after_S4 + Feedback_duration_after_response_time)/1000  / (1/REFRESH_RATE))  ;  // need to know the frame when ITI_after_feedback starts
   frameNo:=0;
   //state:=-1;
@@ -3747,9 +3758,9 @@ begin
       hasBlankedTheTarget:= true;
     end;
     frameNo:=frameNo+1;
-    if(frameNo=Nframes) then trialDone:=true; // trial is done only once the required number of frames has been displayed
-     // end;
 
+    // trial is done only once the required number of frames has been displayed
+    trialDone := IsTimeOver(frameNo, TimeTrg);
 
 
     if (doCheckForResponse=true) then
