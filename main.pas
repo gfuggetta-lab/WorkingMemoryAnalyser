@@ -1838,6 +1838,7 @@ var
   TMS_s3_SOA: integer;
 
   s3_tickStart : LongWord;
+  s3_tickToEnd : LongWord;
   s3_TMSTicks  : LongWord;
   s4_tickStart : LongWord;
   curTick      : LongWord;
@@ -3305,7 +3306,10 @@ begin
   begin
 
     s3_tickStart :=SDL_GetTicks;
-    s3_TMSTicks := s3_tickStart+TMS_s3_SOA;
+    if (TMS_s3_SOA >= 0) then
+      s3_TMSTicks := s3_tickStart+LongWord(TMS_s3_SOA)
+    else
+      s3_TMSTicks := s3_tickStart;
     Nframes:=round(s3_duration/1000 / (1/REFRESH_RATE))  ;
     triggerState:= true; // re-latch the trigger for one-shot parallel port data
 
@@ -3321,6 +3325,10 @@ begin
 
     doPhotodiode:=true;
     timer1.start;
+
+    s3_tickToEnd := s3_tickStart;
+    if (s3_duration >= 0) then
+      s3_tickToEnd := s3_tickToEnd + LongWord(s3_duration);
     for frameNo:=0 to Nframes-1 do
     begin
       curTick:=SDL_GetTicks;
@@ -3405,7 +3413,7 @@ begin
       frameNoTotal := frameNoTotal+1;
 
       // for 120 hz rate, the drawing takes longer than desired
-      if (curTick > (s3_tickStart + s3_duration)) then
+      if (curTick > s3_tickToEnd) then
          Break;
     end;
     //showmessage(floattostr(frameNo));
