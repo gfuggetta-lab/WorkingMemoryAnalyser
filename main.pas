@@ -186,7 +186,7 @@ var
 
   const
 
-    ISGREYBOXLOG = FALSE;  // log data received from grey box
+    ISGREYBOXLOG : BOOLEAN = FALSE;  // log data received from grey box
 
     // Display device definitions, as they appear on the display radiobox
     DISPLAY_GIORGIO_GSYNC = 1;
