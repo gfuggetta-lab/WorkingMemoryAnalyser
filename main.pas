@@ -1872,7 +1872,7 @@ var
   isAuditoryFeedback:boolean;
   isTargetMatchesCue:boolean; //flag set if target (s4) matches cue (s2) on the task dimension (either shape or colour, according to taskType)
 
- // parallelPortPulseDur :integer;
+
 
 
   doPhotodiode:boolean;
@@ -2001,7 +2001,7 @@ const
   show_s3:boolean=true;
   doCheckForResponse:boolean=true;
 
-  parallelPortPulseDur = 0.002;
+  // parallelPortPulseDur = 0.002;
   placeholderRadiusDeg = SCALE_FACTOR * 0.69230769;//1.0;
   background_deg_DEFAULT = 18.3; 
   Fixation_dot_deg_DEFAULT = 0.3; // seems to be too much. 0.07 seems to be better
