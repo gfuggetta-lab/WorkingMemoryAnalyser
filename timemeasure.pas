@@ -13,6 +13,7 @@ type
 
     InitTick  : LongWord; // the tick, when StartTarget was called
     Duration  : LongWord; // the duration in ms
+    RefreshRate : LongWord; // refresh rate used to calculate target frames
   end;
 
   TTimeCheck = (tcBoth, tcTick, tcFrames);
@@ -47,6 +48,7 @@ begin
   tm.Duration := LongWord(durationMs);
   tm.TrgTicks := tm.InitTick + tm.Duration;
   tm.TrgFrames := round (durationMs / 1000 / (1/refreshRate));
+  tm.RefreshRate := refreshRate;
 end;
 
 function IsTimeOverAny(frames: integer; const tm: TTimeTarget): boolean;
