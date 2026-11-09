@@ -1891,6 +1891,7 @@ var
   doPhotodiode:boolean;
   doPhotodiodeForOfs: Boolean;
   NFramesForOfs: Integer; // used only for ITI_after_feedback
+  ItiTriggered: Boolean;
   triggerStationData:integer;
 
   c,k: integer; //general purpose counter
@@ -3681,6 +3682,7 @@ begin
 
   StartTarget(Response_Time_after_S4 + Feedback_duration_after_response_time + ITI_after_feedback, TimeTrg);
   NFramesForOfs :=round  ((Response_Time_after_S4 + Feedback_duration_after_response_time)/1000  / (1/REFRESH_RATE))  ;  // need to know the frame when ITI_after_feedback starts
+  ItiTriggered := false;
   frameNo:=0;
   //state:=-1;
   repeat;
@@ -3702,7 +3704,11 @@ begin
        doPhotodiode:=false;
     //   showmessage('blank triggerStationData = '+ inttostr(triggerStationData));
     end;
-    if (isLufaUSBserial) and (frameNo = NFramesForOfs) then begin
+    if not ItiTriggered
+      and (isLufaUSBserial)
+      and IsSameFrameOrPassOfs(frameNo, NFramesForOfs,  Response_Time_after_S4 + Feedback_duration_after_response_time, TimeTrg)
+    then
+    begin
       LufaPreparePhotodiode(TrialNo, 'ITI after feedback', lufaUSBserialPhotodiodeInput, ofs_marker);
       doPhotodiodeForOfs := true;
     end;
@@ -3933,7 +3939,11 @@ begin
 
     // At Response_Time_after_S4 sec, stop checking for responses and give auditory feedback
     // auditory feedback at 2 sec
-    if (  (frameNo*(1/REFRESH_RATE)>=Response_Time_after_S4/1000)  and (isAuditoryFeedback=true)      )  then
+    if // (  (frameNo*(1/REFRESH_RATE)>=Response_Time_after_S4/1000)  and (isAuditoryFeedback=true)      )
+      isAuditoryFeedback
+      and IsFrameGEOrPassOfs(frameNo, Round(Response_Time_after_S4/1000/(1/REFRESH_RATE)),
+           Response_Time_after_S4, TimeTrg )
+    then
     begin
       doCheckForResponse:=false; // stop checking for responses
       if observedDataCorrectResponseRecord[trialNo] = 1  then
@@ -4038,7 +4048,13 @@ begin
     if (Feedback_shape<>0) then
     begin
 
-      if (  (frameNo*(1/REFRESH_RATE)>=Response_Time_after_S4/1000)  and ( frameNo*(1/REFRESH_RATE) <= (Response_Time_after_S4+Feedback_duration_after_response_time)/1000 )) {and (isAuditoryFeedback=true)}  then
+      if IsFrameOffsetIn(
+        frameNo,
+        Round(Response_Time_after_S4/1000/(1/REFRESH_RATE)),
+        Round((Response_Time_after_S4+Feedback_duration_after_response_time)/1000/(1/REFRESH_RATE)),
+        Response_Time_after_S4, Response_Time_after_S4+Feedback_duration_after_response_time,
+        TimeTrg)
+      then
       begin
 
         if (isBaselineCondition=false) then

@@ -24,12 +24,45 @@ function IsTimeOverAny(frames: integer; const tm: TTimeTarget): boolean;
 function IsTimeOverTick(const tm: TTimeTarget): boolean;
 function IsTimeOverFrames(frames: integer; const tm: TTimeTarget): boolean;
 
+// frame-only check
+function IsTimePassOfs(offsetMs: integer; const tm: TTimeTarget): Boolean;
+function TimeSinceStart(const tm: TTimeTarget): LongWord;
+function FrameSinceStart(const tm: TTimeTarget): LongWord;
+
+function IsSameFrameOrPassOfs(
+    checkType: TTimeCheck;
+    curFrame, TargetFrame: integer;
+    offsetMs: integer; const tm: TTimeTarget):Boolean; overload;
+function IsFrameGEOrPassOfs(
+    checkType: TTimeCheck;
+    curFrame, TargetFrame: integer;
+    offsetMs: integer; const tm: TTimeTarget):Boolean; overload;
+
+function IsFrameOffsetIn(
+    checkType: TTimeCheck;
+    curFrame, MinFrame, MaxFrame: integer;
+    MinOfs, MaxOfs: integer;
+    const tm: TTimeTarget):Boolean; overload;
+
 var
   DEF_CHECK : TTimecheck = tcBoth;
   DEF_REFRESHRATE : Integer = 60;
 
 procedure StartTarget(durationMs: integer; out tm: TTimeTarget); overload;
 function IsTimeOver(frames: integer; const tm: TTimeTarget): boolean; inline; overload;
+function IsSameFrameOrPassOfs(
+    curFrame, TargetFrame: integer;
+    offsetMs: integer; const tm: TTimeTarget):Boolean; overload;
+
+function IsFrameGEOrPassOfs(
+    curFrame, TargetFrame: integer;
+    offsetMs: integer; const tm: TTimeTarget):Boolean; overload;
+
+function IsFrameOffsetIn(
+    curFrame, MinFrame, MaxFrame: integer;
+    MinOfs, MaxOfs: integer;
+    const tm: TTimeTarget):Boolean; overload;
+
 
 implementation
 
@@ -102,6 +135,110 @@ end;
 function IsTimeOver(frames: integer; const tm: TTimeTarget): boolean; overload;
 begin
   Result := IsTimeOver(DEF_CHECK, frames, tm);
+end;
+
+function IsTimePassOfs(offsetMs: integer; const tm: TTimeTarget): Boolean;
+var
+  t : LongWord;
+begin
+  if (offsetMs < 0) then
+    offsetMs :=0;
+  t := TimeSinceStart(tm);
+  Result := t > LongWord(offsetMs);
+end;
+
+function TimeSinceStart(const tm: TTimeTarget): LongWord;
+begin
+  Result := GetTicks - tm.InitTick;
+end;
+
+function FrameSinceStart(const tm: TTimeTarget): LongWord;
+var
+  ms : LongWord;
+begin
+  ms := TimeSinceStart(tm);
+  Result := round (ms / 1000 / (1/tm.RefreshRate));
+end;
+
+function IsSameFrameOrPassOfs(
+    checkType: TTimeCheck;
+    curFrame, TargetFrame: integer;
+    offsetMs: integer; const tm: TTimeTarget):Boolean; overload;
+begin
+  case checkType of
+    tcTick:
+      Result := IsTimePassOfs(offsetMs, tm);
+    tcFrames:
+      Result := curFrame = targetFrame;
+    else
+      Result := (curFrame = targetFrame) or IsTimePassOfs(offsetMs, tm);
+  end;
+end;
+
+function IsSameFrameOrPassOfs(
+    curFrame, TargetFrame: integer;
+    offsetMs: integer; const tm: TTimeTarget):Boolean; overload;
+begin
+  Result := IsSameFrameOrPassOfs(DEF_CHECK, curFrame, TargetFrame, offsetMs, tm);
+end;
+
+function IsFrameGEOrPassOfs(
+    checkType: TTimeCheck;
+    curFrame, TargetFrame: integer;
+    offsetMs: integer; const tm: TTimeTarget):Boolean; overload;
+begin
+  case checkType of
+    tcTick:
+      Result := IsTimePassOfs(offsetMs, tm);
+    tcFrames:
+      Result := curFrame >= targetFrame;
+    else
+      Result := (curFrame >= targetFrame) or IsTimePassOfs(offsetMs, tm);
+  end;
+end;
+
+function IsFrameGEOrPassOfs(
+    curFrame, TargetFrame: integer;
+    offsetMs: integer; const tm: TTimeTarget):Boolean; overload;
+begin
+  Result := IsFrameGEOrPassOfs(DEF_CHECK, curFrame, TargetFrame, offsetMs, tm);
+end;
+
+function IsFrameOffsetIn(
+    checkType: TTimeCheck;
+    curFrame, MinFrame, MaxFrame: integer;
+    MinOfs, MaxOfs: integer;
+    const tm: TTimeTarget):Boolean; overload;
+var
+  t : LongWord;
+begin
+  case checkType of
+    tcTick: begin
+      t := TimeSinceStart(tm);
+      Result := (t >= LongWord(MinOfs)) and (t <= LongWord(MaxOfs));
+    end;
+    tcFrames:
+      Result := (curFrame >= minFrame) and (curFrame <= maxFrame);
+    else
+    begin
+      Result := (curFrame >= minFrame) and (curFrame <= maxFrame);
+      if not result then begin
+        t := TimeSinceStart(tm);
+        Result := (t >= LongWord(MinOfs)) and (t <= LongWord(MaxOfs));
+      end;
+    end;
+  end;
+end;
+
+function IsFrameOffsetIn(
+    curFrame, MinFrame, MaxFrame: integer;
+    MinOfs, MaxOfs: integer;
+    const tm: TTimeTarget):Boolean; overload;
+begin
+  Result := IsFrameOffsetIn(
+    DEF_CHECK,
+    curFrame, MinFrame, MaxFrame,
+    MinOfs, MaxOfs, tm);
 end;
 
 end.
