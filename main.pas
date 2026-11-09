@@ -2003,12 +2003,15 @@ var
   Image_size_CM: real;
   fontdir : string;
   keyboards : string;
+  durationeval : string;
 
   extraInp : TExtraInputData;
 
 
    strg : string = '';
    strglst : Tstringlist;
+
+   tmps : string;
 
 
 const
@@ -2206,6 +2209,9 @@ begin
 
   keyboards := getStringLineForParameter(configDataFilename, 'Keyboard_keys_used_to_respond:');
   KeyboardSetupResponse(keyboards);
+
+  durationeval := getStringLineForParameter(configDataFilename, 'Duration_base:');
+
 
   //////////////////////////////////////////////////////////////////////////////
 
@@ -2492,6 +2498,18 @@ begin
   handedness := Form1.combobox14.items[Form1.combobox14.itemindex];
   displayType := radiogroup4.items[radiogroup4.itemindex];
 
+  TimeMeasure.DEF_REFRESHRATE := REFRESH_RATE;
+  durationeval := trim(LowerCase(durationeval));
+  if (durationeval = 'frames') or (durationeval='frame') then
+    TimeMeasure.DEF_CHECK := tcFrames
+  else if (durationeval = 'time')
+     or (durationeval = 'times')
+     or (durationeval = 'timer') then
+    TimeMeasure.DEF_CHECK := tcTick
+  else
+    TimeMeasure.DEF_CHECK := tcBoth;
+
+
   outputDataFilename := Form1.Savedialog1.filename;
   AssignFile(f, outputDataFilename);
   if FileExists(outputDataFilename) then
@@ -2544,6 +2562,14 @@ begin
    inttostr(round(colours[c].g*255)) +','+
    inttostr(round(colours[c].b*255)));
   end;
+  case timemeasure.DEF_CHECK of
+    tcTick : tmps := 'time';
+    tcFrames: tmps := 'frames';
+  else
+    tmps := 'time and frames';
+  end;
+
+  writeln(f,'Duration_base:  ',#9, tmps);
   writeln(f);
 
   write(f, 'Experiment' + #9+
@@ -2658,8 +2684,6 @@ begin
 
   // trial loop
   trialNo:=0;
-  TimeMeasure.DEF_REFRESHRATE := REFRESH_RATE;
-  TimeMeasure.DEF_CHECK := tcBoth;
 
   try // catching ExperimateTerminate exception. It can be thrown by pollevent()
 
