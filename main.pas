@@ -2210,7 +2210,7 @@ begin
   keyboards := getStringLineForParameter(configDataFilename, 'Keyboard_keys_used_to_respond:');
   KeyboardSetupResponse(keyboards);
 
-  durationeval := getStringLineForParameter(configDataFilename, 'Duration_base:');
+  durationeval := getStringForParameter(configDataFilename, 'Duration_base:');
 
 
   //////////////////////////////////////////////////////////////////////////////
