@@ -3709,7 +3709,7 @@ begin
   ItiTriggered := false;
   frameNo:=0;
   //state:=-1;
-  repeat;
+  repeat
     ef.projectionTrans;
     drawBackgroundFixationWithPlaceholders(fixSpotSizeCM, targetRadiusCM, Run_background_circle_colour,
       Fixation_colour, Placeholders_colour
@@ -3772,7 +3772,6 @@ begin
       //timeOfFirstBlankImageOnset:=timer2.query;
       hasBlankedTheTarget:= true;
     end;
-    frameNo:=frameNo+1;
 
     // trial is done only once the required number of frames has been displayed
     trialDone := IsTimeOver(frameNo, TimeTrg);
@@ -4144,6 +4143,7 @@ begin
 
     ef.renderStereo;
     frameNoTotal := frameNoTotal+1;
+    inc(frameNo);
   until trialDone; // this trial is done
 
   //blank_onsetTime:=timer2.query; // record end of trial relative to experiment start
