@@ -47,6 +47,9 @@ begin
       Exit;
     end;
 
+    // using vsync
+    SDL_SetHint(SDL_HINT_RENDER_VSYNC, '1');
+
     IMG_Init(IMG_INIT_PNG);
     isInitialized := true;
   finally
